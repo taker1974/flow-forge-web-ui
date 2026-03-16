@@ -1,1063 +1,1281 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>Flow Forge Prototype</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --bg: #0f172a;
-      --surface: #020617;
-      --surface-alt: #020617;
-      --border-subtle: #1e293b;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.1);
-      --text: #e5e7eb;
-      --text-muted: #9ca3af;
-      --canvas-bg: #020617;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top left, #1e293b 0, #020617 45%, #000000 100%);
-      color: var(--text);
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .app-shell {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      backdrop-filter: blur(18px);
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.98));
-      box-shadow:
-        0 24px 80px rgba(15, 23, 42, 0.85),
-        0 0 0 1px rgba(148, 163, 184, 0.08),
-        inset 0 0 0 1px rgba(15, 23, 42, 0.9);
-      border-radius: 18px;
-      margin: 10px;
-      overflow: hidden;
-    }
-
-    /* Top toolbar */
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 16px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-      background:
-        radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 60%),
-        linear-gradient(to right, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
-    }
-
-    .toolbar-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding-right: 12px;
-      border-right: 1px solid rgba(148, 163, 184, 0.4);
-    }
-
-    .brand-mark {
-      width: 22px;
-      height: 22px;
-      border-radius: 8px;
-      background:
-        conic-gradient(from 200deg, #38bdf8, #a855f7, #ec4899, #f97316, #38bdf8);
-      position: relative;
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 10px 30px rgba(56, 189, 248, 0.45);
-      overflow: hidden;
-    }
-
-    .brand-mark::after {
-      content: "";
-      position: absolute;
-      inset: 3px;
-      border-radius: 6px;
-      background: radial-gradient(circle at 20% 0%, rgba(248, 250, 252, 0.7), transparent 55%);
-      mix-blend-mode: screen;
-    }
-
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.1;
-    }
-
-    .brand-title {
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-
-    .brand-sub {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-muted);
-    }
-
-    .toolbar-buttons {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .toolbar-button {
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      background: radial-gradient(circle at top, rgba(248, 250, 252, 0.08), rgba(15, 23, 42, 0.95));
-      color: var(--text);
-      border-radius: 999px;
-      padding: 6px 11px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      position: relative;
-      overflow: hidden;
-      transition:
-        border-color 120ms ease-out,
-        transform 100ms ease-out,
-        box-shadow 120ms ease-out,
-        background 160ms ease-out;
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 10px 20px rgba(15, 23, 42, 0.9);
-    }
-
-    .toolbar-button::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.3), transparent 55%);
-      opacity: 0;
-      transition: opacity 180ms ease-out;
-    }
-
-    .toolbar-button span {
-      position: relative;
-      z-index: 1;
-    }
-
-    .toolbar-button-key {
-      font-size: 10px;
-      padding: 2px 5px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-muted);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-    }
-
-    .toolbar-button:hover {
-      border-color: rgba(56, 189, 248, 0.8);
-      transform: translateY(-1px);
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 1),
-        0 16px 35px rgba(15, 23, 42, 1),
-        0 0 25px rgba(56, 189, 248, 0.55);
-      background: radial-gradient(circle at top, rgba(248, 250, 252, 0.12), rgba(2, 6, 23, 0.98));
-    }
-
-    .toolbar-button:hover::before {
-      opacity: 1;
-    }
-
-    .toolbar-button:active {
-      transform: translateY(0);
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 1),
-        0 6px 14px rgba(15, 23, 42, 1);
-    }
-
-    .toolbar-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .badge {
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(56, 189, 248, 0.5);
-      color: #7dd3fc;
-      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.9));
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-    }
-
-    .indicator {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0%, #22c55e, #16a34a);
-      box-shadow:
-        0 0 0 1px rgba(21, 128, 61, 0.9),
-        0 0 0 4px rgba(22, 163, 74, 0.3),
-        0 0 18px rgba(22, 163, 74, 0.7);
-    }
-
-    .toolbar-caption {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    /* Main layout */
-    .main {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      min-height: 0;
-    }
-
-    .sidebar {
-      border-right: 1px solid rgba(148, 163, 184, 0.2);
-      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.06), transparent 55%);
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-muted);
-      padding: 4px 2px 0;
-    }
-
-    .sidebar-scroll {
-      margin-top: 4px;
-      flex: 1;
-      overflow: auto;
-      padding-right: 4px;
-    }
-
-    .library-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-
-    .library-item {
-      border-radius: 10px;
-      padding: 10px 9px;
-      font-size: 12px;
-      font-weight: 500;
-      color: #0f172a;
-      cursor: grab;
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.45),
-        0 10px 18px rgba(15, 23, 42, 0.85);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      position: relative;
-      overflow: hidden;
-      user-select: none;
-    }
-
-    .library-item-label {
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-size: 10px;
-      opacity: 0.85;
-    }
-
-    .library-item-title {
-      font-size: 13px;
-    }
-
-    .library-item::after {
-      content: "⇢";
-      position: absolute;
-      right: 10px;
-      bottom: 6px;
-      font-size: 14px;
-      opacity: 0.7;
-    }
-
-    .library-item:active {
-      cursor: grabbing;
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.7),
-        0 12px 22px rgba(15, 23, 42, 1);
-      transform: translateY(1px);
-    }
-
-    .lib-color-1 { background: linear-gradient(135deg, #a855f7, #ec4899); color: #f9fafb; }
-    .lib-color-2 { background: linear-gradient(135deg, #38bdf8, #6366f1); color: #f9fafb; }
-    .lib-color-3 { background: linear-gradient(135deg, #22c55e, #16a34a); color: #ecfdf3; }
-    .lib-color-4 { background: linear-gradient(135deg, #f97316, #ec4899); color: #fef2f2; }
-    .lib-color-5 { background: linear-gradient(135deg, #eab308, #f97316); color: #0f172a; }
-    .lib-color-6 { background: linear-gradient(135deg, #3b82f6, #0ea5e9); color: #eff6ff; }
-    .lib-color-7 { background: linear-gradient(135deg, #ec4899, #f97316); color: #fdf2f8; }
-    .lib-color-8 { background: linear-gradient(135deg, #4ade80, #22c55e); color: #052e16; }
-    .lib-color-9 { background: linear-gradient(135deg, #facc15, #22c55e); color: #111827; }
-    .lib-color-10 { background: linear-gradient(135deg, #6366f1, #a855f7); color: #eef2ff; }
-
-    /* Canvas area */
-    .canvas-wrapper {
-      padding: 10px 12px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .canvas-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-muted);
-      padding: 2px 4px 4px;
-    }
-
-    .canvas-meta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .canvas-meta-pill {
-      border-radius: 999px;
-      padding: 2px 8px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-muted);
-      background: radial-gradient(circle at top, rgba(148, 163, 184, 0.2), transparent 60%);
-    }
-
-    .canvas-viewport {
-      flex: 1;
-      background: radial-gradient(circle at 10% 0%, rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 1) 55%, #020617 100%);
-      border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      box-shadow:
-        inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 22px 60px rgba(15, 23, 42, 0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: auto;
-      position: relative;
-    }
-
-    .canvas-inner {
-      position: relative;
-      width: 1200px;
-      height: 700px;
-      background:
-        linear-gradient(transparent 23px, rgba(30, 64, 175, 0.3) 24px, transparent 24px),
-        linear-gradient(90deg, transparent 23px, rgba(30, 64, 175, 0.3) 24px, transparent 24px),
-        radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 55%);
-      background-size: 24px 24px;
-      border-radius: 18px;
-      border: 1px solid rgba(30, 64, 175, 0.75);
-      box-shadow:
-        inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 0 70px rgba(30, 64, 175, 0.95),
-        0 0 120px rgba(8, 47, 73, 0.9);
-      overflow: hidden;
-    }
-
-    .canvas-hint {
-      position: absolute;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 11px;
-      color: rgba(226, 232, 240, 0.9);
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.82);
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      pointer-events: none;
-    }
-
-    .canvas-hint-kbd {
-      font-size: 10px;
-      padding: 2px 5px;
-      border-radius: 4px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      color: #e5e7eb;
-    }
-
-    .canvas-node {
-      position: absolute;
-      min-width: 70px;
-      max-width: 250px;
-      min-height: 30px;
-      max-height: 200px;
-      padding: 10px 10px 12px;
-      border-radius: 6px 6px 2px 6px;
-      color: #0f172a;
-      cursor: grab;
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.72),
-        0 16px 30px rgba(15, 23, 42, 0.95);
-      user-select: none;
-      transform-origin: center;
-      transition:
-        box-shadow 120ms ease-out,
-        transform 80ms ease-out;
-    }
-
-    .canvas-node-resize-handle {
-      position: absolute;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 0 0 12px 12px;
-      border-color: transparent transparent rgba(249, 250, 251, 0.95) transparent;
-      cursor: nwse-resize;
-      right: 0;
-      bottom: 0;
-      z-index: 2;
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.85);
-    }
-
-    .canvas-node:active {
-      cursor: grabbing;
-      transform: scale(1.02);
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 16px 40px rgba(15, 23, 42, 1);
-    }
-
-    .canvas-node-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      opacity: 0.9;
-    }
-
-    .canvas-node-title {
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .canvas-node-sub {
-      font-size: 11px;
-      opacity: 0.8;
-    }
-
-    .node-badge {
-      font-size: 9px;
-      padding: 2px 5px;
-      border-radius: 999px;
-      border: 1px solid rgba(15, 23, 42, 0.7);
-      background: rgba(15, 23, 42, 0.08);
-    }
-
-    .canvas-node.lib-color-1,
-    .canvas-node.lib-color-2,
-    .canvas-node.lib-color-4,
-    .canvas-node.lib-color-6,
-    .canvas-node.lib-color-7,
-    .canvas-node.lib-color-10 {
-      color: #f9fafb;
-    }
-
-    .canvas-node.lib-color-3,
-    .canvas-node.lib-color-8 {
-      color: #052e16;
-    }
-
-    .canvas-node.lib-color-5,
-    .canvas-node.lib-color-9 {
-      color: #0f172a;
-    }
-
-    .canvas-node.lib-color-5 .node-badge,
-    .canvas-node.lib-color-9 .node-badge {
-      border-color: rgba(15, 23, 42, 0.8);
-      background: rgba(15, 23, 42, 0.12);
-    }
-
-    .canvas-node.lib-color-3 .node-badge,
-    .canvas-node.lib-color-8 .node-badge {
-      border-color: rgba(22, 101, 52, 0.9);
-      background: rgba(22, 163, 74, 0.2);
-    }
-
-    .minimap {
-      position: absolute;
-      right: 12px;
-      bottom: 12px;
-      width: 150px;
-      height: 90px;
-      border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      background: radial-gradient(circle at 10% 0%, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.96));
-      box-shadow:
-        0 10px 30px rgba(15, 23, 42, 0.95),
-        0 0 0 1px rgba(15, 23, 42, 1);
-      overflow: hidden;
-    }
-
-    .minimap-header {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-muted);
-      padding: 4px 6px;
-      border-bottom: 1px solid rgba(30, 64, 175, 0.8);
-      background: linear-gradient(to right, rgba(15, 23, 42, 0.98), rgba(30, 64, 175, 0.85));
-    }
-
-    .minimap-body {
-      position: relative;
-      width: 100%;
-      height: calc(100% - 16px);
-      background-image:
-        linear-gradient(transparent 9px, rgba(30, 64, 175, 0.5) 10px, transparent 10px),
-        linear-gradient(90deg, transparent 9px, rgba(30, 64, 175, 0.5) 10px, transparent 10px);
-      background-size: 10px 10px;
-    }
-
-    .minimap-node {
-      position: absolute;
-      border-radius: 2px;
-      opacity: 0.85;
-    }
-
-    .minimap-node-primary { background: rgba(56, 189, 248, 0.9); }
-    .minimap-node-secondary { background: rgba(236, 72, 153, 0.9); }
-    .minimap-node-tertiary { background: rgba(34, 197, 94, 0.9); }
-
-    .viewport-badge {
-      position: absolute;
-      left: 12px;
-      bottom: 12px;
-      font-size: 10px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      color: rgba(226, 232, 240, 0.9);
-      background: rgba(15, 23, 42, 0.9);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .viewport-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0%, #38bdf8, #0ea5e9);
-      box-shadow:
-        0 0 0 3px rgba(56, 189, 248, 0.4),
-        0 0 14px rgba(56, 189, 248, 0.9);
-    }
-
-    @media (max-width: 900px) {
-      .main {
-        grid-template-columns: 200px minmax(0, 1fr);
+  <head>
+    <meta charset="UTF-8" />
+    <title>Flow Forge Prototype</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      :root {
+        --bg: #0f172a;
+        --surface: #020617;
+        --surface-alt: #020617;
+        --border-subtle: #1e293b;
+        --accent: #38bdf8;
+        --accent-soft: rgba(56, 189, 248, 0.1);
+        --text: #e5e7eb;
+        --text-muted: #9ca3af;
+        --canvas-bg: #020617;
       }
-    }
 
-    @media (max-width: 720px) {
-      .app-shell {
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
         margin: 0;
-        border-radius: 0;
+        padding: 0;
+        height: 100%;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'SF Pro Text',
+          'Segoe UI',
+          sans-serif;
+        background: radial-gradient(
+          circle at top left,
+          #1e293b 0,
+          #020617 45%,
+          #000000 100%
+        );
+        color: var(--text);
       }
 
+      body {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .app-shell {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        backdrop-filter: blur(18px);
+        background: linear-gradient(
+          145deg,
+          rgba(15, 23, 42, 0.96),
+          rgba(2, 6, 23, 0.98)
+        );
+        box-shadow:
+          0 24px 80px rgba(15, 23, 42, 0.85),
+          0 0 0 1px rgba(148, 163, 184, 0.08),
+          inset 0 0 0 1px rgba(15, 23, 42, 0.9);
+        border-radius: 18px;
+        margin: 10px;
+        overflow: hidden;
+      }
+
+      /* Top toolbar */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(56, 189, 248, 0.2),
+            transparent 60%
+          ),
+          linear-gradient(
+            to right,
+            rgba(15, 23, 42, 0.98),
+            rgba(15, 23, 42, 0.96)
+          );
+      }
+
+      .toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-right: 12px;
+        border-right: 1px solid rgba(148, 163, 184, 0.4);
+      }
+
+      .brand-mark {
+        width: 22px;
+        height: 22px;
+        border-radius: 8px;
+        background: conic-gradient(
+          from 200deg,
+          #38bdf8,
+          #a855f7,
+          #ec4899,
+          #f97316,
+          #38bdf8
+        );
+        position: relative;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 10px 30px rgba(56, 189, 248, 0.45);
+        overflow: hidden;
+      }
+
+      .brand-mark::after {
+        content: '';
+        position: absolute;
+        inset: 3px;
+        border-radius: 6px;
+        background: radial-gradient(
+          circle at 20% 0%,
+          rgba(248, 250, 252, 0.7),
+          transparent 55%
+        );
+        mix-blend-mode: screen;
+      }
+
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+      }
+
+      .brand-title {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .brand-sub {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--text-muted);
+      }
+
+      .toolbar-buttons {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .toolbar-button {
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        background: radial-gradient(
+          circle at top,
+          rgba(248, 250, 252, 0.08),
+          rgba(15, 23, 42, 0.95)
+        );
+        color: var(--text);
+        border-radius: 999px;
+        padding: 6px 11px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          border-color 120ms ease-out,
+          transform 100ms ease-out,
+          box-shadow 120ms ease-out,
+          background 160ms ease-out;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 10px 20px rgba(15, 23, 42, 0.9);
+      }
+
+      .toolbar-button::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at top left,
+          rgba(56, 189, 248, 0.3),
+          transparent 55%
+        );
+        opacity: 0;
+        transition: opacity 180ms ease-out;
+      }
+
+      .toolbar-button span {
+        position: relative;
+        z-index: 1;
+      }
+
+      .toolbar-button-key {
+        font-size: 10px;
+        padding: 2px 5px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--text-muted);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+      }
+
+      .toolbar-button:hover {
+        border-color: rgba(56, 189, 248, 0.8);
+        transform: translateY(-1px);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 1),
+          0 16px 35px rgba(15, 23, 42, 1),
+          0 0 25px rgba(56, 189, 248, 0.55);
+        background: radial-gradient(
+          circle at top,
+          rgba(248, 250, 252, 0.12),
+          rgba(2, 6, 23, 0.98)
+        );
+      }
+
+      .toolbar-button:hover::before {
+        opacity: 1;
+      }
+
+      .toolbar-button:active {
+        transform: translateY(0);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 1),
+          0 6px 14px rgba(15, 23, 42, 1);
+      }
+
+      .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .badge {
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(56, 189, 248, 0.5);
+        color: #7dd3fc;
+        background: radial-gradient(
+          circle at top,
+          rgba(56, 189, 248, 0.25),
+          rgba(15, 23, 42, 0.9)
+        );
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+      }
+
+      .indicator {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 0%, #22c55e, #16a34a);
+        box-shadow:
+          0 0 0 1px rgba(21, 128, 61, 0.9),
+          0 0 0 4px rgba(22, 163, 74, 0.3),
+          0 0 18px rgba(22, 163, 74, 0.7);
+      }
+
+      .toolbar-caption {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      /* Main layout */
       .main {
-        grid-template-columns: 1fr;
-        grid-template-rows: 210px minmax(0, 1fr);
+        flex: 1;
+        display: grid;
+        grid-template-columns: 240px minmax(0, 1fr);
+        min-height: 0;
       }
 
       .sidebar {
-        border-right: none;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        border-right: 1px solid rgba(148, 163, 184, 0.2);
+        background: radial-gradient(
+          circle at top left,
+          rgba(56, 189, 248, 0.06),
+          transparent 55%
+        );
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="app-shell">
-    <header class="toolbar">
-      <div class="toolbar-left">
-        <div class="brand">
-          <div class="brand-mark"></div>
-          <div class="brand-text">
-            <div class="brand-title">Flow Forge</div>
-            <div class="brand-sub">canvas prototype</div>
-          </div>
-        </div>
-        <div class="toolbar-buttons" id="toolbar-buttons"></div>
-      </div>
-      <div class="toolbar-right">
-        <div class="badge">Stage 1 · Core drag & drop</div>
-        <div class="indicator"></div>
-        <div class="toolbar-caption">Перетащи блок слева на канвас</div>
-      </div>
-    </header>
 
-    <div class="main">
-      <aside class="sidebar">
-        <div class="sidebar-header">
-          <span>Библиотека блоков</span>
-          <span>10 prebuilt</span>
-        </div>
-        <div class="sidebar-scroll">
-          <div class="library-grid" id="library">
-            <div class="library-item lib-color-1" draggable="true" data-template-id="trigger">
-              <div class="library-item-label">Trigger</div>
-              <div class="library-item-title">Lorem Entry Hook</div>
-            </div>
-            <div class="library-item lib-color-2" draggable="true" data-template-id="http">
-              <div class="library-item-label">HTTP</div>
-              <div class="library-item-title">Ipsum Request Node</div>
-            </div>
-            <div class="library-item lib-color-3" draggable="true" data-template-id="transform">
-              <div class="library-item-label">Transform</div>
-              <div class="library-item-title">Dolor Mapper</div>
-            </div>
-            <div class="library-item lib-color-4" draggable="true" data-template-id="branch">
-              <div class="library-item-label">Logic</div>
-              <div class="library-item-title">Sit Split Branch</div>
-            </div>
-            <div class="library-item lib-color-5" draggable="true" data-template-id="delay">
-              <div class="library-item-label">Timing</div>
-              <div class="library-item-title">Amet Delay Gate</div>
-            </div>
-            <div class="library-item lib-color-6" draggable="true" data-template-id="iterate">
-              <div class="library-item-label">Loop</div>
-              <div class="library-item-title">Consectetur Iterator</div>
-            </div>
-            <div class="library-item lib-color-7" draggable="true" data-template-id="email">
-              <div class="library-item-label">Notify</div>
-              <div class="library-item-title">Adipiscing Mailer</div>
-            </div>
-            <div class="library-item lib-color-8" draggable="true" data-template-id="db">
-              <div class="library-item-label">Data</div>
-              <div class="library-item-title">Elit Store Node</div>
-            </div>
-            <div class="library-item lib-color-9" draggable="true" data-template-id="script">
-              <div class="library-item-label">Script</div>
-              <div class="library-item-title">Sed Script Runner</div>
-            </div>
-            <div class="library-item lib-color-10" draggable="true" data-template-id="webhook">
-              <div class="library-item-label">Webhook</div>
-              <div class="library-item-title">Do Eiusmod Catcher</div>
-            </div>
-          </div>
-        </div>
-      </aside>
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--text-muted);
+        padding: 4px 2px 0;
+      }
 
-      <section class="canvas-wrapper">
-        <div class="canvas-header">
-          <div>Рабочее поле</div>
-          <div class="canvas-meta">
-            <div class="canvas-meta-pill">1200 × 700</div>
-            <div class="canvas-meta-pill">Drag from left · Move inside</div>
-          </div>
-        </div>
-        <div class="canvas-viewport">
-          <div class="canvas-inner" id="canvas">
-            <div class="canvas-hint">
-              <span>Перетащи блок из библиотеки на сетку · затем таскай его свободно</span>
-              <span class="canvas-hint-kbd">Drag &amp; Drop</span>
+      .sidebar-scroll {
+        margin-top: 4px;
+        flex: 1;
+        overflow: auto;
+        padding-right: 4px;
+      }
+
+      .library-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .library-item {
+        border-radius: 10px;
+        padding: 10px 9px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #0f172a;
+        cursor: grab;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.45),
+          0 10px 18px rgba(15, 23, 42, 0.85);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+      }
+
+      .library-item-label {
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 10px;
+        opacity: 0.85;
+      }
+
+      .library-item-title {
+        font-size: 13px;
+      }
+
+      .library-item::after {
+        content: '⇢';
+        position: absolute;
+        right: 10px;
+        bottom: 6px;
+        font-size: 14px;
+        opacity: 0.7;
+      }
+
+      .library-item:active {
+        cursor: grabbing;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.7),
+          0 12px 22px rgba(15, 23, 42, 1);
+        transform: translateY(1px);
+      }
+
+      .lib-color-1 {
+        background: linear-gradient(135deg, #a855f7, #ec4899);
+        color: #f9fafb;
+      }
+      .lib-color-2 {
+        background: linear-gradient(135deg, #38bdf8, #6366f1);
+        color: #f9fafb;
+      }
+      .lib-color-3 {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #ecfdf3;
+      }
+      .lib-color-4 {
+        background: linear-gradient(135deg, #f97316, #ec4899);
+        color: #fef2f2;
+      }
+      .lib-color-5 {
+        background: linear-gradient(135deg, #eab308, #f97316);
+        color: #0f172a;
+      }
+      .lib-color-6 {
+        background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+        color: #eff6ff;
+      }
+      .lib-color-7 {
+        background: linear-gradient(135deg, #ec4899, #f97316);
+        color: #fdf2f8;
+      }
+      .lib-color-8 {
+        background: linear-gradient(135deg, #4ade80, #22c55e);
+        color: #052e16;
+      }
+      .lib-color-9 {
+        background: linear-gradient(135deg, #facc15, #22c55e);
+        color: #111827;
+      }
+      .lib-color-10 {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: #eef2ff;
+      }
+
+      /* Canvas area */
+      .canvas-wrapper {
+        padding: 10px 12px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .canvas-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--text-muted);
+        padding: 2px 4px 4px;
+      }
+
+      .canvas-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .canvas-meta-pill {
+        border-radius: 999px;
+        padding: 2px 8px;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--text-muted);
+        background: radial-gradient(
+          circle at top,
+          rgba(148, 163, 184, 0.2),
+          transparent 60%
+        );
+      }
+
+      .canvas-viewport {
+        flex: 1;
+        background: radial-gradient(
+          circle at 10% 0%,
+          rgba(15, 23, 42, 0.75),
+          rgba(15, 23, 42, 1) 55%,
+          #020617 100%
+        );
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        box-shadow:
+          inset 0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 22px 60px rgba(15, 23, 42, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: auto;
+        position: relative;
+      }
+
+      .canvas-inner {
+        position: relative;
+        width: 1200px;
+        height: 700px;
+        background:
+          linear-gradient(
+            transparent 23px,
+            rgba(30, 64, 175, 0.3) 24px,
+            transparent 24px
+          ),
+          linear-gradient(
+            90deg,
+            transparent 23px,
+            rgba(30, 64, 175, 0.3) 24px,
+            transparent 24px
+          ),
+          radial-gradient(
+            circle at top left,
+            rgba(56, 189, 248, 0.2),
+            transparent 55%
+          );
+        background-size: 24px 24px;
+        border-radius: 18px;
+        border: 1px solid rgba(30, 64, 175, 0.75);
+        box-shadow:
+          inset 0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 0 70px rgba(30, 64, 175, 0.95),
+          0 0 120px rgba(8, 47, 73, 0.9);
+        overflow: hidden;
+      }
+
+      .canvas-hint {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 11px;
+        color: rgba(226, 232, 240, 0.9);
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.82);
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        pointer-events: none;
+      }
+
+      .canvas-hint-kbd {
+        font-size: 10px;
+        padding: 2px 5px;
+        border-radius: 4px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        color: #e5e7eb;
+      }
+
+      .canvas-node {
+        position: absolute;
+        min-width: 70px;
+        max-width: 250px;
+        min-height: 30px;
+        max-height: 200px;
+        padding: 10px 10px 12px;
+        border-radius: 6px 6px 2px 6px;
+        color: #0f172a;
+        cursor: grab;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.72),
+          0 16px 30px rgba(15, 23, 42, 0.95);
+        user-select: none;
+        transform-origin: center;
+        transition:
+          box-shadow 120ms ease-out,
+          transform 80ms ease-out;
+      }
+
+      .canvas-node-resize-handle {
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 0 12px 12px;
+        border-color: transparent transparent rgba(100, 100, 80, 0.95)
+          transparent;
+        cursor: nwse-resize;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.85);
+      }
+
+      .canvas-node:active {
+        cursor: grabbing;
+        transform: scale(1.02);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 16px 40px rgba(15, 23, 42, 1);
+      }
+
+      .canvas-node-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        opacity: 0.9;
+      }
+
+      .canvas-node-title {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .canvas-node-sub {
+        font-size: 11px;
+        opacity: 0.8;
+      }
+
+      .node-badge {
+        font-size: 9px;
+        padding: 2px 5px;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 23, 42, 0.7);
+        background: rgba(15, 23, 42, 0.08);
+      }
+
+      .canvas-node.lib-color-1,
+      .canvas-node.lib-color-2,
+      .canvas-node.lib-color-4,
+      .canvas-node.lib-color-6,
+      .canvas-node.lib-color-7,
+      .canvas-node.lib-color-10 {
+        color: #f9fafb;
+      }
+
+      .canvas-node.lib-color-3,
+      .canvas-node.lib-color-8 {
+        color: #052e16;
+      }
+
+      .canvas-node.lib-color-5,
+      .canvas-node.lib-color-9 {
+        color: #0f172a;
+      }
+
+      .canvas-node.lib-color-5 .node-badge,
+      .canvas-node.lib-color-9 .node-badge {
+        border-color: rgba(15, 23, 42, 0.8);
+        background: rgba(15, 23, 42, 0.12);
+      }
+
+      .canvas-node.lib-color-3 .node-badge,
+      .canvas-node.lib-color-8 .node-badge {
+        border-color: rgba(22, 101, 52, 0.9);
+        background: rgba(22, 163, 74, 0.2);
+      }
+
+      .minimap {
+        position: absolute;
+        right: 12px;
+        bottom: 12px;
+        width: 150px;
+        height: 90px;
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: radial-gradient(
+          circle at 10% 0%,
+          rgba(15, 23, 42, 0.9),
+          rgba(15, 23, 42, 0.96)
+        );
+        box-shadow:
+          0 10px 30px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 1);
+        overflow: hidden;
+      }
+
+      .minimap-header {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--text-muted);
+        padding: 4px 6px;
+        border-bottom: 1px solid rgba(30, 64, 175, 0.8);
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0.98),
+          rgba(30, 64, 175, 0.85)
+        );
+      }
+
+      .minimap-body {
+        position: relative;
+        width: 100%;
+        height: calc(100% - 16px);
+        background-image:
+          linear-gradient(
+            transparent 9px,
+            rgba(30, 64, 175, 0.5) 10px,
+            transparent 10px
+          ),
+          linear-gradient(
+            90deg,
+            transparent 9px,
+            rgba(30, 64, 175, 0.5) 10px,
+            transparent 10px
+          );
+        background-size: 10px 10px;
+      }
+
+      .minimap-node {
+        position: absolute;
+        border-radius: 2px;
+        opacity: 0.85;
+      }
+
+      .minimap-node-primary {
+        background: rgba(56, 189, 248, 0.9);
+      }
+      .minimap-node-secondary {
+        background: rgba(236, 72, 153, 0.9);
+      }
+      .minimap-node-tertiary {
+        background: rgba(34, 197, 94, 0.9);
+      }
+
+      .viewport-badge {
+        position: absolute;
+        left: 12px;
+        bottom: 12px;
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        color: rgba(226, 232, 240, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .viewport-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 0%, #38bdf8, #0ea5e9);
+        box-shadow:
+          0 0 0 3px rgba(56, 189, 248, 0.4),
+          0 0 14px rgba(56, 189, 248, 0.9);
+      }
+
+      @media (max-width: 900px) {
+        .main {
+          grid-template-columns: 200px minmax(0, 1fr);
+        }
+      }
+
+      @media (max-width: 720px) {
+        .app-shell {
+          margin: 0;
+          border-radius: 0;
+        }
+
+        .main {
+          grid-template-columns: 1fr;
+          grid-template-rows: 210px minmax(0, 1fr);
+        }
+
+        .sidebar {
+          border-right: none;
+          border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="toolbar">
+        <div class="toolbar-left">
+          <div class="brand">
+            <div class="brand-mark"></div>
+            <div class="brand-text">
+              <div class="brand-title">Flow Forge</div>
+              <div class="brand-sub">canvas prototype</div>
             </div>
           </div>
-          <div class="minimap" aria-hidden="true">
-            <div class="minimap-header">Overview</div>
-            <div class="minimap-body" id="minimap"></div>
-          </div>
-          <div class="viewport-badge">
-            <span class="viewport-dot"></span>
-            <span>Canvas prototype &mdash; Stage 1</span>
-          </div>
+          <div class="toolbar-buttons" id="toolbar-buttons"></div>
         </div>
-      </section>
+        <div class="toolbar-right">
+          <div class="badge">Stage 1 · Core drag & drop</div>
+          <div class="indicator"></div>
+          <div class="toolbar-caption">Перетащи блок слева на канвас</div>
+        </div>
+      </header>
+
+      <div class="main">
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <span>Библиотека блоков</span>
+            <span>10 prebuilt</span>
+          </div>
+          <div class="sidebar-scroll">
+            <div class="library-grid" id="library">
+              <div
+                class="library-item lib-color-1"
+                draggable="true"
+                data-template-id="trigger"
+              >
+                <div class="library-item-label">Trigger</div>
+                <div class="library-item-title">Lorem Entry Hook</div>
+              </div>
+              <div
+                class="library-item lib-color-2"
+                draggable="true"
+                data-template-id="http"
+              >
+                <div class="library-item-label">HTTP</div>
+                <div class="library-item-title">Ipsum Request Node</div>
+              </div>
+              <div
+                class="library-item lib-color-3"
+                draggable="true"
+                data-template-id="transform"
+              >
+                <div class="library-item-label">Transform</div>
+                <div class="library-item-title">Dolor Mapper</div>
+              </div>
+              <div
+                class="library-item lib-color-4"
+                draggable="true"
+                data-template-id="branch"
+              >
+                <div class="library-item-label">Logic</div>
+                <div class="library-item-title">Sit Split Branch</div>
+              </div>
+              <div
+                class="library-item lib-color-5"
+                draggable="true"
+                data-template-id="delay"
+              >
+                <div class="library-item-label">Timing</div>
+                <div class="library-item-title">Amet Delay Gate</div>
+              </div>
+              <div
+                class="library-item lib-color-6"
+                draggable="true"
+                data-template-id="iterate"
+              >
+                <div class="library-item-label">Loop</div>
+                <div class="library-item-title">Consectetur Iterator</div>
+              </div>
+              <div
+                class="library-item lib-color-7"
+                draggable="true"
+                data-template-id="email"
+              >
+                <div class="library-item-label">Notify</div>
+                <div class="library-item-title">Adipiscing Mailer</div>
+              </div>
+              <div
+                class="library-item lib-color-8"
+                draggable="true"
+                data-template-id="db"
+              >
+                <div class="library-item-label">Data</div>
+                <div class="library-item-title">Elit Store Node</div>
+              </div>
+              <div
+                class="library-item lib-color-9"
+                draggable="true"
+                data-template-id="script"
+              >
+                <div class="library-item-label">Script</div>
+                <div class="library-item-title">Sed Script Runner</div>
+              </div>
+              <div
+                class="library-item lib-color-10"
+                draggable="true"
+                data-template-id="webhook"
+              >
+                <div class="library-item-label">Webhook</div>
+                <div class="library-item-title">Do Eiusmod Catcher</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="canvas-wrapper">
+          <div class="canvas-header">
+            <div>Рабочее поле</div>
+            <div class="canvas-meta">
+              <div class="canvas-meta-pill">1200 × 700</div>
+              <div class="canvas-meta-pill">Drag from left · Move inside</div>
+            </div>
+          </div>
+          <div class="canvas-viewport">
+            <div class="canvas-inner" id="canvas">
+              <div class="canvas-hint">
+                <span
+                  >Перетащи блок из библиотеки на сетку · затем таскай его
+                  свободно</span
+                >
+                <span class="canvas-hint-kbd">Drag &amp; Drop</span>
+              </div>
+            </div>
+            <div class="minimap" aria-hidden="true">
+              <div class="minimap-header">Overview</div>
+              <div class="minimap-body" id="minimap"></div>
+            </div>
+            <div class="viewport-badge">
+              <span class="viewport-dot"></span>
+              <span>Canvas prototype &mdash; Stage 1</span>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
-  </div>
 
-  <script>
-    (function () {
-      const toolbarButtons = [
-        "Lorem Ipsum",
-        "Dolor Sit",
-        "Amet Trigger",
-        "HTTP Lorem",
-        "Mapper Ipsum",
-        "Split Dolor",
-        "Delay Sit",
-        "Loop Amet",
-        "Notify Lorem",
-        "Webhook Ipsum"
-      ];
+    <script>
+      (function () {
+        const toolbarButtons = [
+          'Lorem Ipsum',
+          'Dolor Sit',
+          'Amet Trigger',
+          'HTTP Lorem',
+          'Mapper Ipsum',
+          'Split Dolor',
+          'Delay Sit',
+          'Loop Amet',
+          'Notify Lorem',
+          'Webhook Ipsum',
+        ];
 
-      const toolbarContainer = document.getElementById("toolbar-buttons");
-      toolbarButtons.forEach((label, index) => {
-        const btn = document.createElement("button");
-        btn.className = "toolbar-button";
-        btn.type = "button";
+        const toolbarContainer = document.getElementById('toolbar-buttons');
+        toolbarButtons.forEach((label, index) => {
+          const btn = document.createElement('button');
+          btn.className = 'toolbar-button';
+          btn.type = 'button';
 
-        const mainSpan = document.createElement("span");
-        mainSpan.textContent = label;
-        btn.appendChild(mainSpan);
+          const mainSpan = document.createElement('span');
+          mainSpan.textContent = label;
+          btn.appendChild(mainSpan);
 
-        const key = document.createElement("span");
-        key.className = "toolbar-button-key";
-        key.textContent = index + 1;
-        btn.appendChild(key);
+          const key = document.createElement('span');
+          key.className = 'toolbar-button-key';
+          key.textContent = index + 1;
+          btn.appendChild(key);
 
-        btn.addEventListener("click", () => {
-          alert("Toolbar: " + label);
+          btn.addEventListener('click', () => {
+            alert('Toolbar: ' + label);
+          });
+
+          toolbarContainer.appendChild(btn);
         });
 
-        toolbarContainer.appendChild(btn);
-      });
+        const canvas = document.getElementById('canvas');
+        const minimap = document.getElementById('minimap');
+        const library = document.getElementById('library');
 
-      const canvas = document.getElementById("canvas");
-      const minimap = document.getElementById("minimap");
-      const library = document.getElementById("library");
+        let dragNode = null;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+        let resizeState = null;
 
-      let dragNode = null;
-      let dragOffsetX = 0;
-      let dragOffsetY = 0;
-      let resizeState = null;
+        const CANVAS_SIZE_STEP = 10;
+        const MIN_WIDTH = 70;
+        const MIN_HEIGHT = 30;
+        const MAX_WIDTH = 250;
+        const MAX_HEIGHT = 200;
+        const NODE_SIZE_STEP = 5;
+        const NODE_POSITION_STEP = 5;
 
-      const MIN_WIDTH = 70;
-      const MIN_HEIGHT = 30;
-      const MAX_WIDTH = 250;
-      const MAX_HEIGHT = 200;
+        function createNodeFromLibraryItem(libItem, x, y) {
+          const templateId = libItem.getAttribute('data-template-id') || 'node';
+          const node = document.createElement('div');
 
-      function createNodeFromLibraryItem(libItem, x, y) {
-        const templateId = libItem.getAttribute("data-template-id") || "node";
-        const node = document.createElement("div");
+          const colorClasses = Array.from(libItem.classList).filter((cls) =>
+            cls.startsWith('lib-color-'),
+          );
+          node.className = 'canvas-node ' + colorClasses.join(' ');
+          node.dataset.templateId = templateId;
 
-        const colorClasses = Array.from(libItem.classList).filter((cls) =>
-          cls.startsWith("lib-color-")
-        );
-        node.className = "canvas-node " + colorClasses.join(" ");
-        node.dataset.templateId = templateId;
+          const header = document.createElement('div');
+          header.className = 'canvas-node-header';
 
-        const header = document.createElement("div");
-        header.className = "canvas-node-header";
+          const label = document.createElement('span');
+          label.textContent =
+            libItem.querySelector('.library-item-label')?.textContent || 'Node';
+          header.appendChild(label);
 
-        const label = document.createElement("span");
-        label.textContent = libItem.querySelector(".library-item-label")?.textContent || "Node";
-        header.appendChild(label);
+          const badge = document.createElement('span');
+          badge.className = 'node-badge';
+          badge.textContent =
+            '#' + (Date.now() % 10000).toString().padStart(4, '0');
+          header.appendChild(badge);
 
-        const badge = document.createElement("span");
-        badge.className = "node-badge";
-        badge.textContent = "#" + (Date.now() % 10000).toString().padStart(4, "0");
-        header.appendChild(badge);
+          node.appendChild(header);
 
-        node.appendChild(header);
+          const title = document.createElement('div');
+          title.className = 'canvas-node-title';
+          title.textContent =
+            libItem.querySelector('.library-item-title')?.textContent || 'Node';
+          node.appendChild(title);
 
-        const title = document.createElement("div");
-        title.className = "canvas-node-title";
-        title.textContent = libItem.querySelector(".library-item-title")?.textContent || "Node";
-        node.appendChild(title);
+          const sub = document.createElement('div');
+          sub.className = 'canvas-node-sub';
+          sub.textContent = 'Перетаскивай этот блок по канвасу';
+          node.appendChild(sub);
 
-        const sub = document.createElement("div");
-        sub.className = "canvas-node-sub";
-        sub.textContent = "Перетаскивай этот блок по канвасу";
-        node.appendChild(sub);
+          const handle = document.createElement('div');
+          handle.className = 'canvas-node-resize-handle';
+          handle.dataset.resizeHandle = 'se';
+          node.appendChild(handle);
 
-        const handle = document.createElement("div");
-        handle.className = "canvas-node-resize-handle";
-        handle.dataset.resizeHandle = "se";
-        node.appendChild(handle);
+          node.style.left = x + 'px';
+          node.style.top = y + 'px';
 
-        node.style.left = x + "px";
-        node.style.top = y + "px";
+          attachNodeDragHandlers(node);
+          canvas.appendChild(node);
 
-        attachNodeDragHandlers(node);
-        canvas.appendChild(node);
+          updateMinimap();
+          return node;
+        }
 
-        updateMinimap();
-        return node;
-      }
+        function clampNodePosition(node, x, y) {
+          const rect = canvas.getBoundingClientRect();
+          const nodeRect = node.getBoundingClientRect();
 
-      function clampNodePosition(node, x, y) {
-        const rect = canvas.getBoundingClientRect();
-        const nodeRect = node.getBoundingClientRect();
+          const width = nodeRect.width;
+          const height = nodeRect.height;
 
-        const width = nodeRect.width;
-        const height = nodeRect.height;
+          const minX = 4;
+          const minY = 4;
+          const maxX = rect.width - width - 4;
+          const maxY = rect.height - height - 4;
 
-        const minX = 4;
-        const minY = 4;
-        const maxX = rect.width - width - 4;
-        const maxY = rect.height - height - 4;
+          let clampedX = Math.min(Math.max(x, minX), maxX);
+          let clampedY = Math.min(Math.max(y, minY), maxY);
 
-        const clampedX = Math.min(Math.max(x, minX), maxX);
-        const clampedY = Math.min(Math.max(y, minY), maxY);
+          clampedX =
+            Math.round(clampedX / NODE_POSITION_STEP) * NODE_POSITION_STEP;
+          clampedY =
+            Math.round(clampedY / NODE_POSITION_STEP) * NODE_POSITION_STEP;
 
-        return { x: clampedX, y: clampedY };
-      }
+          return { x: clampedX, y: clampedY };
+        }
 
-      function clampNodeRect(x, y, width, height) {
-        const canvasRect = canvas.getBoundingClientRect();
+        function clampNodeRect(x, y, width, height) {
+          const canvasRect = canvas.getBoundingClientRect();
 
-        const clampedWidth = Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH);
-        const clampedHeight = Math.min(Math.max(height, MIN_HEIGHT), MAX_HEIGHT);
+          let clampedWidth = Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH);
+          let clampedHeight = Math.min(
+            Math.max(height, MIN_HEIGHT),
+            MAX_HEIGHT,
+          );
 
-        const maxX = canvasRect.width - clampedWidth - 4;
-        const maxY = canvasRect.height - clampedHeight - 4;
-        const minX = 4;
-        const minY = 4;
+          clampedWidth =
+            Math.max(
+              MIN_WIDTH,
+              Math.min(
+                MAX_WIDTH,
+                Math.round(clampedWidth / NODE_SIZE_STEP) * NODE_SIZE_STEP,
+              ),
+            );
+          clampedHeight =
+            Math.max(
+              MIN_HEIGHT,
+              Math.min(
+                MAX_HEIGHT,
+                Math.round(clampedHeight / NODE_SIZE_STEP) * NODE_SIZE_STEP,
+              ),
+            );
 
-        const clampedX = Math.min(Math.max(x, minX), maxX);
-        const clampedY = Math.min(Math.max(y, minY), maxY);
+          const maxX = canvasRect.width - clampedWidth - 4;
+          const maxY = canvasRect.height - clampedHeight - 4;
+          const minX = 4;
+          const minY = 4;
 
-        return { x: clampedX, y: clampedY, width: clampedWidth, height: clampedHeight };
-      }
+          let clampedX = Math.min(Math.max(x, minX), maxX);
+          let clampedY = Math.min(Math.max(y, minY), maxY);
 
-      function attachNodeDragHandlers(node) {
-        node.addEventListener("pointerdown", (event) => {
-          if (event.button !== 0) return;
-          const target = event.target;
+          clampedX =
+            Math.round(clampedX / NODE_POSITION_STEP) * NODE_POSITION_STEP;
+          clampedY =
+            Math.round(clampedY / NODE_POSITION_STEP) * NODE_POSITION_STEP;
 
-          if (target instanceof HTMLElement && target.dataset.resizeHandle) {
+          return {
+            x: clampedX,
+            y: clampedY,
+            width: clampedWidth,
+            height: clampedHeight,
+          };
+        }
+
+        function attachNodeDragHandlers(node) {
+          node.addEventListener('pointerdown', (event) => {
+            if (event.button !== 0) return;
+            const target = event.target;
+
+            if (target instanceof HTMLElement && target.dataset.resizeHandle) {
+              event.preventDefault();
+              const nodeRect = node.getBoundingClientRect();
+              const canvasRect = canvas.getBoundingClientRect();
+
+              resizeState = {
+                node,
+                startPointerX: event.clientX,
+                startPointerY: event.clientY,
+                startWidth: nodeRect.width,
+                startHeight: nodeRect.height,
+                startLeft: nodeRect.left - canvasRect.left,
+                startTop: nodeRect.top - canvasRect.top,
+              };
+
+              node.setPointerCapture(event.pointerId);
+              return;
+            }
+
             event.preventDefault();
+
             const nodeRect = node.getBoundingClientRect();
             const canvasRect = canvas.getBoundingClientRect();
 
-            resizeState = {
-              node,
-              startPointerX: event.clientX,
-              startPointerY: event.clientY,
-              startWidth: nodeRect.width,
-              startHeight: nodeRect.height,
-              startLeft: nodeRect.left - canvasRect.left,
-              startTop: nodeRect.top - canvasRect.top
-            };
+            dragNode = node;
+            dragOffsetX = event.clientX - nodeRect.left;
+            dragOffsetY = event.clientY - nodeRect.top;
 
             node.setPointerCapture(event.pointerId);
-            return;
-          }
 
-          event.preventDefault();
+            const initialX = event.clientX - canvasRect.left - dragOffsetX;
+            const initialY = event.clientY - canvasRect.top - dragOffsetY;
+            const { x, y } = clampNodePosition(node, initialX, initialY);
+            node.style.left = x + 'px';
+            node.style.top = y + 'px';
+          });
 
-          const nodeRect = node.getBoundingClientRect();
-          const canvasRect = canvas.getBoundingClientRect();
+          node.addEventListener('pointermove', (event) => {
+            if (resizeState && resizeState.node === node) {
+              event.preventDefault();
 
-          dragNode = node;
-          dragOffsetX = event.clientX - nodeRect.left;
-          dragOffsetY = event.clientY - nodeRect.top;
+              const deltaX = event.clientX - resizeState.startPointerX;
+              const deltaY = event.clientY - resizeState.startPointerY;
 
-          node.setPointerCapture(event.pointerId);
+              const nextWidth = resizeState.startWidth + deltaX;
+              const nextHeight = resizeState.startHeight + deltaY;
 
-          const initialX = event.clientX - canvasRect.left - dragOffsetX;
-          const initialY = event.clientY - canvasRect.top - dragOffsetY;
-          const { x, y } = clampNodePosition(node, initialX, initialY);
-          node.style.left = x + "px";
-          node.style.top = y + "px";
-        });
+              const rect = clampNodeRect(
+                resizeState.startLeft,
+                resizeState.startTop,
+                nextWidth,
+                nextHeight,
+              );
 
-        node.addEventListener("pointermove", (event) => {
-          if (resizeState && resizeState.node === node) {
+              node.style.width = rect.width + 'px';
+              node.style.height = rect.height + 'px';
+              node.style.left = rect.x + 'px';
+              node.style.top = rect.y + 'px';
+
+              updateMinimap();
+              return;
+            }
+
+            if (!dragNode || dragNode !== node) return;
             event.preventDefault();
 
-            const deltaX = event.clientX - resizeState.startPointerX;
-            const deltaY = event.clientY - resizeState.startPointerY;
-
-            const nextWidth = resizeState.startWidth + deltaX;
-            const nextHeight = resizeState.startHeight + deltaY;
-
-            const rect = clampNodeRect(
-              resizeState.startLeft,
-              resizeState.startTop,
-              nextWidth,
-              nextHeight
-            );
-
-            node.style.width = rect.width + "px";
-            node.style.height = rect.height + "px";
-            node.style.left = rect.x + "px";
-            node.style.top = rect.y + "px";
+            const canvasRect = canvas.getBoundingClientRect();
+            const nextX = event.clientX - canvasRect.left - dragOffsetX;
+            const nextY = event.clientY - canvasRect.top - dragOffsetY;
+            const { x, y } = clampNodePosition(node, nextX, nextY);
+            node.style.left = x + 'px';
+            node.style.top = y + 'px';
 
             updateMinimap();
+          });
+
+          node.addEventListener('pointerup', (event) => {
+            if (resizeState && resizeState.node === node) {
+              try {
+                node.releasePointerCapture(event.pointerId);
+              } catch (e) {}
+              resizeState = null;
+              updateMinimap();
+              return;
+            }
+
+            if (dragNode === node) {
+              dragNode.releasePointerCapture(event.pointerId);
+              dragNode = null;
+              updateMinimap();
+            }
+          });
+
+          node.addEventListener('pointercancel', (event) => {
+            if (resizeState && resizeState.node === node) {
+              try {
+                node.releasePointerCapture(event.pointerId);
+              } catch (e) {}
+              resizeState = null;
+            }
+
+            if (dragNode === node) {
+              try {
+                dragNode.releasePointerCapture(event.pointerId);
+              } catch (e) {}
+              dragNode = null;
+            }
+          });
+        }
+
+        library.addEventListener('dragstart', (event) => {
+          const target = event.target;
+          if (
+            !(target instanceof HTMLElement) ||
+            !target.classList.contains('library-item')
+          ) {
             return;
           }
 
-          if (!dragNode || dragNode !== node) return;
+          event.dataTransfer.effectAllowed = 'copy';
+          event.dataTransfer.setData(
+            'application/x-flow-node-template',
+            target.getAttribute('data-template-id') || '',
+          );
+          event.dataTransfer.setData(
+            'text/plain',
+            target.getAttribute('data-template-id') || '',
+          );
+        });
+
+        canvas.addEventListener('dragover', (event) => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = 'copy';
+        });
+
+        canvas.addEventListener('drop', (event) => {
           event.preventDefault();
 
-          const canvasRect = canvas.getBoundingClientRect();
-          const nextX = event.clientX - canvasRect.left - dragOffsetX;
-          const nextY = event.clientY - canvasRect.top - dragOffsetY;
-          const { x, y } = clampNodePosition(node, nextX, nextY);
-          node.style.left = x + "px";
-          node.style.top = y + "px";
+          const templateId =
+            event.dataTransfer.getData('application/x-flow-node-template') ||
+            event.dataTransfer.getData('text/plain');
 
-          updateMinimap();
-        });
-
-        node.addEventListener("pointerup", (event) => {
-          if (resizeState && resizeState.node === node) {
-            try {
-              node.releasePointerCapture(event.pointerId);
-            } catch (e) {}
-            resizeState = null;
-            updateMinimap();
+          if (!templateId) {
             return;
           }
 
-          if (dragNode === node) {
-            dragNode.releasePointerCapture(event.pointerId);
-            dragNode = null;
-            updateMinimap();
-          }
+          const libItem = library.querySelector(
+            '.library-item[data-template-id="' + templateId + '"]',
+          );
+          if (!libItem) return;
+
+          const canvasRect = canvas.getBoundingClientRect();
+          const rawX = event.clientX - canvasRect.left - 80;
+          const rawY = event.clientY - canvasRect.top - 40;
+          const { x, y } = clampNodePosition(libItem, rawX, rawY);
+
+          createNodeFromLibraryItem(libItem, x, y);
         });
 
-        node.addEventListener("pointercancel", (event) => {
-          if (resizeState && resizeState.node === node) {
-            try {
-              node.releasePointerCapture(event.pointerId);
-            } catch (e) {}
-            resizeState = null;
-          }
+        function updateMinimap() {
+          if (!canvas || !minimap) return;
 
-          if (dragNode === node) {
-            try {
-              dragNode.releasePointerCapture(event.pointerId);
-            } catch (e) {}
-            dragNode = null;
-          }
-        });
-      }
+          minimap.innerHTML = '';
 
-      library.addEventListener("dragstart", (event) => {
-        const target = event.target;
-        if (!(target instanceof HTMLElement) || !target.classList.contains("library-item")) {
-          return;
+          const canvasRect = canvas.getBoundingClientRect();
+          const scaleX = minimap.clientWidth / canvasRect.width;
+          const scaleY = minimap.clientHeight / canvasRect.height;
+          const scale = Math.min(scaleX, scaleY);
+
+          const nodes = canvas.querySelectorAll('.canvas-node');
+          nodes.forEach((node, index) => {
+            const rect = node.getBoundingClientRect();
+            const mini = document.createElement('div');
+            mini.className = 'minimap-node';
+
+            if (index === 0) {
+              mini.classList.add('minimap-node-primary');
+            } else if (index % 3 === 0) {
+              mini.classList.add('minimap-node-secondary');
+            } else {
+              mini.classList.add('minimap-node-tertiary');
+            }
+
+            const x = (rect.left - canvasRect.left) * scale;
+            const y = (rect.top - canvasRect.top) * scale;
+            const w = Math.max(6, rect.width * scale);
+            const h = Math.max(4, rect.height * scale);
+
+            mini.style.left = x + 'px';
+            mini.style.top = y + 'px';
+            mini.style.width = w + 'px';
+            mini.style.height = h + 'px';
+
+            minimap.appendChild(mini);
+          });
         }
 
-        event.dataTransfer.effectAllowed = "copy";
-        event.dataTransfer.setData(
-          "application/x-flow-node-template",
-          target.getAttribute("data-template-id") || ""
-        );
-        event.dataTransfer.setData("text/plain", target.getAttribute("data-template-id") || "");
-      });
-
-      canvas.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = "copy";
-      });
-
-      canvas.addEventListener("drop", (event) => {
-        event.preventDefault();
-
-        const templateId =
-          event.dataTransfer.getData("application/x-flow-node-template") ||
-          event.dataTransfer.getData("text/plain");
-
-        if (!templateId) {
-          return;
-        }
-
-        const libItem = library.querySelector(
-          '.library-item[data-template-id="' + templateId + '"]'
-        );
-        if (!libItem) return;
-
-        const canvasRect = canvas.getBoundingClientRect();
-        const rawX = event.clientX - canvasRect.left - 80;
-        const rawY = event.clientY - canvasRect.top - 40;
-        const { x, y } = clampNodePosition(libItem, rawX, rawY);
-
-        createNodeFromLibraryItem(libItem, x, y);
-      });
-
-      function updateMinimap() {
-        if (!canvas || !minimap) return;
-
-        minimap.innerHTML = "";
-
-        const canvasRect = canvas.getBoundingClientRect();
-        const scaleX = minimap.clientWidth / canvasRect.width;
-        const scaleY = minimap.clientHeight / canvasRect.height;
-        const scale = Math.min(scaleX, scaleY);
-
-        const nodes = canvas.querySelectorAll(".canvas-node");
-        nodes.forEach((node, index) => {
-          const rect = node.getBoundingClientRect();
-          const mini = document.createElement("div");
-          mini.className = "minimap-node";
-
-          if (index === 0) {
-            mini.classList.add("minimap-node-primary");
-          } else if (index % 3 === 0) {
-            mini.classList.add("minimap-node-secondary");
-          } else {
-            mini.classList.add("minimap-node-tertiary");
-          }
-
-          const x = (rect.left - canvasRect.left) * scale;
-          const y = (rect.top - canvasRect.top) * scale;
-          const w = Math.max(6, rect.width * scale);
-          const h = Math.max(4, rect.height * scale);
-
-          mini.style.left = x + "px";
-          mini.style.top = y + "px";
-          mini.style.width = w + "px";
-          mini.style.height = h + "px";
-
-          minimap.appendChild(mini);
+        const resizeObserver = new ResizeObserver(() => {
+          updateMinimap();
         });
-      }
+        resizeObserver.observe(canvas);
 
-      const resizeObserver = new ResizeObserver(() => {
-        updateMinimap();
-      });
-      resizeObserver.observe(canvas);
-
-      window.addEventListener("load", () => {
-        updateMinimap();
-      });
-    })();
-  </script>
-</body>
+        window.addEventListener('load', () => {
+          updateMinimap();
+        });
+      })();
+    </script>
+  </body>
 </html>
-
