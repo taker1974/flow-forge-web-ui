@@ -500,6 +500,27 @@
         overflow: hidden;
       }
 
+      .canvas-connections {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: visible;
+      }
+
+      .connection-path {
+        fill: none;
+        stroke: rgba(148, 163, 184, 0.9);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        filter: drop-shadow(0 0 6px rgba(15, 23, 42, 0.8));
+      }
+
+      .connection-path-active {
+        stroke: rgba(56, 189, 248, 0.95);
+        stroke-dasharray: 4 4;
+      }
+
       .canvas-hint {
         position: absolute;
         top: 12px;
@@ -559,6 +580,44 @@
         bottom: 0;
         z-index: 2;
         box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.85);
+      }
+
+      .canvas-node-connector {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.9);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.95),
+          0 0 10px rgba(15, 23, 42, 0.95);
+        cursor: crosshair;
+        z-index: 3;
+      }
+
+      .canvas-node-connector-top {
+        top: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .canvas-node-connector-right {
+        right: -5px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .canvas-node-connector-bottom {
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .canvas-node-connector-left {
+        left: -5px;
+        top: 50%;
+        transform: translateY(-50%);
       }
 
       .canvas-node:active {
@@ -868,6 +927,14 @@
           </div>
           <div class="canvas-viewport">
             <div class="canvas-inner" id="canvas">
+              <svg
+                class="canvas-connections"
+                id="canvas-connections"
+                width="100%"
+                height="100%"
+                viewBox="0 0 1200 700"
+                preserveAspectRatio="none"
+              ></svg>
               <div class="canvas-hint">
                 <span
                   >Перетащи блок из библиотеки на сетку · затем таскай его
@@ -929,11 +996,19 @@
         const canvas = document.getElementById('canvas');
         const minimap = document.getElementById('minimap');
         const library = document.getElementById('library');
+        const connectionsLayer = document.getElementById(
+          'canvas-connections',
+        );
 
         let dragNode = null;
         let dragOffsetX = 0;
         let dragOffsetY = 0;
         let resizeState = null;
+        let nodeIdCounter = 0;
+        let connectionCounter = 0;
+        let activeConnection = null;
+        let activeConnectionPath = null;
+        const connections = [];
 
         const CANVAS_SIZE_STEP = 10;
         const MIN_WIDTH = 70;
@@ -952,6 +1027,7 @@
           );
           node.className = 'canvas-node ' + colorClasses.join(' ');
           node.dataset.templateId = templateId;
+          node.dataset.nodeId = 'node-' + ++nodeIdCounter;
 
           const header = document.createElement('div');
           header.className = 'canvas-node-header';
@@ -985,10 +1061,20 @@
           handle.dataset.resizeHandle = 'se';
           node.appendChild(handle);
 
+          ['top', 'right', 'bottom', 'left'].forEach((side) => {
+            const cp = document.createElement('div');
+            cp.className =
+              'canvas-node-connector canvas-node-connector-' + side;
+            cp.dataset.connectionHandle = side;
+            cp.dataset.nodeId = node.dataset.nodeId;
+            node.appendChild(cp);
+          });
+
           node.style.left = x + 'px';
           node.style.top = y + 'px';
 
           attachNodeDragHandlers(node);
+          attachConnectionHandlers(node);
           canvas.appendChild(node);
 
           updateMinimap();
@@ -1070,7 +1156,10 @@
             if (event.button !== 0) return;
             const target = event.target;
 
-            if (target instanceof HTMLElement && target.dataset.resizeHandle) {
+            if (
+              target instanceof HTMLElement &&
+              target.dataset.resizeHandle
+            ) {
               event.preventDefault();
               const nodeRect = node.getBoundingClientRect();
               const canvasRect = canvas.getBoundingClientRect();
@@ -1086,6 +1175,15 @@
               };
 
               node.setPointerCapture(event.pointerId);
+              return;
+            }
+
+            if (
+              target instanceof HTMLElement &&
+              (target.dataset.connectionHandle ||
+                target.classList.contains('canvas-node-connector') ||
+                target.closest('.canvas-node-connector'))
+            ) {
               return;
             }
 
@@ -1130,6 +1228,7 @@
               node.style.top = rect.y + 'px';
 
               updateMinimap();
+              updateAllConnections();
               return;
             }
 
@@ -1144,6 +1243,7 @@
             node.style.top = y + 'px';
 
             updateMinimap();
+            updateAllConnections();
           });
 
           node.addEventListener('pointerup', (event) => {
@@ -1153,6 +1253,7 @@
               } catch (e) {}
               resizeState = null;
               updateMinimap();
+              updateAllConnections();
               return;
             }
 
@@ -1179,6 +1280,159 @@
             }
           });
         }
+
+        function getHandlePosition(handleEl) {
+          const canvasRect = canvas.getBoundingClientRect();
+          const rect = handleEl.getBoundingClientRect();
+          const x = rect.left + rect.width / 2 - canvasRect.left;
+          const y = rect.top + rect.height / 2 - canvasRect.top;
+          return { x, y };
+        }
+
+        function buildConnectionPathD(from, to) {
+          const dx = Math.abs(to.x - from.x);
+          const dy = Math.abs(to.y - from.y);
+          const offsetX = Math.max(dx / 2, 40);
+          const offsetY = Math.max(dy / 2, 20);
+          const c1x = from.x + offsetX;
+          const c1y = from.y + (to.y > from.y ? offsetY : -offsetY);
+          const c2x = to.x - offsetX;
+          const c2y = to.y + (to.y > from.y ? -offsetY : offsetY);
+          return `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`;
+        }
+
+        function updateConnectionPath(connection) {
+          const fromHandle = canvas.querySelector(
+            `.canvas-node-connector[data-node-id="${connection.from.nodeId}"][data-connection-handle="${connection.from.side}"]`,
+          );
+          const toHandle = canvas.querySelector(
+            `.canvas-node-connector[data-node-id="${connection.to.nodeId}"][data-connection-handle="${connection.to.side}"]`,
+          );
+          if (!fromHandle || !toHandle) return;
+          const fromPos = getHandlePosition(fromHandle);
+          const toPos = getHandlePosition(toHandle);
+          connection.path.setAttribute('d', buildConnectionPathD(fromPos, toPos));
+        }
+
+        function updateAllConnections() {
+          connections.forEach((conn) => updateConnectionPath(conn));
+        }
+
+        function attachConnectionHandlers(node) {
+          const connectors = node.querySelectorAll('.canvas-node-connector');
+          connectors.forEach((connector) => {
+            connector.addEventListener('mousedown', (event) => {
+              if (event.button !== 0) return;
+              event.preventDefault();
+              event.stopPropagation();
+
+              const handleEl = event.currentTarget;
+              const nodeId = handleEl.dataset.nodeId;
+              const side = handleEl.dataset.connectionHandle;
+              if (!nodeId || !side || !connectionsLayer) return;
+
+              const pos = getHandlePosition(handleEl);
+              const svgNS = 'http://www.w3.org/2000/svg';
+              const path = document.createElementNS(svgNS, 'path');
+              path.classList.add('connection-path', 'connection-path-active');
+              connectionsLayer.appendChild(path);
+
+              activeConnection = {
+                from: { nodeId, side, handleEl },
+              };
+              activeConnectionPath = path;
+
+              const canvasRect = canvas.getBoundingClientRect();
+              const to = {
+                x: event.clientX - canvasRect.left,
+                y: event.clientY - canvasRect.top,
+              };
+              path.setAttribute('d', buildConnectionPathD(pos, to));
+            });
+
+            connector.addEventListener('contextmenu', (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              const handleEl = event.currentTarget;
+              const nodeId = handleEl.dataset.nodeId;
+              const side = handleEl.dataset.connectionHandle;
+              if (!nodeId || !side) return;
+
+              const before = connections.length;
+              for (let i = connections.length - 1; i >= 0; i--) {
+                const c = connections[i];
+                const matchFrom =
+                  c.from.nodeId === nodeId && c.from.side === side;
+                const matchTo = c.to.nodeId === nodeId && c.to.side === side;
+                if (matchFrom || matchTo) {
+                  if (c.path && c.path.parentNode === connectionsLayer) {
+                    connectionsLayer.removeChild(c.path);
+                  }
+                  connections.splice(i, 1);
+                }
+              }
+              if (before !== connections.length) {
+                updateAllConnections();
+              }
+            });
+          });
+        }
+
+        canvas.addEventListener('mousemove', (event) => {
+          if (!activeConnection || !activeConnectionPath) return;
+          const fromPos = getHandlePosition(activeConnection.from.handleEl);
+          const canvasRect = canvas.getBoundingClientRect();
+          const to = {
+            x: event.clientX - canvasRect.left,
+            y: event.clientY - canvasRect.top,
+          };
+          activeConnectionPath.setAttribute(
+            'd',
+            buildConnectionPathD(fromPos, to),
+          );
+        });
+
+        window.addEventListener('mouseup', (event) => {
+          if (!activeConnection || !activeConnectionPath) return;
+
+          let completed = false;
+          const target = event.target;
+          if (
+            target instanceof HTMLElement &&
+            target.classList.contains('canvas-node-connector')
+          ) {
+            const toHandle = target;
+            const toNodeId = toHandle.dataset.nodeId;
+            const toSide = toHandle.dataset.connectionHandle;
+            if (
+              toNodeId &&
+              toSide &&
+              (toNodeId !== activeConnection.from.nodeId ||
+                toSide !== activeConnection.from.side)
+            ) {
+              activeConnectionPath.classList.remove('connection-path-active');
+              const conn = {
+                id: 'conn-' + ++connectionCounter,
+                from: {
+                  nodeId: activeConnection.from.nodeId,
+                  side: activeConnection.from.side,
+                },
+                to: { nodeId: toNodeId, side: toSide },
+                path: activeConnectionPath,
+              };
+              connections.push(conn);
+              updateConnectionPath(conn);
+              completed = true;
+            }
+          }
+
+          if (!completed && activeConnectionPath.parentNode === connectionsLayer) {
+            connectionsLayer.removeChild(activeConnectionPath);
+          }
+
+          activeConnection = null;
+          activeConnectionPath = null;
+        });
 
         library.addEventListener('dragstart', (event) => {
           const target = event.target;
