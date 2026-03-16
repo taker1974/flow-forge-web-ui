@@ -1,0 +1,21 @@
+{
+  "name": "flow-forge-web-ui-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Stage 1 prototype: n8n/make-like drag & drop canvas with toolbar, library and bounded canvas.",
+  "scripts": {
+    "start": "npx serve .",
+    "preview": "npx serve ."
+  },
+  "keywords": [
+    "workflow",
+    "canvas",
+    "prototype",
+    "drag-and-drop"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
+
