@@ -422,10 +422,12 @@
 
     .canvas-node {
       position: absolute;
-      min-width: 150px;
-      max-width: 260px;
+      min-width: 70px;
+      max-width: 250px;
+      min-height: 30px;
+      max-height: 200px;
       padding: 10px 10px 12px;
-      border-radius: 12px;
+      border-radius: 6px 6px 2px 6px;
       color: #0f172a;
       cursor: grab;
       box-shadow:
@@ -436,6 +438,21 @@
       transition:
         box-shadow 120ms ease-out,
         transform 80ms ease-out;
+    }
+
+    .canvas-node-resize-handle {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 0 12px 12px;
+      border-color: transparent transparent rgba(249, 250, 251, 0.95) transparent;
+      cursor: nwse-resize;
+      right: 0;
+      bottom: 0;
+      z-index: 2;
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.85);
     }
 
     .canvas-node:active {
@@ -744,6 +761,12 @@
       let dragNode = null;
       let dragOffsetX = 0;
       let dragOffsetY = 0;
+      let resizeState = null;
+
+      const MIN_WIDTH = 70;
+      const MIN_HEIGHT = 30;
+      const MAX_WIDTH = 250;
+      const MAX_HEIGHT = 200;
 
       function createNodeFromLibraryItem(libItem, x, y) {
         const templateId = libItem.getAttribute("data-template-id") || "node";
@@ -779,6 +802,11 @@
         sub.textContent = "Перетаскивай этот блок по канвасу";
         node.appendChild(sub);
 
+        const handle = document.createElement("div");
+        handle.className = "canvas-node-resize-handle";
+        handle.dataset.resizeHandle = "se";
+        node.appendChild(handle);
+
         node.style.left = x + "px";
         node.style.top = y + "px";
 
@@ -807,9 +835,47 @@
         return { x: clampedX, y: clampedY };
       }
 
+      function clampNodeRect(x, y, width, height) {
+        const canvasRect = canvas.getBoundingClientRect();
+
+        const clampedWidth = Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH);
+        const clampedHeight = Math.min(Math.max(height, MIN_HEIGHT), MAX_HEIGHT);
+
+        const maxX = canvasRect.width - clampedWidth - 4;
+        const maxY = canvasRect.height - clampedHeight - 4;
+        const minX = 4;
+        const minY = 4;
+
+        const clampedX = Math.min(Math.max(x, minX), maxX);
+        const clampedY = Math.min(Math.max(y, minY), maxY);
+
+        return { x: clampedX, y: clampedY, width: clampedWidth, height: clampedHeight };
+      }
+
       function attachNodeDragHandlers(node) {
         node.addEventListener("pointerdown", (event) => {
           if (event.button !== 0) return;
+          const target = event.target;
+
+          if (target instanceof HTMLElement && target.dataset.resizeHandle) {
+            event.preventDefault();
+            const nodeRect = node.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+
+            resizeState = {
+              node,
+              startPointerX: event.clientX,
+              startPointerY: event.clientY,
+              startWidth: nodeRect.width,
+              startHeight: nodeRect.height,
+              startLeft: nodeRect.left - canvasRect.left,
+              startTop: nodeRect.top - canvasRect.top
+            };
+
+            node.setPointerCapture(event.pointerId);
+            return;
+          }
+
           event.preventDefault();
 
           const nodeRect = node.getBoundingClientRect();
@@ -829,6 +895,31 @@
         });
 
         node.addEventListener("pointermove", (event) => {
+          if (resizeState && resizeState.node === node) {
+            event.preventDefault();
+
+            const deltaX = event.clientX - resizeState.startPointerX;
+            const deltaY = event.clientY - resizeState.startPointerY;
+
+            const nextWidth = resizeState.startWidth + deltaX;
+            const nextHeight = resizeState.startHeight + deltaY;
+
+            const rect = clampNodeRect(
+              resizeState.startLeft,
+              resizeState.startTop,
+              nextWidth,
+              nextHeight
+            );
+
+            node.style.width = rect.width + "px";
+            node.style.height = rect.height + "px";
+            node.style.left = rect.x + "px";
+            node.style.top = rect.y + "px";
+
+            updateMinimap();
+            return;
+          }
+
           if (!dragNode || dragNode !== node) return;
           event.preventDefault();
 
@@ -843,6 +934,15 @@
         });
 
         node.addEventListener("pointerup", (event) => {
+          if (resizeState && resizeState.node === node) {
+            try {
+              node.releasePointerCapture(event.pointerId);
+            } catch (e) {}
+            resizeState = null;
+            updateMinimap();
+            return;
+          }
+
           if (dragNode === node) {
             dragNode.releasePointerCapture(event.pointerId);
             dragNode = null;
@@ -851,6 +951,13 @@
         });
 
         node.addEventListener("pointercancel", (event) => {
+          if (resizeState && resizeState.node === node) {
+            try {
+              node.releasePointerCapture(event.pointerId);
+            } catch (e) {}
+            resizeState = null;
+          }
+
           if (dragNode === node) {
             try {
               dragNode.releasePointerCapture(event.pointerId);
