@@ -642,6 +642,73 @@
         outline: none;
       }
 
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 23, 0.72);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 20px;
+      }
+
+      .modal-overlay-open {
+        display: flex;
+      }
+
+      .modal {
+        width: min(560px, 100%);
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: radial-gradient(
+            circle at top left,
+            rgba(56, 189, 248, 0.18),
+            transparent 55%
+          ),
+          rgba(2, 6, 23, 0.92);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.95),
+          0 30px 80px rgba(0, 0, 0, 0.75);
+        overflow: hidden;
+      }
+
+      .modal-header {
+        padding: 12px 14px 10px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .modal-title {
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(226, 232, 240, 0.95);
+      }
+
+      .modal-close {
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: rgba(2, 6, 23, 0.2);
+        color: rgba(226, 232, 240, 0.95);
+        border-radius: 10px;
+        padding: 6px 10px;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .modal-body {
+        padding: 12px 14px 14px;
+        color: rgba(226, 232, 240, 0.92);
+        font-size: 13px;
+        line-height: 1.4;
+        white-space: pre-wrap;
+      }
+
       /* Canvas area */
       .canvas-wrapper {
         display: flex;
@@ -1283,6 +1350,16 @@ Lorem ipsum
       </div>
     </div>
 
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal" role="document">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">Notice</div>
+        <button class="modal-close" type="button" id="modal-close">OK</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
     <script>
       (function () {
         const TemplateStatus = Object.freeze({
@@ -1304,6 +1381,30 @@ Lorem ipsum
           { id: 'save-template', label: 'Save this template' },
         ];
 
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalTitleEl = document.getElementById('modal-title');
+        const modalBodyEl = document.getElementById('modal-body');
+        const modalCloseBtn = document.getElementById('modal-close');
+
+        function showModal(title, message) {
+          if (!modalOverlay || !modalTitleEl || !modalBodyEl) return;
+          modalTitleEl.textContent = title;
+          modalBodyEl.textContent = message;
+          modalOverlay.classList.add('modal-overlay-open');
+        }
+
+        function closeModal() {
+          modalOverlay?.classList.remove('modal-overlay-open');
+        }
+
+        modalCloseBtn?.addEventListener('click', closeModal);
+        modalOverlay?.addEventListener('click', (e) => {
+          if (e.target === modalOverlay) closeModal();
+        });
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') closeModal();
+        });
+
         toolbarActions.forEach((action) => {
           const btn = document.createElement('button');
           btn.className = 'toolbar-button';
@@ -1314,6 +1415,10 @@ Lorem ipsum
           btn.appendChild(mainSpan);
 
           btn.addEventListener('click', () => {
+            if (action.id === 'save-template') {
+              handleSaveTemplate();
+              return;
+            }
             alert(action.label);
           });
 
@@ -1327,6 +1432,7 @@ Lorem ipsum
         const tplRunBtn = document.getElementById('tpl-run');
         const journalToggleBtn = document.getElementById('journal-toggle');
         const journalPanel = document.getElementById('journal-panel');
+        const journalText = journalPanel?.querySelector('.journal-text');
 
         Object.values(TemplateStatus).forEach((value) => {
           const opt = document.createElement('option');
@@ -1349,6 +1455,23 @@ Lorem ipsum
         tplDeleteBtn?.addEventListener('click', () => alert('Delete (todo)'));
         tplRunBtn?.addEventListener('click', () => alert('Run... (todo)'));
 
+        function forceOpenJournal() {
+          if (!journalPanel) return;
+          const collapsed = journalPanel.classList.contains('journal-collapsed');
+          if (collapsed) {
+            journalPanel.classList.remove('journal-collapsed');
+            if (journalToggleBtn) journalToggleBtn.textContent = 'Journal ▾';
+          }
+        }
+
+        function writeJournal(text) {
+          forceOpenJournal();
+          if (journalText) {
+            journalText.value = text;
+            journalText.scrollTop = 0;
+          }
+        }
+
         journalToggleBtn?.addEventListener('click', () => {
           if (!journalPanel) return;
           const collapsed = journalPanel.classList.toggle('journal-collapsed');
@@ -1361,6 +1484,60 @@ Lorem ipsum
         const connectionsLayer = document.getElementById(
           'canvas-connections',
         );
+
+        function handleSaveTemplate() {
+          const status = templateStatusSelect.value;
+          const name = templateNameInput.value.trim();
+
+          templateNameInput.classList.remove('toolbar-control-invalid');
+          templateStatusSelect.classList.remove('toolbar-control-invalid');
+
+          if (status === TemplateStatus.UNKNOWN) {
+            templateStatusSelect.classList.add('toolbar-control-invalid');
+            showModal(
+              'Cannot save template',
+              'Поле "Статус шаблона" не должно быть UNKNOWN.',
+            );
+            return;
+          }
+
+          if (name.length < 4 || name.length > 64) {
+            templateNameInput.classList.add('toolbar-control-invalid');
+            showModal(
+              'Cannot save template',
+              'Поле "Название шаблона" должно иметь длину от 4 до 64 символов.',
+            );
+            return;
+          }
+
+          const blocks = Array.from(canvas.querySelectorAll('.canvas-node')).map(
+            (node) => ({
+              internal_block_id: node.dataset.internalBlockId,
+              block_type_id: node.dataset.blockTypeId,
+              default_input_text:
+                node.querySelector('.canvas-node-input')?.value ??
+                node.dataset.defaultInputText ??
+                '',
+            }),
+          );
+
+          const lines = connections.map((c) => ({
+            internal_line_id: c.internal_line_id,
+            block_from_internal_id: c.block_from_internal_id,
+            block_to_internal_id: c.block_to_internal_id,
+          }));
+
+          const payload = {
+            name,
+            data: {
+              status,
+              blocks,
+              lines,
+            },
+          };
+
+          writeJournal(JSON.stringify(payload, null, 2));
+        }
 
         let dragNode = null;
         let dragOffsetX = 0;
@@ -1794,8 +1971,12 @@ Lorem ipsum
                 toSide !== activeConnection.from.side)
             ) {
               activeConnectionPath.classList.remove('connection-path-active');
+              const internalLineId = `${activeConnection.from.nodeId}-${toNodeId}`;
               const conn = {
                 id: 'conn-' + ++connectionCounter,
+                internal_line_id: internalLineId,
+                block_from_internal_id: activeConnection.from.nodeId,
+                block_to_internal_id: toNodeId,
                 from: {
                   nodeId: activeConnection.from.nodeId,
                   side: activeConnection.from.side,

@@ -171,3 +171,53 @@ Error:
 
 ---
 
+убери из данных блока input_text.
+там, где был input_text, должен быть default_input_text (включая поле ввода в блоке).
+
+---
+
+давай добавим в данные линии:
+
+- "internal_line_id": строка вида "<id блока начала>-<id блока конца>"
+- "block_from_internal_id": <id блока начала>
+- "block_to_internal_id": <id блока конца>
+
+---
+
+реализуем реакцию на кнопку "Save this template".
+при нажатии проверим поля "Статус шаблона" и "Название шаблона":
+
+- статус не должен быть UNKNOWN;
+- название должно иметь длину от 4 до 64 символов.
+
+если не так, то выведем красивый алерт с указанием на ошибку.
+
+канвас может быть пустым.
+
+если всё в порядке, то сформируем такой json:
+
+{
+  "name": <Название шаблона>,
+  "data": {
+    "status": <Статус шаблона>,
+    "blocks": [
+      // далее для каждого блока из канваса (из данных):
+      {
+        "internal_block_id": <internal_block_id>,
+        "block_type_id": <block_type_id>,
+        "default_input_text": <default_input_text>
+      },
+      ...
+    ],
+    "lines":[
+      // далее для каждой линии из канваса (из данных):
+      {
+        "internal_line_id": <internal_line_id>,
+        "block_from_internal_id": <block_from_internal_id>,
+        "block_to_internal_id": <block_from_internal_id>
+      }
+    ]
+  }
+}
+
+затем текст с этим json надо вывести в текстовое поле в Journal, предварительно форсировав открытие этого элемента.
