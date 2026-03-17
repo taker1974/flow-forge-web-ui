@@ -1536,7 +1536,47 @@ Lorem ipsum
             },
           };
 
-          writeJournal(JSON.stringify(payload, null, 2));
+          const blocksLayout = Array.from(
+            canvas.querySelectorAll('.canvas-node'),
+          ).map((node) => {
+            const x = Number.parseFloat(node.style.left || '0') || 0;
+            const y = Number.parseFloat(node.style.top || '0') || 0;
+            const width =
+              Number.parseFloat(node.style.width || '') || node.offsetWidth;
+            const height =
+              Number.parseFloat(node.style.height || '') || node.offsetHeight;
+            return {
+              internal_block_id: node.dataset.internalBlockId,
+              x,
+              y,
+              width,
+              height,
+            };
+          });
+
+          const linesLayout = connections.map((c) => ({
+            internal_line_id: c.internal_line_id,
+            block_from_internal_id: c.block_from_internal_id,
+            block_to_internal_id: c.block_to_internal_id,
+            from_side: c.from?.side,
+            to_side: c.to?.side,
+          }));
+
+          const canvasState = {
+            canvas: {
+              width: 1200,
+              height: 700,
+              canvas_size_step: CANVAS_SIZE_STEP,
+              block_position_step: NODE_POSITION_STEP,
+              block_size_step: NODE_SIZE_STEP,
+            },
+            blocks: blocksLayout,
+            lines: linesLayout,
+          };
+
+          writeJournal(
+            `${JSON.stringify(payload, null, 2)},\n\n${JSON.stringify(canvasState, null, 2)}`,
+          );
         }
 
         let dragNode = null;
