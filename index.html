@@ -553,7 +553,7 @@
         max-width: 250px;
         min-height: 30px;
         max-height: 200px;
-        padding: 10px 10px 12px;
+        padding: 0;
         border-radius: 6px 6px 2px 6px;
         color: #0f172a;
         cursor: grab;
@@ -565,6 +565,48 @@
         transition:
           box-shadow 120ms ease-out,
           transform 80ms ease-out;
+      }
+
+      .canvas-node-topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 10px;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.35);
+      }
+
+      .canvas-node-topline-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        line-height: 1.2;
+      }
+
+      .canvas-node-body {
+        padding: 8px 10px 10px;
+        height: calc(100% - 36px);
+        min-height: 30px;
+      }
+
+      .canvas-node-input {
+        width: 100%;
+        height: 100%;
+        resize: none;
+        border-radius: 6px;
+        border: 1px solid rgba(15, 23, 42, 0.35);
+        background: rgba(2, 6, 23, 0.12);
+        color: inherit;
+        padding: 8px;
+        font-size: 12px;
+        line-height: 1.3;
+        outline: none;
+      }
+
+      .canvas-node-input:focus {
+        border-color: rgba(56, 189, 248, 0.85);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
       }
 
       .canvas-node-resize-handle {
@@ -626,27 +668,6 @@
         box-shadow:
           0 0 0 1px rgba(15, 23, 42, 0.9),
           0 16px 40px rgba(15, 23, 42, 1);
-      }
-
-      .canvas-node-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 6px;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-        opacity: 0.9;
-      }
-
-      .canvas-node-title {
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      .canvas-node-sub {
-        font-size: 11px;
-        opacity: 0.8;
       }
 
       .node-badge {
@@ -1017,6 +1038,8 @@
         const MAX_HEIGHT = 200;
         const NODE_SIZE_STEP = 5;
         const NODE_POSITION_STEP = 5;
+        const DEFAULT_INPUT_TEXT =
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
 
         function createNodeFromLibraryItem(libItem, x, y) {
           const templateId = libItem.getAttribute('data-template-id') || 'node';
@@ -1027,34 +1050,46 @@
           );
           node.className = 'canvas-node ' + colorClasses.join(' ');
           node.dataset.templateId = templateId;
-          node.dataset.nodeId = 'node-' + ++nodeIdCounter;
+          const internalBlockId = String(++nodeIdCounter).slice(0, 16);
+          node.dataset.nodeId = internalBlockId;
+          node.dataset.internalBlockId = internalBlockId;
 
-          const header = document.createElement('div');
-          header.className = 'canvas-node-header';
+          const blockTypeId =
+            libItem.querySelector('.library-item-title')?.textContent?.trim() ||
+            libItem.textContent?.trim() ||
+            'Block';
+          node.dataset.blockTypeId = blockTypeId.slice(0, 64);
+          node.dataset.defaultInputText = DEFAULT_INPUT_TEXT;
+          node.dataset.inputText = '';
 
-          const label = document.createElement('span');
-          label.textContent =
-            libItem.querySelector('.library-item-label')?.textContent || 'Node';
-          header.appendChild(label);
+          const top = document.createElement('div');
+          top.className = 'canvas-node-topline';
+
+          const title = document.createElement('div');
+          title.className = 'canvas-node-topline-title';
+          title.textContent = `${node.dataset.blockTypeId}`;
+          top.appendChild(title);
 
           const badge = document.createElement('span');
           badge.className = 'node-badge';
-          badge.textContent =
-            '#' + (Date.now() % 10000).toString().padStart(4, '0');
-          header.appendChild(badge);
+          badge.textContent = '#' + internalBlockId;
+          top.appendChild(badge);
 
-          node.appendChild(header);
+          node.appendChild(top);
 
-          const title = document.createElement('div');
-          title.className = 'canvas-node-title';
-          title.textContent =
-            libItem.querySelector('.library-item-title')?.textContent || 'Node';
-          node.appendChild(title);
+          const body = document.createElement('div');
+          body.className = 'canvas-node-body';
 
-          const sub = document.createElement('div');
-          sub.className = 'canvas-node-sub';
-          sub.textContent = 'Перетаскивай этот блок по канвасу';
-          node.appendChild(sub);
+          const input = document.createElement('textarea');
+          input.className = 'canvas-node-input';
+          input.placeholder = 'input_text';
+          input.maxLength = 4096;
+          input.value = '';
+          input.addEventListener('input', () => {
+            node.dataset.inputText = input.value;
+          });
+          body.appendChild(input);
+          node.appendChild(body);
 
           const handle = document.createElement('div');
           handle.className = 'canvas-node-resize-handle';
@@ -1066,12 +1101,15 @@
             cp.className =
               'canvas-node-connector canvas-node-connector-' + side;
             cp.dataset.connectionHandle = side;
-            cp.dataset.nodeId = node.dataset.nodeId;
+            cp.dataset.nodeId = internalBlockId;
             node.appendChild(cp);
           });
 
-          node.style.left = x + 'px';
-          node.style.top = y + 'px';
+          const initial = clampNodeRect(x, y, 180, 110);
+          node.style.left = initial.x + 'px';
+          node.style.top = initial.y + 'px';
+          node.style.width = initial.width + 'px';
+          node.style.height = initial.height + 'px';
 
           attachNodeDragHandlers(node);
           attachConnectionHandlers(node);
@@ -1183,6 +1221,14 @@
               (target.dataset.connectionHandle ||
                 target.classList.contains('canvas-node-connector') ||
                 target.closest('.canvas-node-connector'))
+            ) {
+              return;
+            }
+
+            if (
+              target instanceof HTMLElement &&
+              (target.classList.contains('canvas-node-input') ||
+                target.closest('.canvas-node-input'))
             ) {
               return;
             }
