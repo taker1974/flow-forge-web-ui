@@ -1401,7 +1401,6 @@ Lorem ipsum
             'Block';
           node.dataset.blockTypeId = blockTypeId.slice(0, 64);
           node.dataset.defaultInputText = DEFAULT_INPUT_TEXT;
-          node.dataset.inputText = '';
 
           const top = document.createElement('div');
           top.className = 'canvas-node-topline';
@@ -1423,12 +1422,9 @@ Lorem ipsum
 
           const input = document.createElement('textarea');
           input.className = 'canvas-node-input';
-          input.placeholder = 'input_text';
+          input.placeholder = 'default_input_text';
           input.maxLength = 4096;
-          input.value = '';
-          input.addEventListener('input', () => {
-            node.dataset.inputText = input.value;
-          });
+          input.value = node.dataset.defaultInputText;
           body.appendChild(input);
           node.appendChild(body);
 
