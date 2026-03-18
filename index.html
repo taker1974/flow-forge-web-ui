@@ -300,6 +300,38 @@
         gap: 8px;
       }
 
+      .toolbar-auth {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .auth-badge {
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(2, 6, 23, 0.28);
+        color: rgba(226, 232, 240, 0.92);
+        max-width: 220px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .auth-badge-on {
+        border-color: rgba(34, 197, 94, 0.6);
+        color: rgba(187, 247, 208, 0.95);
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+      }
+
+      .auth-badge-off {
+        border-color: rgba(148, 163, 184, 0.28);
+        color: rgba(148, 163, 184, 0.95);
+      }
+
       .toolbar-toggle {
         border: 1px solid rgba(148, 163, 184, 0.35);
         background: rgba(2, 6, 23, 0.28);
@@ -326,32 +358,6 @@
 
       .toolbar-toggle:active {
         transform: translateY(0);
-      }
-
-      .badge {
-        font-size: 10px;
-        padding: 3px 8px;
-        border-radius: 999px;
-        border: 1px solid rgba(56, 189, 248, 0.5);
-        color: #7dd3fc;
-        background: radial-gradient(
-          circle at top,
-          rgba(56, 189, 248, 0.25),
-          rgba(15, 23, 42, 0.9)
-        );
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-      }
-
-      .indicator {
-        width: 7px;
-        height: 7px;
-        border-radius: 999px;
-        background: radial-gradient(circle at 30% 0%, #22c55e, #16a34a);
-        box-shadow:
-          0 0 0 1px rgba(21, 128, 61, 0.9),
-          0 0 0 4px rgba(22, 163, 74, 0.3),
-          0 0 18px rgba(22, 163, 74, 0.7);
       }
 
       .toolbar-caption {
@@ -389,6 +395,20 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 10px 2px 2px;
+        border-top: 1px solid rgba(148, 163, 184, 0.18);
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.25;
+      }
+
+      .sidebar-footer strong {
+        color: rgba(226, 232, 240, 0.9);
+        font-weight: 600;
       }
 
       .center {
@@ -709,6 +729,71 @@
         white-space: pre-wrap;
       }
 
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .form-grid .form-field-full {
+        grid-column: 1 / -1;
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .form-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: rgba(148, 163, 184, 0.95);
+      }
+
+      .password-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .password-wrap .toolbar-control {
+        width: 100%;
+        padding-right: 44px;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 26px;
+        min-width: 34px;
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(2, 6, 23, 0.18);
+        color: rgba(226, 232, 240, 0.9);
+        cursor: pointer;
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .password-toggle:hover {
+        border-color: rgba(56, 189, 248, 0.6);
+      }
+
+      .form-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .modal-close-secondary {
+        opacity: 0.9;
+      }
+
       /* Canvas area */
       .canvas-wrapper {
         display: flex;
@@ -747,6 +832,55 @@
           rgba(148, 163, 184, 0.2),
           transparent 60%
         );
+      }
+
+      .canvas-size-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .canvas-size-controls input {
+        width: 92px;
+        height: 28px;
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(2, 6, 23, 0.28);
+        color: rgba(226, 232, 240, 0.95);
+        padding: 0 10px;
+        outline: none;
+        box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.8);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+      }
+
+      .canvas-size-controls input:focus {
+        border-color: rgba(56, 189, 248, 0.85);
+        box-shadow:
+          inset 0 0 0 1px rgba(15, 23, 42, 0.8),
+          0 0 0 3px rgba(56, 189, 248, 0.18);
+      }
+
+      .canvas-size-controls .canvas-size-sep {
+        font-size: 11px;
+        color: rgba(148, 163, 184, 0.9);
+      }
+
+      .canvas-size-controls button {
+        height: 28px;
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        background: rgba(2, 6, 23, 0.28);
+        color: rgba(226, 232, 240, 0.95);
+        padding: 0 10px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .canvas-size-controls button:hover {
+        border-color: rgba(56, 189, 248, 0.75);
       }
 
       .canvas-viewport {
@@ -819,32 +953,6 @@
       .connection-path-active {
         stroke: rgba(56, 189, 248, 0.95);
         stroke-dasharray: 4 4;
-      }
-
-      .canvas-hint {
-        position: absolute;
-        top: 12px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 11px;
-        color: rgba(226, 232, 240, 0.9);
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.82);
-        border: 1px solid rgba(148, 163, 184, 0.7);
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        pointer-events: none;
-      }
-
-      .canvas-hint-kbd {
-        font-size: 10px;
-        padding: 2px 5px;
-        border-radius: 4px;
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px solid rgba(148, 163, 184, 0.6);
-        color: #e5e7eb;
       }
 
       .canvas-node {
@@ -939,25 +1047,25 @@
       }
 
       .canvas-node-connector-top {
-        top: -5px;
+        top: -10px;
         left: 50%;
         transform: translateX(-50%);
       }
 
       .canvas-node-connector-right {
-        right: -5px;
+        right: -10px;
         top: 50%;
         transform: translateY(-50%);
       }
 
       .canvas-node-connector-bottom {
-        bottom: -5px;
+        bottom: -10px;
         left: 50%;
         transform: translateX(-50%);
       }
 
       .canvas-node-connector-left {
-        left: -5px;
+        left: -10px;
         top: 50%;
         transform: translateY(-50%);
       }
@@ -1013,7 +1121,7 @@
         position: relative;
         width: 150px;
         height: 90px;
-        border-radius: 10px;
+        border-radius: 4px;
         border: 1px solid rgba(148, 163, 184, 0.6);
         background: radial-gradient(
           circle at 10% 0%,
@@ -1024,6 +1132,12 @@
           0 10px 30px rgba(15, 23, 42, 0.95),
           0 0 0 1px rgba(15, 23, 42, 1);
         overflow: hidden;
+      }
+
+      .rightbar-section-body-minimap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       .minimap-header {
@@ -1043,7 +1157,7 @@
       .minimap-body {
         position: relative;
         width: 100%;
-        height: calc(100% - 16px);
+        height: 100%;
         background-image:
           linear-gradient(
             transparent 9px,
@@ -1076,9 +1190,7 @@
       }
 
       .viewport-badge {
-        position: absolute;
-        left: 12px;
-        bottom: 12px;
+        position: relative;
         font-size: 10px;
         padding: 4px 8px;
         border-radius: 999px;
@@ -1088,6 +1200,25 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
+      }
+
+      .rightbar-footer {
+        margin-top: auto;
+        padding-top: 8px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .rightbar-footer .viewport-badge {
+        border-color: rgba(148, 163, 184, 0.18);
+        color: rgba(148, 163, 184, 0.85);
+        background: rgba(2, 6, 23, 0.18);
+        box-shadow: none;
+      }
+
+      .rightbar-footer .viewport-dot {
+        opacity: 0.55;
+        box-shadow: none;
       }
 
       .viewport-dot {
@@ -1144,37 +1275,57 @@
             <div class="toolbar-buttons" id="toolbar-buttons"></div>
             <div class="toolbar-fields">
               <div class="toolbar-field">
-                <div class="toolbar-field-label">Статус шаблона</div>
-                <select class="toolbar-control" id="template-status"></select>
+                <div class="toolbar-field-label">Template status</div>
+                <select
+                  class="toolbar-control"
+                  id="template-status"
+                  aria-label="Template status"
+                ></select>
               </div>
               <div class="toolbar-field">
-                <div class="toolbar-field-label">Название шаблона</div>
+                <div class="toolbar-field-label">Template name</div>
                 <input
                   class="toolbar-control"
                   id="template-name"
                   type="text"
                   minlength="4"
                   maxlength="64"
-                  placeholder="Например: My first template"
+                  aria-label="Template name"
+                  placeholder="For example: My first template"
                 />
               </div>
             </div>
           </div>
         </div>
         <div class="toolbar-right">
+          <div class="toolbar-auth">
+            <button class="toolbar-toggle" type="button" id="auth-register">
+              Register
+            </button>
+            <button class="toolbar-toggle" type="button" id="auth-login">
+              Login
+            </button>
+            <button class="toolbar-toggle" type="button" id="auth-logout">
+              Logout
+            </button>
+          </div>
+          <div
+            class="auth-badge auth-badge-off"
+            id="auth-status"
+            aria-label="Authorization status"
+          >
+            Logged out
+          </div>
           <button class="toolbar-toggle" type="button" id="journal-toggle">
             Journal
           </button>
-          <div class="badge">Stage 1 · Core drag & drop</div>
-          <div class="indicator"></div>
-          <div class="toolbar-caption">Перетащи блок слева на канвас</div>
         </div>
       </header>
 
       <div class="main">
         <aside class="sidebar">
           <div class="sidebar-header">
-            <span>Библиотека блоков</span>
+            <span>Block library</span>
             <span>10 prebuilt</span>
           </div>
           <div class="sidebar-scroll">
@@ -1261,15 +1412,22 @@
               </div>
             </div>
           </div>
+          <div class="sidebar-footer">
+            <strong>Tip</strong>: drag a block from here onto the canvas.
+          </div>
         </aside>
 
         <div class="center">
           <section class="canvas-wrapper">
             <div class="canvas-header">
-              <div>Рабочее поле</div>
+            <div>Workspace</div>
               <div class="canvas-meta">
-                <div class="canvas-meta-pill">1200 × 700</div>
-                <div class="canvas-meta-pill">Drag from left · Move inside</div>
+                <div class="canvas-size-controls" aria-label="Canvas size controls">
+                  <input id="canvas-width" type="number" min="1200" max="10000" step="10" value="1200" aria-label="Canvas width" />
+                  <span class="canvas-size-sep">×</span>
+                  <input id="canvas-height" type="number" min="700" max="10000" step="10" value="700" aria-label="Canvas height" />
+                  <button type="button" id="canvas-set">Set</button>
+                </div>
               </div>
             </div>
             <div class="canvas-viewport">
@@ -1282,17 +1440,6 @@
                   viewBox="0 0 1200 700"
                   preserveAspectRatio="none"
                 ></svg>
-                <div class="canvas-hint">
-                  <span
-                    >Перетащи блок из библиотеки на сетку · затем таскай его
-                    свободно</span
-                  >
-                  <span class="canvas-hint-kbd">Drag &amp; Drop</span>
-                </div>
-              </div>
-              <div class="viewport-badge">
-                <span class="viewport-dot"></span>
-                <span>Canvas prototype &mdash; Stage 1</span>
               </div>
             </div>
           </section>
@@ -1300,7 +1447,7 @@
           <section class="journal journal-collapsed" id="journal-panel">
             <div class="journal-header">Journal</div>
             <div class="journal-body">
-              <textarea class="journal-text" readonly>
+              <textarea class="journal-text" readonly aria-label="Journal">
 Lorem ipsum
               </textarea>
             </div>
@@ -1309,11 +1456,11 @@ Lorem ipsum
 
         <aside class="rightbar">
           <div class="rightbar-section">
-            <div class="rightbar-section-header">Мои шаблоны</div>
+            <div class="rightbar-section-header">My templates</div>
             <div class="rightbar-section-body">
               <div class="rightbar-muted">
-                здесь будет список моих<br />
-                шаблонов (позже)<br />
+                my templates list will be here<br />
+                (later)<br />
                 ...<br />
                 ...
               </div>
@@ -1321,7 +1468,7 @@ Lorem ipsum
           </div>
 
           <div class="rightbar-section">
-            <div class="rightbar-section-header">Действия</div>
+            <div class="rightbar-section-header">Actions</div>
             <div class="rightbar-section-body">
               <div class="rightbar-actions">
                 <button class="rightbar-action" type="button" id="tpl-load">
@@ -1330,20 +1477,23 @@ Lorem ipsum
                 <button class="rightbar-action" type="button" id="tpl-delete">
                   Delete
                 </button>
-                <button class="rightbar-action" type="button" id="tpl-run">
-                  Run...
-                </button>
               </div>
             </div>
           </div>
 
           <div class="rightbar-section">
-            <div class="rightbar-section-header">Миникарта</div>
-            <div class="rightbar-section-body">
+            <div class="rightbar-section-header">Mini-map</div>
+            <div class="rightbar-section-body rightbar-section-body-minimap">
               <div class="minimap" aria-hidden="true">
-                <div class="minimap-header">Overview</div>
                 <div class="minimap-body" id="minimap"></div>
               </div>
+            </div>
+          </div>
+
+          <div class="rightbar-footer">
+            <div class="viewport-badge" aria-label="Build info">
+              <span class="viewport-dot"></span>
+              <span>Stage 1</span>
             </div>
           </div>
         </aside>
@@ -1393,6 +1543,13 @@ Lorem ipsum
           modalOverlay.classList.add('modal-overlay-open');
         }
 
+        function showModalHtml(title, html) {
+          if (!modalOverlay || !modalTitleEl || !modalBodyEl) return;
+          modalTitleEl.textContent = title;
+          modalBodyEl.innerHTML = html;
+          modalOverlay.classList.add('modal-overlay-open');
+        }
+
         function closeModal() {
           modalOverlay?.classList.remove('modal-overlay-open');
         }
@@ -1429,10 +1586,12 @@ Lorem ipsum
         const templateNameInput = document.getElementById('template-name');
         const tplLoadBtn = document.getElementById('tpl-load');
         const tplDeleteBtn = document.getElementById('tpl-delete');
-        const tplRunBtn = document.getElementById('tpl-run');
         const journalToggleBtn = document.getElementById('journal-toggle');
         const journalPanel = document.getElementById('journal-panel');
         const journalText = journalPanel?.querySelector('.journal-text');
+        const authRegisterBtn = document.getElementById('auth-register');
+        const authLoginBtn = document.getElementById('auth-login');
+        const authLogoutBtn = document.getElementById('auth-logout');
 
         Object.values(TemplateStatus).forEach((value) => {
           const opt = document.createElement('option');
@@ -1444,7 +1603,8 @@ Lorem ipsum
 
         function updateTemplateNameValidity() {
           const value = templateNameInput.value.trim();
-          const ok = value.length === 0 || (value.length >= 4 && value.length <= 64);
+          const ok =
+            value.length === 0 || (value.length >= 4 && value.length <= 64);
           templateNameInput.classList.toggle('toolbar-control-invalid', !ok);
         }
 
@@ -1453,7 +1613,274 @@ Lorem ipsum
 
         tplLoadBtn?.addEventListener('click', () => alert('Load (todo)'));
         tplDeleteBtn?.addEventListener('click', () => alert('Delete (todo)'));
-        tplRunBtn?.addEventListener('click', () => alert('Run... (todo)'));
+
+        const CONFIG = Object.freeze({
+          userServiceUrl: 'http://localhost:8082',
+          storageKey: 'flowForgeAuth',
+          refreshIntervalMinutes: 10,
+        });
+
+        function getAuthState() {
+          try {
+            const raw = localStorage.getItem(CONFIG.storageKey);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            if (!parsed?.access_token || !parsed?.refresh_token) return null;
+            return parsed;
+          } catch {
+            return null;
+          }
+        }
+
+        function setAuthState(state) {
+          if (!state) {
+            localStorage.removeItem(CONFIG.storageKey);
+            return;
+          }
+          localStorage.setItem(CONFIG.storageKey, JSON.stringify(state));
+        }
+
+        const authStatusBadge = document.getElementById('auth-status');
+
+        function updateAuthButtonsVisibility() {
+          const state = getAuthState();
+          const isLoggedIn = Boolean(state);
+          if (authRegisterBtn)
+            authRegisterBtn.style.display = isLoggedIn ? 'none' : '';
+          if (authLoginBtn) authLoginBtn.style.display = isLoggedIn ? 'none' : '';
+          if (authLogoutBtn) authLogoutBtn.style.display = isLoggedIn ? '' : 'none';
+
+          if (authStatusBadge) {
+            authStatusBadge.classList.toggle('auth-badge-on', isLoggedIn);
+            authStatusBadge.classList.toggle('auth-badge-off', !isLoggedIn);
+            authStatusBadge.textContent = isLoggedIn
+              ? `Logged in: ${state.login || 'user'}`
+              : 'Logged out';
+          }
+        }
+
+        async function sha256Hex(text) {
+          const data = new TextEncoder().encode(text);
+          const hash = await crypto.subtle.digest('SHA-256', data);
+          const bytes = Array.from(new Uint8Array(hash));
+          return bytes.map((b) => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function getPasswordHashFromInput(rawPassword) {
+          const value = String(rawPassword || '');
+          if (value.startsWith('hash:')) {
+            return value.slice('hash:'.length).trim();
+          }
+          return await sha256Hex(value);
+        }
+
+        async function apiPost(path, body, accessToken) {
+          const res = await fetch(`${CONFIG.userServiceUrl}${path}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+            },
+            body: JSON.stringify(body),
+          });
+
+          const contentType = res.headers.get('content-type') || '';
+          let payload = null;
+          if (contentType.includes('application/json')) {
+            try { payload = await res.json(); } catch {}
+          } else {
+            try { payload = await res.text(); } catch {}
+          }
+
+          if (!res.ok) {
+            const msg =
+              (payload && typeof payload === 'object' && (payload.message || payload.error)) ||
+              (typeof payload === 'string' ? payload : '') ||
+              `HTTP ${res.status}`;
+            throw new Error(msg);
+          }
+
+          return payload;
+        }
+
+        function openAuthForm(kind) {
+          function wirePasswordToggle(inputId, toggleId) {
+            const input = document.getElementById(inputId);
+            const btn = document.getElementById(toggleId);
+            if (!(input instanceof HTMLInputElement) || !(btn instanceof HTMLButtonElement)) {
+              return;
+            }
+            btn.addEventListener('click', () => {
+              const next = input.type === 'password' ? 'text' : 'password';
+              input.type = next;
+              btn.textContent = next === 'password' ? '👁' : '🙈';
+            });
+          }
+
+          if (kind === 'register') {
+            showModalHtml(
+              'Register',
+              `
+                <div class="form-grid">
+                  <div class="form-field">
+                    <div class="form-label">Login</div>
+                    <input class="toolbar-control" id="reg-login" type="text" minlength="4" maxlength="64" />
+                  </div>
+                  <div class="form-field">
+                    <div class="form-label">Password</div>
+                    <div class="password-wrap">
+                      <input class="toolbar-control" id="reg-password" type="password" minlength="8" maxlength="128" />
+                      <button class="password-toggle" type="button" id="reg-password-toggle" aria-label="Show/hide password">👁</button>
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <div class="form-label">First name</div>
+                    <input class="toolbar-control" id="reg-first" type="text" minlength="1" maxlength="64" />
+                  </div>
+                  <div class="form-field">
+                    <div class="form-label">Last name</div>
+                    <input class="toolbar-control" id="reg-last" type="text" minlength="1" maxlength="64" />
+                  </div>
+                  <div class="form-field form-field-full">
+                    <div class="form-label">Email</div>
+                    <input class="toolbar-control" id="reg-email" type="email" minlength="5" maxlength="64" />
+                  </div>
+                  <div class="form-field form-field-full">
+                    <div class="form-label">Phone (+79001234567)</div>
+                    <input class="toolbar-control" id="reg-phone" type="tel" minlength="11" maxlength="16" placeholder="+79001234567" />
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="modal-close modal-close-secondary" type="button" id="auth-cancel">Cancel</button>
+                  <button class="modal-close" type="button" id="auth-submit">Submit</button>
+                </div>
+              `,
+            );
+            wirePasswordToggle('reg-password', 'reg-password-toggle');
+          } else if (kind === 'login') {
+            showModalHtml(
+              'Login',
+              `
+                <div class="form-grid">
+                  <div class="form-field form-field-full">
+                    <div class="form-label">Login</div>
+                    <input class="toolbar-control" id="login-login" type="text" minlength="4" maxlength="64" />
+                  </div>
+                  <div class="form-field form-field-full">
+                    <div class="form-label">Password</div>
+                    <div class="password-wrap">
+                      <input class="toolbar-control" id="login-password" type="password" minlength="8" maxlength="128" />
+                      <button class="password-toggle" type="button" id="login-password-toggle" aria-label="Show/hide password">👁</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="modal-close modal-close-secondary" type="button" id="auth-cancel">Cancel</button>
+                  <button class="modal-close" type="button" id="auth-submit">Login</button>
+                </div>
+              `,
+            );
+            wirePasswordToggle('login-password', 'login-password-toggle');
+          }
+
+          document.getElementById('auth-cancel')?.addEventListener('click', closeModal);
+          document.getElementById('auth-submit')?.addEventListener('click', async () => {
+            try {
+              if (kind === 'register') {
+                const login = document.getElementById('reg-login')?.value?.trim() || '';
+                const password = document.getElementById('reg-password')?.value || '';
+                const firstName = document.getElementById('reg-first')?.value?.trim() || '';
+                const lastName = document.getElementById('reg-last')?.value?.trim() || '';
+                const email = document.getElementById('reg-email')?.value?.trim() || '';
+                const phone = document.getElementById('reg-phone')?.value?.trim() || '';
+
+                const password_hash = await getPasswordHashFromInput(password);
+                await apiPost('/auth/register', {
+                  login,
+                  password_hash,
+                  first_name: firstName,
+                  last_name: lastName,
+                  email,
+                  phone,
+                });
+
+                closeModal();
+                showModal(
+                  'Register',
+                  'Registration completed successfully. You can now login.',
+                );
+              }
+
+              if (kind === 'login') {
+                const login = document.getElementById('login-login')?.value?.trim() || '';
+                const password = document.getElementById('login-password')?.value || '';
+                const password_hash = await getPasswordHashFromInput(password);
+                const resp = await apiPost('/auth/login', { login, password_hash });
+                const access_token = resp?.access_token;
+                const refresh_token = resp?.refresh_token;
+
+                if (!access_token || !refresh_token) {
+                  throw new Error('Invalid login response (missing tokens)');
+                }
+
+                setAuthState({ access_token, refresh_token, login });
+                closeModal();
+                updateAuthButtonsVisibility();
+                showModal('Login', 'Login completed successfully.');
+              }
+            } catch (e) {
+              showModal('Auth error', String(e?.message || e));
+            }
+          });
+        }
+
+        authRegisterBtn?.addEventListener('click', () => openAuthForm('register'));
+        authLoginBtn?.addEventListener('click', () => openAuthForm('login'));
+        authLogoutBtn?.addEventListener('click', async () => {
+          const state = getAuthState();
+          if (!state) {
+            updateAuthButtonsVisibility();
+            return;
+          }
+          try {
+            await apiPost('/auth/logout', {
+              refresh_token: state.refresh_token,
+              access_token: state.access_token,
+            }, state.access_token);
+          } catch {
+            // silent by requirement
+          } finally {
+            setAuthState(null);
+            updateAuthButtonsVisibility();
+          }
+        });
+
+        updateAuthButtonsVisibility();
+
+        async function refreshTokens() {
+          const state = getAuthState();
+          if (!state) return;
+          try {
+            const resp = await apiPost('/auth/refresh', {
+              refresh_token: state.refresh_token,
+            });
+            const access_token = resp?.access_token;
+            const refresh_token = resp?.refresh_token;
+            if (!access_token || !refresh_token) {
+              throw new Error('Invalid refresh response (missing tokens)');
+            }
+            setAuthState({ ...state, access_token, refresh_token });
+            updateAuthButtonsVisibility();
+          } catch {
+            // silent auto-refresh fail -> drop auth
+            setAuthState(null);
+            updateAuthButtonsVisibility();
+          }
+        }
+
+        const refreshIntervalMs = Math.max(1, CONFIG.refreshIntervalMinutes) * 60 * 1000;
+        setInterval(refreshTokens, refreshIntervalMs);
+        refreshTokens();
 
         function forceOpenJournal() {
           if (!journalPanel) return;
@@ -1484,6 +1911,10 @@ Lorem ipsum
         const connectionsLayer = document.getElementById(
           'canvas-connections',
         );
+        const canvasViewport = canvas?.closest('.canvas-viewport');
+        const canvasWidthInput = document.getElementById('canvas-width');
+        const canvasHeightInput = document.getElementById('canvas-height');
+        const canvasSetBtn = document.getElementById('canvas-set');
 
         function handleSaveTemplate() {
           const status = templateStatusSelect.value;
@@ -1496,7 +1927,7 @@ Lorem ipsum
             templateStatusSelect.classList.add('toolbar-control-invalid');
             showModal(
               'Cannot save template',
-              'Поле "Статус шаблона" не должно быть UNKNOWN.',
+              'The "Template status" field must not be UNKNOWN.',
             );
             return;
           }
@@ -1505,7 +1936,7 @@ Lorem ipsum
             templateNameInput.classList.add('toolbar-control-invalid');
             showModal(
               'Cannot save template',
-              'Поле "Название шаблона" должно иметь длину от 4 до 64 символов.',
+              'The "Template name" field must be between 4 and 64 characters.',
             );
             return;
           }
@@ -1590,6 +2021,10 @@ Lorem ipsum
         const connections = [];
 
         const CANVAS_SIZE_STEP = 10;
+        const MIN_CANVAS_WIDTH = 1200;
+        const MIN_CANVAS_HEIGHT = 700;
+        const MAX_CANVAS_WIDTH = 10000;
+        const MAX_CANVAS_HEIGHT = 10000;
         const MIN_WIDTH = 70;
         const MIN_HEIGHT = 30;
         const MAX_WIDTH = 250;
@@ -1674,16 +2109,15 @@ Lorem ipsum
         }
 
         function clampNodePosition(node, x, y) {
-          const rect = canvas.getBoundingClientRect();
           const nodeRect = node.getBoundingClientRect();
 
-          const width = nodeRect.width;
-          const height = nodeRect.height;
+          const width = node.offsetWidth || nodeRect.width;
+          const height = node.offsetHeight || nodeRect.height;
 
           const minX = 4;
           const minY = 4;
-          const maxX = rect.width - width - 4;
-          const maxY = rect.height - height - 4;
+          const maxX = canvasWidth - width - 4;
+          const maxY = canvasHeight - height - 4;
 
           let clampedX = Math.min(Math.max(x, minX), maxX);
           let clampedY = Math.min(Math.max(y, minY), maxY);
@@ -1697,8 +2131,6 @@ Lorem ipsum
         }
 
         function clampNodeRect(x, y, width, height) {
-          const canvasRect = canvas.getBoundingClientRect();
-
           let clampedWidth = Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH);
           let clampedHeight = Math.min(
             Math.max(height, MIN_HEIGHT),
@@ -1722,8 +2154,8 @@ Lorem ipsum
               ),
             );
 
-          const maxX = canvasRect.width - clampedWidth - 4;
-          const maxY = canvasRect.height - clampedHeight - 4;
+          const maxX = canvasWidth - clampedWidth - 4;
+          const maxY = canvasHeight - clampedHeight - 4;
           const minX = 4;
           const minY = 4;
 
@@ -1743,6 +2175,79 @@ Lorem ipsum
           };
         }
 
+        let canvasWidth = MIN_CANVAS_WIDTH;
+        let canvasHeight = MIN_CANVAS_HEIGHT;
+
+        function applyCanvasSize(width, height) {
+          canvasWidth = width;
+          canvasHeight = height;
+
+          canvas.style.width = `${width}px`;
+          canvas.style.height = `${height}px`;
+          connectionsLayer?.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+          if (canvasWidthInput instanceof HTMLInputElement) {
+            canvasWidthInput.value = String(width);
+          }
+          if (canvasHeightInput instanceof HTMLInputElement) {
+            canvasHeightInput.value = String(height);
+          }
+
+          // Ensure all nodes are inside after resize (especially when shrinking).
+          const nodes = Array.from(canvas.querySelectorAll('.canvas-node'));
+          nodes.forEach((node) => {
+            const x = Number.parseFloat(node.style.left || '0') || 0;
+            const y = Number.parseFloat(node.style.top || '0') || 0;
+            const w =
+              Number.parseFloat(node.style.width || '') || node.offsetWidth || 0;
+            const h =
+              Number.parseFloat(node.style.height || '') || node.offsetHeight || 0;
+
+            const rect = clampNodeRect(x, y, w, h);
+            node.style.left = rect.x + 'px';
+            node.style.top = rect.y + 'px';
+            node.style.width = rect.width + 'px';
+            node.style.height = rect.height + 'px';
+          });
+
+          updateMinimap();
+          updateAllConnections();
+        }
+
+        function parseCanvasSizeInput(value, min, max) {
+          const n = Number.parseInt(String(value || ''), 10);
+          if (!Number.isFinite(n)) return null;
+          if (n < min || n > max) return null;
+          const snapped = Math.round(n / CANVAS_SIZE_STEP) * CANVAS_SIZE_STEP;
+          if (snapped < min || snapped > max) return null;
+          return snapped;
+        }
+
+        function trySetCanvasSizeFromControls() {
+          if (!(canvasWidthInput instanceof HTMLInputElement)) return;
+          if (!(canvasHeightInput instanceof HTMLInputElement)) return;
+
+          const w = parseCanvasSizeInput(
+            canvasWidthInput.value,
+            MIN_CANVAS_WIDTH,
+            MAX_CANVAS_WIDTH,
+          );
+          const h = parseCanvasSizeInput(
+            canvasHeightInput.value,
+            MIN_CANVAS_HEIGHT,
+            MAX_CANVAS_HEIGHT,
+          );
+
+          if (!w || !h) {
+            // Requirement: if we can't set it, don't change anything.
+            canvasWidthInput.value = String(canvasWidth);
+            canvasHeightInput.value = String(canvasHeight);
+            return;
+          }
+
+          applyCanvasSize(w, h);
+        }
+
         function attachNodeDragHandlers(node) {
           node.addEventListener('pointerdown', (event) => {
             if (event.button !== 0) return;
@@ -1753,17 +2258,22 @@ Lorem ipsum
               target.dataset.resizeHandle
             ) {
               event.preventDefault();
-              const nodeRect = node.getBoundingClientRect();
-              const canvasRect = canvas.getBoundingClientRect();
+              const p = getPointerInCanvas(event);
+              const startLeft = Number.parseFloat(node.style.left || '0') || 0;
+              const startTop = Number.parseFloat(node.style.top || '0') || 0;
+              const startWidth =
+                Number.parseFloat(node.style.width || '') || node.offsetWidth || 0;
+              const startHeight =
+                Number.parseFloat(node.style.height || '') || node.offsetHeight || 0;
 
               resizeState = {
                 node,
-                startPointerX: event.clientX,
-                startPointerY: event.clientY,
-                startWidth: nodeRect.width,
-                startHeight: nodeRect.height,
-                startLeft: nodeRect.left - canvasRect.left,
-                startTop: nodeRect.top - canvasRect.top,
+                startPointerX: p.x,
+                startPointerY: p.y,
+                startWidth,
+                startHeight,
+                startLeft,
+                startTop,
               };
 
               node.setPointerCapture(event.pointerId);
@@ -1789,17 +2299,17 @@ Lorem ipsum
 
             event.preventDefault();
 
-            const nodeRect = node.getBoundingClientRect();
-            const canvasRect = canvas.getBoundingClientRect();
-
             dragNode = node;
-            dragOffsetX = event.clientX - nodeRect.left;
-            dragOffsetY = event.clientY - nodeRect.top;
+            const p = getPointerInCanvas(event);
+            const startLeft = Number.parseFloat(node.style.left || '0') || 0;
+            const startTop = Number.parseFloat(node.style.top || '0') || 0;
+            dragOffsetX = p.x - startLeft;
+            dragOffsetY = p.y - startTop;
 
             node.setPointerCapture(event.pointerId);
 
-            const initialX = event.clientX - canvasRect.left - dragOffsetX;
-            const initialY = event.clientY - canvasRect.top - dragOffsetY;
+            const initialX = p.x - dragOffsetX;
+            const initialY = p.y - dragOffsetY;
             const { x, y } = clampNodePosition(node, initialX, initialY);
             node.style.left = x + 'px';
             node.style.top = y + 'px';
@@ -1809,8 +2319,9 @@ Lorem ipsum
             if (resizeState && resizeState.node === node) {
               event.preventDefault();
 
-              const deltaX = event.clientX - resizeState.startPointerX;
-              const deltaY = event.clientY - resizeState.startPointerY;
+              const p = getPointerInCanvas(event);
+              const deltaX = p.x - resizeState.startPointerX;
+              const deltaY = p.y - resizeState.startPointerY;
 
               const nextWidth = resizeState.startWidth + deltaX;
               const nextHeight = resizeState.startHeight + deltaY;
@@ -1835,9 +2346,9 @@ Lorem ipsum
             if (!dragNode || dragNode !== node) return;
             event.preventDefault();
 
-            const canvasRect = canvas.getBoundingClientRect();
-            const nextX = event.clientX - canvasRect.left - dragOffsetX;
-            const nextY = event.clientY - canvasRect.top - dragOffsetY;
+            const p = getPointerInCanvas(event);
+            const nextX = p.x - dragOffsetX;
+            const nextY = p.y - dragOffsetY;
             const { x, y } = clampNodePosition(node, nextX, nextY);
             node.style.left = x + 'px';
             node.style.top = y + 'px';
@@ -1881,24 +2392,56 @@ Lorem ipsum
           });
         }
 
-        function getHandlePosition(handleEl) {
+        function getPointerInCanvas(event) {
           const canvasRect = canvas.getBoundingClientRect();
-          const rect = handleEl.getBoundingClientRect();
-          const x = rect.left + rect.width / 2 - canvasRect.left;
-          const y = rect.top + rect.height / 2 - canvasRect.top;
-          return { x, y };
+          return {
+            x: event.clientX - canvasRect.left,
+            y: event.clientY - canvasRect.top,
+          };
         }
 
-        function buildConnectionPathD(from, to) {
-          const dx = Math.abs(to.x - from.x);
-          const dy = Math.abs(to.y - from.y);
-          const offsetX = Math.max(dx / 2, 40);
-          const offsetY = Math.max(dy / 2, 20);
-          const c1x = from.x + offsetX;
-          const c1y = from.y + (to.y > from.y ? offsetY : -offsetY);
-          const c2x = to.x - offsetX;
-          const c2y = to.y + (to.y > from.y ? -offsetY : offsetY);
-          return `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`;
+        function clientPointToSvg(x, y) {
+          if (!connectionsLayer) return { x: 0, y: 0 };
+          const ctm = connectionsLayer.getScreenCTM();
+          if (!ctm) return { x: 0, y: 0 };
+          const pt = connectionsLayer.createSVGPoint();
+          pt.x = x;
+          pt.y = y;
+          const sp = pt.matrixTransform(ctm.inverse());
+          return { x: sp.x, y: sp.y };
+        }
+
+        function getPointerInSvg(event) {
+          return clientPointToSvg(event.clientX, event.clientY);
+        }
+
+        function getHandlePositionSvg(handleEl) {
+          const rect = handleEl.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          return clientPointToSvg(cx, cy);
+        }
+
+        function buildConnectionPathD(from, to, fromSide, toSide) {
+          const dx = to.x - from.x;
+          const dy = to.y - from.y;
+
+          const base = 60;
+          const offset = Math.max(base, Math.min(180, Math.hypot(dx, dy) / 2));
+
+          function nudge(point, side, amount) {
+            if (side === 'left') return { x: point.x - amount, y: point.y };
+            if (side === 'right') return { x: point.x + amount, y: point.y };
+            if (side === 'top') return { x: point.x, y: point.y - amount };
+            if (side === 'bottom') return { x: point.x, y: point.y + amount };
+            // fallback: mostly horizontal
+            return { x: point.x + (dx >= 0 ? amount : -amount), y: point.y };
+          }
+
+          const c1 = nudge(from, fromSide, offset);
+          const c2 = nudge(to, toSide, offset);
+
+          return `M ${from.x} ${from.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${to.x} ${to.y}`;
         }
 
         function updateConnectionPath(connection) {
@@ -1909,9 +2452,17 @@ Lorem ipsum
             `.canvas-node-connector[data-node-id="${connection.to.nodeId}"][data-connection-handle="${connection.to.side}"]`,
           );
           if (!fromHandle || !toHandle) return;
-          const fromPos = getHandlePosition(fromHandle);
-          const toPos = getHandlePosition(toHandle);
-          connection.path.setAttribute('d', buildConnectionPathD(fromPos, toPos));
+          const fromPos = getHandlePositionSvg(fromHandle);
+          const toPos = getHandlePositionSvg(toHandle);
+          connection.path.setAttribute(
+            'd',
+            buildConnectionPathD(
+              fromPos,
+              toPos,
+              connection.from?.side,
+              connection.to?.side,
+            ),
+          );
         }
 
         function updateAllConnections() {
@@ -1931,7 +2482,7 @@ Lorem ipsum
               const side = handleEl.dataset.connectionHandle;
               if (!nodeId || !side || !connectionsLayer) return;
 
-              const pos = getHandlePosition(handleEl);
+              const pos = getHandlePositionSvg(handleEl);
               const svgNS = 'http://www.w3.org/2000/svg';
               const path = document.createElementNS(svgNS, 'path');
               path.classList.add('connection-path', 'connection-path-active');
@@ -1942,12 +2493,8 @@ Lorem ipsum
               };
               activeConnectionPath = path;
 
-              const canvasRect = canvas.getBoundingClientRect();
-              const to = {
-                x: event.clientX - canvasRect.left,
-                y: event.clientY - canvasRect.top,
-              };
-              path.setAttribute('d', buildConnectionPathD(pos, to));
+              const to = getPointerInSvg(event);
+              path.setAttribute('d', buildConnectionPathD(pos, to, side));
             });
 
             connector.addEventListener('contextmenu', (event) => {
@@ -1980,15 +2527,11 @@ Lorem ipsum
 
         canvas.addEventListener('mousemove', (event) => {
           if (!activeConnection || !activeConnectionPath) return;
-          const fromPos = getHandlePosition(activeConnection.from.handleEl);
-          const canvasRect = canvas.getBoundingClientRect();
-          const to = {
-            x: event.clientX - canvasRect.left,
-            y: event.clientY - canvasRect.top,
-          };
+          const fromPos = getHandlePositionSvg(activeConnection.from.handleEl);
+          const to = getPointerInSvg(event);
           activeConnectionPath.setAttribute(
             'd',
-            buildConnectionPathD(fromPos, to),
+            buildConnectionPathD(fromPos, to, activeConnection.from?.side),
           );
         });
 
@@ -2079,9 +2622,9 @@ Lorem ipsum
           );
           if (!libItem) return;
 
-          const canvasRect = canvas.getBoundingClientRect();
-          const rawX = event.clientX - canvasRect.left - 80;
-          const rawY = event.clientY - canvasRect.top - 40;
+          const p = getPointerInCanvas(event);
+          const rawX = p.x - 80;
+          const rawY = p.y - 40;
           const { x, y } = clampNodePosition(libItem, rawX, rawY);
 
           createNodeFromLibraryItem(libItem, x, y);
@@ -2130,9 +2673,36 @@ Lorem ipsum
         });
         resizeObserver.observe(canvas);
 
+        let rafHandle = 0;
+        function scheduleCanvasRedraw() {
+          if (rafHandle) return;
+          rafHandle = requestAnimationFrame(() => {
+            rafHandle = 0;
+            updateMinimap();
+            updateAllConnections();
+          });
+        }
+
+        if (canvasViewport instanceof HTMLElement) {
+          canvasViewport.addEventListener('scroll', scheduleCanvasRedraw, {
+            passive: true,
+          });
+        }
+        window.addEventListener('resize', scheduleCanvasRedraw);
+
+        canvasSetBtn?.addEventListener('click', trySetCanvasSizeFromControls);
+        canvasWidthInput?.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') trySetCanvasSizeFromControls();
+        });
+        canvasHeightInput?.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') trySetCanvasSizeFromControls();
+        });
+
         window.addEventListener('load', () => {
           updateMinimap();
         });
+
+        applyCanvasSize(MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT);
       })();
     </script>
   </body>
