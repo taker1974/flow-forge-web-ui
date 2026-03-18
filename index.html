@@ -907,6 +907,7 @@
         position: relative;
         width: 1200px;
         height: 700px;
+        flex-shrink: 0;
         background:
           linear-gradient(
             transparent 23px,
@@ -2034,6 +2035,18 @@ Lorem ipsum
         const DEFAULT_INPUT_TEXT =
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
 
+        function autoScrollHorizontally(event) {
+          if (!(canvasViewport instanceof HTMLElement)) return;
+          const rect = canvasViewport.getBoundingClientRect();
+          const margin = 40;
+          const speed = 20;
+          if (event.clientX < rect.left + margin) {
+            canvasViewport.scrollLeft -= speed;
+          } else if (event.clientX > rect.right - margin) {
+            canvasViewport.scrollLeft += speed;
+          }
+        }
+
         function createNodeFromLibraryItem(libItem, x, y) {
           const templateId = libItem.getAttribute('data-template-id') || 'node';
           const node = document.createElement('div');
@@ -2338,6 +2351,7 @@ Lorem ipsum
               node.style.left = rect.x + 'px';
               node.style.top = rect.y + 'px';
 
+            autoScrollHorizontally(event);
               updateMinimap();
               updateAllConnections();
               return;
@@ -2353,6 +2367,7 @@ Lorem ipsum
             node.style.left = x + 'px';
             node.style.top = y + 'px';
 
+            autoScrollHorizontally(event);
             updateMinimap();
             updateAllConnections();
           });
@@ -2533,6 +2548,7 @@ Lorem ipsum
             'd',
             buildConnectionPathD(fromPos, to, activeConnection.from?.side),
           );
+          autoScrollHorizontally(event);
         });
 
         window.addEventListener('mouseup', (event) => {
