@@ -1883,6 +1883,9 @@ Lorem ipsum
             }
             if (action.id === 'new-template') {
               resetCanvasDOM();
+              templateStatusSelect.value = TemplateStatus.UNKNOWN;
+              templateNameInput.value = '';
+              updateTemplateNameValidity();
               try {
                 localStorage.removeItem(CANVAS_STORAGE_KEY);
               } catch {}
@@ -1921,7 +1924,32 @@ Lorem ipsum
           templateNameInput.classList.toggle('toolbar-control-invalid', !ok);
         }
 
-        templateNameInput.addEventListener('input', updateTemplateNameValidity);
+        function getTemplateState() {
+          return {
+            status: String(templateStatusSelect?.value || TemplateStatus.UNKNOWN),
+            name: String(templateNameInput?.value || ''),
+          };
+        }
+
+        function applyTemplateState(template) {
+          if (!template) return;
+          const status = String(template.status || TemplateStatus.UNKNOWN);
+          const name = String(template.name || '');
+          const knownStatuses = Object.values(TemplateStatus);
+          templateStatusSelect.value = knownStatuses.includes(status)
+            ? status
+            : TemplateStatus.UNKNOWN;
+          templateNameInput.value = name;
+          updateTemplateNameValidity();
+        }
+
+        templateNameInput.addEventListener('input', () => {
+          updateTemplateNameValidity();
+          persistCanvasStateDebounced();
+        });
+        templateStatusSelect?.addEventListener('change', () => {
+          persistCanvasStateDebounced();
+        });
         updateTemplateNameValidity();
 
         tplLoadBtn?.addEventListener('click', () => {
@@ -2543,6 +2571,7 @@ Lorem ipsum
 
           return {
             v: CANVAS_STATE_VERSION,
+            template: getTemplateState(),
             canvas: { width: canvasWidth, height: canvasHeight },
             blocks,
             lines,
@@ -2628,6 +2657,7 @@ Lorem ipsum
 
           try {
             if (!state?.canvas) return false;
+            applyTemplateState(state.template);
 
             const width = Number(state.canvas.width);
             const height = Number(state.canvas.height);
