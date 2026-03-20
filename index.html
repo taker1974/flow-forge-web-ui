@@ -873,6 +873,14 @@
         gap: 8px;
       }
 
+      .confirm-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
       .modal-close-secondary {
         opacity: 0.9;
       }
@@ -1069,6 +1077,7 @@
       }
 
       .canvas-node-topline {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -1171,12 +1180,69 @@
           0 16px 40px rgba(15, 23, 42, 1);
       }
 
+      .canvas-node.selected {
+        box-shadow:
+          0 0 0 2px rgba(56, 189, 248, 1),
+          0 0 0 4px rgba(37, 99, 235, 0.75),
+          0 0 24px rgba(59, 130, 246, 1),
+          0 0 60px rgba(56, 189, 248, 0.95),
+          0 16px 55px rgba(0, 0, 0, 0.9);
+        transform: scale(1.01);
+      }
+
       .node-badge {
         font-size: 9px;
         padding: 2px 5px;
         border-radius: 999px;
         border: 1px solid rgba(15, 23, 42, 0.7);
         background: rgba(15, 23, 42, 0.08);
+      }
+
+      .node-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: calc(100% + 6px);
+        z-index: 20;
+        min-width: 160px;
+        padding: 8px;
+        border-radius: 6px;
+        background: rgba(2, 6, 23, 0.97);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        box-shadow:
+          0 20px 70px rgba(0, 0, 0, 0.65),
+          0 0 0 1px rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(6px);
+      }
+
+      .canvas-node.node-menu-open .node-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .node-menu-item {
+        width: 100%;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(2, 6, 23, 0.35);
+        color: rgba(226, 232, 240, 0.95);
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 12px;
+        line-height: 1.2;
+        cursor: pointer;
+        text-align: left;
+        letter-spacing: 0.03em;
+      }
+
+      .node-menu-item:hover:not(:disabled) {
+        border-color: rgba(56, 189, 248, 0.55);
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.25);
+      }
+
+      .node-menu-item:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
       }
 
       .canvas-node.lib-color-1,
@@ -1726,7 +1792,70 @@ Lorem ipsum
           modalOverlay.classList.add('modal-overlay-open');
         }
 
+        function showConfirm(title, message, onConfirm) {
+          if (!modalOverlay || !modalTitleEl || !modalBodyEl) {
+            onConfirm?.();
+            return;
+          }
+
+          if (modalCloseBtn instanceof HTMLElement) {
+            // Hide "OK" header button for confirmation dialogs.
+            modalCloseBtn.style.display = 'none';
+          }
+
+          modalTitleEl.textContent = title;
+          modalBodyEl.innerHTML = `
+            <div>${message}</div>
+            <div class="confirm-actions">
+              <button
+                type="button"
+                class="modal-close"
+                id="confirm-cancel"
+                autofocus
+              >
+                CANCEL
+              </button>
+              <button type="button" class="modal-close" id="confirm-yes">YES</button>
+            </div>
+          `;
+          modalOverlay.classList.add('modal-overlay-open');
+
+          const yesBtn = modalBodyEl.querySelector('#confirm-yes');
+          const cancelBtn = modalBodyEl.querySelector('#confirm-cancel');
+
+          const cleanup = () => {
+            // remove listeners (best-effort)
+            try {
+              if (yesBtn) {
+                yesBtn.replaceWith(yesBtn.cloneNode(true));
+              }
+              if (cancelBtn) {
+                cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+              }
+            } catch {
+              // ignore
+            }
+          };
+
+          const onCancel = () => {
+            cleanup();
+            closeModal();
+          };
+
+          const onYes = () => {
+            cleanup();
+            closeModal();
+            onConfirm?.();
+          };
+
+          cancelBtn?.addEventListener('click', onCancel);
+          yesBtn?.addEventListener('click', onYes);
+        }
+
         function closeModal() {
+          if (modalCloseBtn instanceof HTMLElement) {
+            modalCloseBtn.style.display = '';
+          }
           modalOverlay?.classList.remove('modal-overlay-open');
         }
 
@@ -1750,6 +1879,13 @@ Lorem ipsum
           btn.addEventListener('click', () => {
             if (action.id === 'save-template') {
               handleSaveTemplate();
+              return;
+            }
+            if (action.id === 'new-template') {
+              resetCanvasDOM();
+              try {
+                localStorage.removeItem(CANVAS_STORAGE_KEY);
+              } catch {}
               return;
             }
             alert(action.label);
@@ -1788,7 +1924,14 @@ Lorem ipsum
         templateNameInput.addEventListener('input', updateTemplateNameValidity);
         updateTemplateNameValidity();
 
-        tplLoadBtn?.addEventListener('click', () => alert('Load (todo)'));
+        tplLoadBtn?.addEventListener('click', () => {
+          // Placeholder: load template from backend.
+          // On successful load:
+          // 1) clear local canvas+localStorage
+          // 2) applyCanvasState(loadedState)
+          // 3) persistCanvasStateDebounced()
+          alert('Load (todo)');
+        });
         tplDeleteBtn?.addEventListener('click', () => alert('Delete (todo)'));
         tplUpdateBtn?.addEventListener('click', () => alert('Update (todo)'));
 
@@ -2130,6 +2273,92 @@ Lorem ipsum
         const canvasHeightInput = document.getElementById('canvas-height');
         const canvasSetBtn = document.getElementById('canvas-set');
 
+        canvas?.addEventListener('pointerdown', (event) => {
+          // Clear selection when clicking canvas background (not a node).
+          const targetEl = event.target instanceof HTMLElement ? event.target : null;
+          const closestNode = targetEl?.closest('.canvas-node') || null;
+          if (!closestNode) {
+            setSelectedBlockNode(null);
+            closeNodeMenu();
+          }
+        });
+
+        function deleteSelectedBlock() {
+          if (!(selectedBlockNode instanceof HTMLElement)) return;
+          closeNodeMenu();
+          const nodeId = selectedBlockNode.dataset.internalBlockId;
+          if (!nodeId) return;
+
+          // If user was in the middle of creating a connection, cancel it.
+          if (activeConnectionPath?.parentNode === connectionsLayer) {
+            connectionsLayer.removeChild(activeConnectionPath);
+          }
+          activeConnection = null;
+          activeConnectionPath = null;
+
+          for (let i = connections.length - 1; i >= 0; i--) {
+            const c = connections[i];
+            const hit =
+              c.block_from_internal_id === nodeId ||
+              c.block_to_internal_id === nodeId;
+            if (!hit) continue;
+
+            if (c.path && c.path.parentNode === connectionsLayer) {
+              connectionsLayer.removeChild(c.path);
+            }
+            connections.splice(i, 1);
+          }
+
+          selectedBlockNode.remove();
+          setSelectedBlockNode(null);
+
+          updateMinimap();
+          updateAllConnections();
+          persistCanvasStateDebounced();
+        }
+
+        function confirmDeleteSelectedBlock() {
+          if (!(selectedBlockNode instanceof HTMLElement)) return;
+          const nodeId = selectedBlockNode.dataset.internalBlockId;
+          if (!nodeId) return;
+          closeNodeMenu();
+
+          showConfirm(
+            'Delete block',
+            `You are going to delete block #${nodeId}. Are you sure?`,
+            () => deleteSelectedBlock(),
+          );
+        }
+
+        window.addEventListener('keydown', (e) => {
+          if (e.key !== 'Delete') return;
+          if (modalOverlay?.classList.contains('modal-overlay-open')) return;
+
+          const ae = globalThis.document?.activeElement;
+          if (
+            ae instanceof HTMLElement &&
+            (ae.closest('.canvas-node-input') || ae.isContentEditable)
+          ) {
+            // Don't delete while user is editing textarea.
+            return;
+          }
+
+          if (!selectedBlockNode) return;
+          e.preventDefault();
+          confirmDeleteSelectedBlock();
+        });
+
+        window.addEventListener('pointerdown', (e) => {
+          if (!(nodeMenuOpenNode instanceof HTMLElement)) return;
+          const targetEl = e.target instanceof HTMLElement ? e.target : null;
+          if (!targetEl) return;
+
+          if (targetEl.closest('.node-menu')) return;
+          if (targetEl.closest('.node-badge')) return;
+
+          closeNodeMenu();
+        });
+
         function handleSaveTemplate() {
           const status = templateStatusSelect.value;
           const name = templateNameInput.value.trim();
@@ -2234,6 +2463,297 @@ Lorem ipsum
         let activeConnectionPath = null;
         const connections = [];
 
+        let selectedBlockNode = null;
+
+        let nodeMenuOpenNode = null;
+
+        function setSelectedBlockNode(node) {
+          if (nodeMenuOpenNode instanceof HTMLElement && node !== nodeMenuOpenNode) {
+            closeNodeMenu();
+          }
+          if (selectedBlockNode === node) return;
+          if (selectedBlockNode instanceof HTMLElement) {
+            selectedBlockNode.classList.remove('selected');
+          }
+          selectedBlockNode = node instanceof HTMLElement ? node : null;
+          if (selectedBlockNode) selectedBlockNode.classList.add('selected');
+        }
+
+        function closeNodeMenu() {
+          if (nodeMenuOpenNode instanceof HTMLElement) {
+            nodeMenuOpenNode.classList.remove('node-menu-open');
+          }
+          nodeMenuOpenNode = null;
+        }
+
+        function toggleNodeMenu(node, open) {
+          if (!(node instanceof HTMLElement)) return;
+          if (open === undefined) open = nodeMenuOpenNode !== node;
+
+          if (open) {
+            closeNodeMenu();
+            nodeMenuOpenNode = node;
+            nodeMenuOpenNode.classList.add('node-menu-open');
+          } else {
+            closeNodeMenu();
+          }
+        }
+
+        const CANVAS_STORAGE_KEY = 'flowForgeCanvasState';
+        const CANVAS_STATE_VERSION = 1;
+        let persistTimer = null;
+        let suppressPersistence = false;
+
+        function serializeCanvasState() {
+          const blocks = Array.from(canvas.querySelectorAll('.canvas-node')).map(
+            (node) => {
+              const inputEl = node.querySelector('.canvas-node-input');
+              const defaultInputText =
+                (inputEl && inputEl.value) || node.dataset.defaultInputText || '';
+              const x = Number.parseFloat(node.style.left || '0') || 0;
+              const y = Number.parseFloat(node.style.top || '0') || 0;
+              const width =
+                Number.parseFloat(node.style.width || '') ||
+                node.offsetWidth ||
+                0;
+              const height =
+                Number.parseFloat(node.style.height || '') ||
+                node.offsetHeight ||
+                0;
+
+              return {
+                internal_block_id: node.dataset.internalBlockId,
+                block_type_id: node.dataset.blockTypeId,
+                default_input_text: defaultInputText,
+                x,
+                y,
+                width,
+                height,
+              };
+            },
+          );
+
+          const lines = connections.map((c) => ({
+            internal_line_id: c.internal_line_id,
+            block_from_internal_id: c.block_from_internal_id,
+            block_to_internal_id: c.block_to_internal_id,
+            from_side: c.from?.side,
+            to_side: c.to?.side,
+          }));
+
+          return {
+            v: CANVAS_STATE_VERSION,
+            canvas: { width: canvasWidth, height: canvasHeight },
+            blocks,
+            lines,
+          };
+        }
+
+        function persistCanvasState() {
+          try {
+            const state = serializeCanvasState();
+            localStorage.setItem(CANVAS_STORAGE_KEY, JSON.stringify(state));
+          } catch {
+            // localStorage may be unavailable/quota exceeded -> ignore
+          }
+        }
+
+        function persistCanvasStateDebounced() {
+          if (suppressPersistence) return;
+          if (persistTimer) globalThis.clearTimeout(persistTimer);
+          persistTimer = globalThis.setTimeout(() => {
+            persistTimer = null;
+            persistCanvasState();
+          }, 350);
+        }
+
+        function resetCanvasDOM() {
+          const prev = suppressPersistence;
+          suppressPersistence = true;
+          if (persistTimer) globalThis.clearTimeout(persistTimer);
+          persistTimer = null;
+
+          try {
+            canvas
+              .querySelectorAll('.canvas-node')
+              .forEach((node) => node.remove());
+
+            if (connectionsLayer instanceof SVGSVGElement) {
+              connectionsLayer
+                .querySelectorAll('path.connection-path')
+                .forEach((p) => p.remove());
+            }
+
+            connections.splice(0, connections.length);
+            dragNode = null;
+            resizeState = null;
+            activeConnection = null;
+            activeConnectionPath = null;
+            nodeIdCounter = 0;
+            connectionCounter = 0;
+            setSelectedBlockNode(null);
+            closeNodeMenu();
+          } finally {
+            suppressPersistence = prev;
+          }
+
+          updateMinimap();
+          updateAllConnections();
+          persistCanvasStateDebounced();
+        }
+
+        function findLibraryItemByBlockTypeId(blockTypeId) {
+          const target =
+            typeof blockTypeId === 'string' ? blockTypeId.slice(0, 64) : '';
+          const items = Array.from(
+            library?.querySelectorAll('.library-item') || [],
+          );
+          for (const libItem of items) {
+            const title =
+              libItem.querySelector('.library-item-title')?.textContent?.trim() ||
+              libItem.textContent?.trim() ||
+              '';
+            const normalized = title.slice(0, 64);
+            if (normalized === target) return libItem;
+          }
+          // Fallback: just use the first available library item.
+          return items[0] || null;
+        }
+
+        function applyCanvasState(state) {
+          const prev = suppressPersistence;
+          suppressPersistence = true;
+          if (persistTimer) globalThis.clearTimeout(persistTimer);
+          persistTimer = null;
+
+          try {
+            if (!state?.canvas) return false;
+
+            const width = Number(state.canvas.width);
+            const height = Number(state.canvas.height);
+            if (!Number.isFinite(width) || !Number.isFinite(height)) return false;
+
+            applyCanvasSize(width, height);
+
+            const blocks = Array.isArray(state.blocks) ? state.blocks : [];
+            const lines = Array.isArray(state.lines) ? state.lines : [];
+
+            // Re-create blocks.
+            for (const b of blocks) {
+              if (!b) continue;
+              const internalId = String(b.internal_block_id ?? '').slice(0, 16);
+              const blockTypeId = String(b.block_type_id ?? '').slice(0, 64);
+              const defaultInputText = String(b.default_input_text ?? '');
+              const x = Number(b.x);
+              const y = Number(b.y);
+              const w = Number(b.width);
+              const h = Number(b.height);
+
+              if (!internalId || !blockTypeId) continue;
+
+              const libItem = findLibraryItemByBlockTypeId(blockTypeId);
+              if (!libItem) continue;
+
+              const node = createNodeFromLibraryItem(libItem, x, y);
+
+              // Override restored ids/types/text.
+              node.dataset.internalBlockId = internalId;
+              node.dataset.nodeId = internalId;
+              node.dataset.blockTypeId = blockTypeId;
+              node.dataset.defaultInputText = defaultInputText;
+
+              const titleEl = node.querySelector(
+                '.canvas-node-topline-title',
+              );
+              if (titleEl) titleEl.textContent = blockTypeId;
+
+              const badgeEl = node.querySelector('.node-badge');
+              if (badgeEl) badgeEl.textContent = '#' + internalId;
+
+              const inputEl = node.querySelector('.canvas-node-input');
+              if (inputEl) inputEl.value = defaultInputText;
+
+              node
+                .querySelectorAll('.canvas-node-connector')
+                .forEach((cp) => (cp.dataset.nodeId = internalId));
+
+              // Apply restored geometry (with clamping to current canvas).
+              const rect = clampNodeRect(x, y, w, h);
+              node.style.left = rect.x + 'px';
+              node.style.top = rect.y + 'px';
+              node.style.width = rect.width + 'px';
+              node.style.height = rect.height + 'px';
+            }
+
+            // Make sure new nodes won't clash with restored ids.
+            const maxInternal = blocks.reduce((acc, b) => {
+              const n = Number.parseInt(String(b?.internal_block_id ?? ''), 10);
+              return Number.isFinite(n) ? Math.max(acc, n) : acc;
+            }, 0);
+            nodeIdCounter = Math.max(nodeIdCounter, maxInternal);
+
+            // Re-create connections.
+            connectionCounter = Math.max(connectionCounter, lines.length);
+            for (const l of lines) {
+              if (!l) continue;
+              const fromId = String(l.block_from_internal_id ?? '');
+              const toId = String(l.block_to_internal_id ?? '');
+              const fromSide = String(l.from_side ?? '');
+              const toSide = String(l.to_side ?? '');
+              if (!fromId || !toId || !fromSide || !toSide) continue;
+
+              const svgNS = 'http://www.w3.org/2000/svg';
+              const path = document.createElementNS(svgNS, 'path');
+              path.classList.add('connection-path');
+              path.setAttribute('marker-end', 'url(#conn-arrow)');
+              connectionsLayer.appendChild(path);
+
+              const internalLineId =
+                String(l.internal_line_id ?? `${fromId}-${toId}`);
+              const conn = {
+                id: 'conn-' + ++connectionCounter,
+                internal_line_id: internalLineId,
+                block_from_internal_id: fromId,
+                block_to_internal_id: toId,
+                from: { nodeId: fromId, side: fromSide },
+                to: { nodeId: toId, side: toSide },
+                path,
+              };
+              connections.push(conn);
+              updateConnectionPath(conn);
+            }
+
+            updateMinimap();
+            updateAllConnections();
+            return true;
+          } finally {
+            suppressPersistence = prev;
+          }
+        }
+
+        function tryRestoreCanvasState() {
+          try {
+            const raw = localStorage.getItem(CANVAS_STORAGE_KEY);
+            if (!raw) return false;
+            const state = JSON.parse(raw);
+            if (!state || state.v !== CANVAS_STATE_VERSION) return false;
+
+            if (!state.canvas || typeof state.canvas !== 'object') return false;
+            const width = Number(state.canvas.width);
+            const height = Number(state.canvas.height);
+            if (!Number.isFinite(width) || !Number.isFinite(height)) return false;
+
+            if (!Array.isArray(state.blocks) || !Array.isArray(state.lines))
+              return false;
+
+            resetCanvasDOM();
+            applyCanvasState(state);
+            return true;
+          } catch {
+            return false;
+          }
+        }
+
         const CANVAS_SIZE_STEP = 10;
         const MIN_CANVAS_WIDTH = 1200;
         const MIN_CANVAS_HEIGHT = 700;
@@ -2293,6 +2813,40 @@ Lorem ipsum
           badge.textContent = '#' + internalBlockId;
           top.appendChild(badge);
 
+          const menuEl = document.createElement('div');
+          menuEl.className = 'node-menu';
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.type = 'button';
+          deleteBtn.className = 'node-menu-item';
+          deleteBtn.textContent = 'Delete...';
+
+          const resetBtn = document.createElement('button');
+          resetBtn.type = 'button';
+          resetBtn.className = 'node-menu-item';
+          resetBtn.textContent = 'Reset...';
+          resetBtn.disabled = true;
+
+          deleteBtn.addEventListener('pointerdown', (event) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            setSelectedBlockNode(node);
+            confirmDeleteSelectedBlock();
+          });
+
+          menuEl.appendChild(deleteBtn);
+          menuEl.appendChild(resetBtn);
+          top.appendChild(menuEl);
+
+          badge.addEventListener('pointerdown', (event) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            setSelectedBlockNode(node);
+            toggleNodeMenu(node);
+          });
+
           node.appendChild(top);
 
           const body = document.createElement('div');
@@ -2303,6 +2857,9 @@ Lorem ipsum
           input.placeholder = 'default_input_text';
           input.maxLength = 4096;
           input.value = node.dataset.defaultInputText;
+          input.addEventListener('input', () => {
+            persistCanvasStateDebounced();
+          });
           body.appendChild(input);
           node.appendChild(body);
 
@@ -2440,6 +2997,7 @@ Lorem ipsum
 
           updateMinimap();
           updateAllConnections();
+          persistCanvasStateDebounced();
         }
 
         function parseCanvasSizeInput(value, min, max) {
@@ -2479,6 +3037,7 @@ Lorem ipsum
         function attachNodeDragHandlers(node) {
           node.addEventListener('pointerdown', (event) => {
             if (event.button !== 0) return;
+            setSelectedBlockNode(node);
             const target = event.target;
 
             if (target instanceof HTMLElement && target.dataset.resizeHandle) {
@@ -2596,6 +3155,7 @@ Lorem ipsum
               resizeState = null;
               updateMinimap();
               updateAllConnections();
+              persistCanvasStateDebounced();
               return;
             }
 
@@ -2603,6 +3163,7 @@ Lorem ipsum
               dragNode.releasePointerCapture(event.pointerId);
               dragNode = null;
               updateMinimap();
+              persistCanvasStateDebounced();
             }
           });
 
@@ -2753,6 +3314,7 @@ Lorem ipsum
               }
               if (before !== connections.length) {
                 updateAllConnections();
+                persistCanvasStateDebounced();
               }
             });
           });
@@ -2808,6 +3370,7 @@ Lorem ipsum
               };
               connections.push(conn);
               updateConnectionPath(conn);
+              persistCanvasStateDebounced();
               completed = true;
             }
           }
@@ -2870,6 +3433,7 @@ Lorem ipsum
           const { x, y } = clampNodePosition(libItem, rawX, rawY);
 
           createNodeFromLibraryItem(libItem, x, y);
+          persistCanvasStateDebounced();
         });
 
         function updateMinimap() {
@@ -2940,11 +3504,14 @@ Lorem ipsum
           if (e.key === 'Enter') trySetCanvasSizeFromControls();
         });
 
+        const restoredOk = tryRestoreCanvasState();
+        if (!restoredOk) {
+          applyCanvasSize(MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT);
+        }
+
         window.addEventListener('load', () => {
           updateMinimap();
         });
-
-        applyCanvasSize(MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT);
       })();
     </script>
   </body>
