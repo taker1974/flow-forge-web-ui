@@ -107,8 +107,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        padding-right: 12px;
-        border-right: 1px solid rgba(148, 163, 184, 0.4);
+        padding-right: 0;
       }
 
       .brand-mark {
@@ -167,6 +166,7 @@
         align-items: center;
         gap: 6px;
         flex-wrap: wrap;
+        margin-left: 2px;
       }
 
       .toolbar-fields {
@@ -763,7 +763,8 @@
         width: min(560px, 100%);
         border-radius: 3px;
         border: 1px solid rgba(148, 163, 184, 0.25);
-        background: radial-gradient(
+        background:
+          radial-gradient(
             circle at top left,
             rgba(56, 189, 248, 0.18),
             transparent 55%
@@ -990,13 +991,33 @@
            major grid = 250px (minor * 5) */
         background-image:
           /* minor (all squares) */
-          linear-gradient(to right, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
+          linear-gradient(
+            to right,
+            rgba(15, 23, 42, 0.06) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(15, 23, 42, 0.06) 1px,
+            transparent 1px
+          ),
           /* major (every 5 minor squares) */
           linear-gradient(to right, rgba(15, 23, 42, 0.12) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(15, 23, 42, 0.12) 1px, transparent 1px);
-        background-size: 50px 50px, 50px 50px, 250px 250px, 250px 250px;
-        background-position: 0 0, 0 0, 0 0, 0 0;
+          linear-gradient(
+            to bottom,
+            rgba(15, 23, 42, 0.12) 1px,
+            transparent 1px
+          );
+        background-size:
+          50px 50px,
+          50px 50px,
+          250px 250px,
+          250px 250px;
+        background-position:
+          0 0,
+          0 0,
+          0 0,
+          0 0;
         border-radius: 3px;
         border: 1px solid rgba(15, 23, 42, 0.14);
         box-shadow:
@@ -1337,11 +1358,17 @@
       <header class="toolbar">
         <div class="toolbar-left">
           <div class="brand">
-            <div class="brand-mark"></div>
-            <div class="brand-text">
-              <div class="brand-title">Flow Forge</div>
-              <div class="brand-sub">canvas prototype</div>
-            </div>
+            <img
+              src="./images/flow-forge-tksoft-hr-blue-05.png"
+              alt="Flow Forge"
+              style="
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                display: block;
+                margin-left: -2px;
+              "
+            />
           </div>
           <div class="toolbar-left-content">
             <div class="toolbar-buttons" id="toolbar-buttons"></div>
@@ -1492,12 +1519,31 @@
         <div class="center">
           <section class="canvas-wrapper">
             <div class="canvas-header">
-            <div>Workspace</div>
+              <div>Workspace</div>
               <div class="canvas-meta">
-                <div class="canvas-size-controls" aria-label="Canvas size controls">
-                  <input id="canvas-width" type="number" min="1200" max="10000" step="10" value="1200" aria-label="Canvas width" />
+                <div
+                  class="canvas-size-controls"
+                  aria-label="Canvas size controls"
+                >
+                  <input
+                    id="canvas-width"
+                    type="number"
+                    min="1200"
+                    max="10000"
+                    step="10"
+                    value="1200"
+                    aria-label="Canvas width"
+                  />
                   <span class="canvas-size-sep">×</span>
-                  <input id="canvas-height" type="number" min="700" max="10000" step="10" value="700" aria-label="Canvas height" />
+                  <input
+                    id="canvas-height"
+                    type="number"
+                    min="700"
+                    max="10000"
+                    step="10"
+                    value="700"
+                    aria-label="Canvas height"
+                  />
                   <button type="button" id="canvas-set">Set</button>
                 </div>
               </div>
@@ -1615,24 +1661,30 @@ Lorem ipsum
           </div>
 
           <div class="rightbar-footer">
-            <div class="viewport-badge" aria-label="Build info">
-              <span class="viewport-dot"></span>
-              <span>Stage 1</span>
-            </div>
+            <img
+              src="./images/logo-tksoft-hr-blue-01.png"
+              alt="TKSoft"
+              style="width: 100%; height: 100%; object-fit: contain; display: block"
+            />
           </div>
         </aside>
       </div>
     </div>
 
-  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
-    <div class="modal" role="document">
-      <div class="modal-header">
-        <div class="modal-title" id="modal-title">Notice</div>
-        <button class="modal-close" type="button" id="modal-close">OK</button>
+    <div
+      class="modal-overlay"
+      id="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="modal" role="document">
+        <div class="modal-header">
+          <div class="modal-title" id="modal-title">Notice</div>
+          <button class="modal-close" type="button" id="modal-close">OK</button>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
       </div>
-      <div class="modal-body" id="modal-body"></div>
     </div>
-  </div>
 
     <script>
       (function () {
@@ -1773,8 +1825,10 @@ Lorem ipsum
           const isLoggedIn = Boolean(state);
           if (authRegisterBtn)
             authRegisterBtn.style.display = isLoggedIn ? 'none' : '';
-          if (authLoginBtn) authLoginBtn.style.display = isLoggedIn ? 'none' : '';
-          if (authLogoutBtn) authLogoutBtn.style.display = isLoggedIn ? '' : 'none';
+          if (authLoginBtn)
+            authLoginBtn.style.display = isLoggedIn ? 'none' : '';
+          if (authLogoutBtn)
+            authLogoutBtn.style.display = isLoggedIn ? '' : 'none';
 
           if (authStatusBadge) {
             authStatusBadge.classList.toggle('auth-badge-on', isLoggedIn);
@@ -1805,7 +1859,9 @@ Lorem ipsum
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+              ...(accessToken
+                ? { Authorization: `Bearer ${accessToken}` }
+                : {}),
             },
             body: JSON.stringify(body),
           });
@@ -1813,14 +1869,20 @@ Lorem ipsum
           const contentType = res.headers.get('content-type') || '';
           let payload = null;
           if (contentType.includes('application/json')) {
-            try { payload = await res.json(); } catch {}
+            try {
+              payload = await res.json();
+            } catch {}
           } else {
-            try { payload = await res.text(); } catch {}
+            try {
+              payload = await res.text();
+            } catch {}
           }
 
           if (!res.ok) {
             const msg =
-              (payload && typeof payload === 'object' && (payload.message || payload.error)) ||
+              (payload &&
+                typeof payload === 'object' &&
+                (payload.message || payload.error)) ||
               (typeof payload === 'string' ? payload : '') ||
               `HTTP ${res.status}`;
             throw new Error(msg);
@@ -1833,7 +1895,10 @@ Lorem ipsum
           function wirePasswordToggle(inputId, toggleId) {
             const input = document.getElementById(inputId);
             const btn = document.getElementById(toggleId);
-            if (!(input instanceof HTMLInputElement) || !(btn instanceof HTMLButtonElement)) {
+            if (
+              !(input instanceof HTMLInputElement) ||
+              !(btn instanceof HTMLButtonElement)
+            ) {
               return;
             }
             btn.addEventListener('click', () => {
@@ -1909,58 +1974,77 @@ Lorem ipsum
             wirePasswordToggle('login-password', 'login-password-toggle');
           }
 
-          document.getElementById('auth-cancel')?.addEventListener('click', closeModal);
-          document.getElementById('auth-submit')?.addEventListener('click', async () => {
-            try {
-              if (kind === 'register') {
-                const login = document.getElementById('reg-login')?.value?.trim() || '';
-                const password = document.getElementById('reg-password')?.value || '';
-                const firstName = document.getElementById('reg-first')?.value?.trim() || '';
-                const lastName = document.getElementById('reg-last')?.value?.trim() || '';
-                const email = document.getElementById('reg-email')?.value?.trim() || '';
-                const phone = document.getElementById('reg-phone')?.value?.trim() || '';
+          document
+            .getElementById('auth-cancel')
+            ?.addEventListener('click', closeModal);
+          document
+            .getElementById('auth-submit')
+            ?.addEventListener('click', async () => {
+              try {
+                if (kind === 'register') {
+                  const login =
+                    document.getElementById('reg-login')?.value?.trim() || '';
+                  const password =
+                    document.getElementById('reg-password')?.value || '';
+                  const firstName =
+                    document.getElementById('reg-first')?.value?.trim() || '';
+                  const lastName =
+                    document.getElementById('reg-last')?.value?.trim() || '';
+                  const email =
+                    document.getElementById('reg-email')?.value?.trim() || '';
+                  const phone =
+                    document.getElementById('reg-phone')?.value?.trim() || '';
 
-                const password_hash = await getPasswordHashFromInput(password);
-                await apiPost('/auth/register', {
-                  login,
-                  password_hash,
-                  first_name: firstName,
-                  last_name: lastName,
-                  email,
-                  phone,
-                });
+                  const password_hash =
+                    await getPasswordHashFromInput(password);
+                  await apiPost('/auth/register', {
+                    login,
+                    password_hash,
+                    first_name: firstName,
+                    last_name: lastName,
+                    email,
+                    phone,
+                  });
 
-                closeModal();
-                showModal(
-                  'Register',
-                  'Registration completed successfully. You can now login.',
-                );
-              }
-
-              if (kind === 'login') {
-                const login = document.getElementById('login-login')?.value?.trim() || '';
-                const password = document.getElementById('login-password')?.value || '';
-                const password_hash = await getPasswordHashFromInput(password);
-                const resp = await apiPost('/auth/login', { login, password_hash });
-                const access_token = resp?.access_token;
-                const refresh_token = resp?.refresh_token;
-
-                if (!access_token || !refresh_token) {
-                  throw new Error('Invalid login response (missing tokens)');
+                  closeModal();
+                  showModal(
+                    'Register',
+                    'Registration completed successfully. You can now login.',
+                  );
                 }
 
-                setAuthState({ access_token, refresh_token, login });
-                closeModal();
-                updateAuthButtonsVisibility();
-                showModal('Login', 'Login completed successfully.');
+                if (kind === 'login') {
+                  const login =
+                    document.getElementById('login-login')?.value?.trim() || '';
+                  const password =
+                    document.getElementById('login-password')?.value || '';
+                  const password_hash =
+                    await getPasswordHashFromInput(password);
+                  const resp = await apiPost('/auth/login', {
+                    login,
+                    password_hash,
+                  });
+                  const access_token = resp?.access_token;
+                  const refresh_token = resp?.refresh_token;
+
+                  if (!access_token || !refresh_token) {
+                    throw new Error('Invalid login response (missing tokens)');
+                  }
+
+                  setAuthState({ access_token, refresh_token, login });
+                  closeModal();
+                  updateAuthButtonsVisibility();
+                  showModal('Login', 'Login completed successfully.');
+                }
+              } catch (e) {
+                showModal('Auth error', String(e?.message || e));
               }
-            } catch (e) {
-              showModal('Auth error', String(e?.message || e));
-            }
-          });
+            });
         }
 
-        authRegisterBtn?.addEventListener('click', () => openAuthForm('register'));
+        authRegisterBtn?.addEventListener('click', () =>
+          openAuthForm('register'),
+        );
         authLoginBtn?.addEventListener('click', () => openAuthForm('login'));
         authLogoutBtn?.addEventListener('click', async () => {
           const state = getAuthState();
@@ -1969,10 +2053,14 @@ Lorem ipsum
             return;
           }
           try {
-            await apiPost('/auth/logout', {
-              refresh_token: state.refresh_token,
-              access_token: state.access_token,
-            }, state.access_token);
+            await apiPost(
+              '/auth/logout',
+              {
+                refresh_token: state.refresh_token,
+                access_token: state.access_token,
+              },
+              state.access_token,
+            );
           } catch {
             // silent by requirement
           } finally {
@@ -2004,13 +2092,15 @@ Lorem ipsum
           }
         }
 
-        const refreshIntervalMs = Math.max(1, CONFIG.refreshIntervalMinutes) * 60 * 1000;
+        const refreshIntervalMs =
+          Math.max(1, CONFIG.refreshIntervalMinutes) * 60 * 1000;
         setInterval(refreshTokens, refreshIntervalMs);
         refreshTokens();
 
         function forceOpenJournal() {
           if (!journalPanel) return;
-          const collapsed = journalPanel.classList.contains('journal-collapsed');
+          const collapsed =
+            journalPanel.classList.contains('journal-collapsed');
           if (collapsed) {
             journalPanel.classList.remove('journal-collapsed');
             if (journalToggleBtn) journalToggleBtn.textContent = 'Journal ▾';
@@ -2034,9 +2124,7 @@ Lorem ipsum
         const canvas = document.getElementById('canvas');
         const minimap = document.getElementById('minimap');
         const library = document.getElementById('library');
-        const connectionsLayer = document.getElementById(
-          'canvas-connections',
-        );
+        const connectionsLayer = document.getElementById('canvas-connections');
         const canvasViewport = canvas?.closest('.canvas-viewport');
         const canvasWidthInput = document.getElementById('canvas-width');
         const canvasHeightInput = document.getElementById('canvas-height');
@@ -2067,16 +2155,16 @@ Lorem ipsum
             return;
           }
 
-          const blocks = Array.from(canvas.querySelectorAll('.canvas-node')).map(
-            (node) => ({
-              internal_block_id: node.dataset.internalBlockId,
-              block_type_id: node.dataset.blockTypeId,
-              default_input_text:
-                node.querySelector('.canvas-node-input')?.value ??
-                node.dataset.defaultInputText ??
-                '',
-            }),
-          );
+          const blocks = Array.from(
+            canvas.querySelectorAll('.canvas-node'),
+          ).map((node) => ({
+            internal_block_id: node.dataset.internalBlockId,
+            block_type_id: node.dataset.blockTypeId,
+            default_input_text:
+              node.querySelector('.canvas-node-input')?.value ??
+              node.dataset.defaultInputText ??
+              '',
+          }));
 
           const lines = connections.map((c) => ({
             internal_line_id: c.internal_line_id,
@@ -2275,22 +2363,20 @@ Lorem ipsum
             MAX_HEIGHT,
           );
 
-          clampedWidth =
-            Math.max(
-              MIN_WIDTH,
-              Math.min(
-                MAX_WIDTH,
-                Math.round(clampedWidth / NODE_SIZE_STEP) * NODE_SIZE_STEP,
-              ),
-            );
-          clampedHeight =
-            Math.max(
-              MIN_HEIGHT,
-              Math.min(
-                MAX_HEIGHT,
-                Math.round(clampedHeight / NODE_SIZE_STEP) * NODE_SIZE_STEP,
-              ),
-            );
+          clampedWidth = Math.max(
+            MIN_WIDTH,
+            Math.min(
+              MAX_WIDTH,
+              Math.round(clampedWidth / NODE_SIZE_STEP) * NODE_SIZE_STEP,
+            ),
+          );
+          clampedHeight = Math.max(
+            MIN_HEIGHT,
+            Math.min(
+              MAX_HEIGHT,
+              Math.round(clampedHeight / NODE_SIZE_STEP) * NODE_SIZE_STEP,
+            ),
+          );
 
           const maxX = canvasWidth - clampedWidth - 4;
           const maxY = canvasHeight - clampedHeight - 4;
@@ -2337,9 +2423,13 @@ Lorem ipsum
             const x = Number.parseFloat(node.style.left || '0') || 0;
             const y = Number.parseFloat(node.style.top || '0') || 0;
             const w =
-              Number.parseFloat(node.style.width || '') || node.offsetWidth || 0;
+              Number.parseFloat(node.style.width || '') ||
+              node.offsetWidth ||
+              0;
             const h =
-              Number.parseFloat(node.style.height || '') || node.offsetHeight || 0;
+              Number.parseFloat(node.style.height || '') ||
+              node.offsetHeight ||
+              0;
 
             const rect = clampNodeRect(x, y, w, h);
             node.style.left = rect.x + 'px';
@@ -2391,18 +2481,19 @@ Lorem ipsum
             if (event.button !== 0) return;
             const target = event.target;
 
-            if (
-              target instanceof HTMLElement &&
-              target.dataset.resizeHandle
-            ) {
+            if (target instanceof HTMLElement && target.dataset.resizeHandle) {
               event.preventDefault();
               const p = getPointerInCanvas(event);
               const startLeft = Number.parseFloat(node.style.left || '0') || 0;
               const startTop = Number.parseFloat(node.style.top || '0') || 0;
               const startWidth =
-                Number.parseFloat(node.style.width || '') || node.offsetWidth || 0;
+                Number.parseFloat(node.style.width || '') ||
+                node.offsetWidth ||
+                0;
               const startHeight =
-                Number.parseFloat(node.style.height || '') || node.offsetHeight || 0;
+                Number.parseFloat(node.style.height || '') ||
+                node.offsetHeight ||
+                0;
 
               resizeState = {
                 node,
@@ -2476,7 +2567,7 @@ Lorem ipsum
               node.style.left = rect.x + 'px';
               node.style.top = rect.y + 'px';
 
-            autoScrollHorizontally(event);
+              autoScrollHorizontally(event);
               updateMinimap();
               updateAllConnections();
               return;
@@ -2698,7 +2789,10 @@ Lorem ipsum
             ) {
               activeConnectionPath.classList.remove('connection-path-active');
               // Switch to the final arrowhead when the connection is completed.
-              activeConnectionPath.setAttribute('marker-end', 'url(#conn-arrow)');
+              activeConnectionPath.setAttribute(
+                'marker-end',
+                'url(#conn-arrow)',
+              );
               const internalLineId = `${activeConnection.from.nodeId}-${toNodeId}`;
               const conn = {
                 id: 'conn-' + ++connectionCounter,
@@ -2718,7 +2812,10 @@ Lorem ipsum
             }
           }
 
-          if (!completed && activeConnectionPath.parentNode === connectionsLayer) {
+          if (
+            !completed &&
+            activeConnectionPath.parentNode === connectionsLayer
+          ) {
             connectionsLayer.removeChild(activeConnectionPath);
           }
 
