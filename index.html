@@ -220,6 +220,31 @@
         box-shadow: none;
       }
 
+      #template-status.template-status-unknown {
+        background: #ff00ff;
+        color: #ffffff;
+      }
+
+      #template-status.template-status-rejected {
+        background: #dc2626;
+        color: #ffffff;
+      }
+
+      #template-status.template-status-editing {
+        background: #38bdf8;
+        color: #001018;
+      }
+
+      #template-status.template-status-ready {
+        background: #a3e635;
+        color: #365314;
+      }
+
+      #template-status.template-status-deleted {
+        background: #0f172a;
+        color: #94a3b8;
+      }
+
       #template-status:focus {
         border-color: rgba(56, 189, 248, 0.85);
         box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
@@ -257,6 +282,16 @@
         box-shadow:
           inset 0 0 0 1px rgba(15, 23, 42, 0.8),
           0 0 0 3px rgba(248, 113, 113, 0.18);
+      }
+
+      #template-name.toolbar-control-invalid {
+        background: rgba(220, 38, 38, 0.22);
+        border-color: rgba(248, 113, 113, 0.95);
+        color: #94a3b8;
+      }
+
+      #template-name.toolbar-control-invalid::placeholder {
+        color: #94a3b8;
       }
 
       .toolbar-button {
@@ -426,7 +461,7 @@
       .main {
         flex: 1;
         display: grid;
-        grid-template-columns: 240px minmax(0, 1fr) 240px;
+        grid-template-columns: 151px minmax(0, 1fr) 360px;
         min-height: 0;
       }
 
@@ -437,7 +472,7 @@
           rgba(56, 189, 248, 0.06),
           transparent 55%
         );
-        padding: 10px 12px;
+        padding: 10px 6px;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -472,7 +507,7 @@
           rgba(56, 189, 248, 0.06),
           transparent 55%
         );
-        padding: 10px 12px;
+        padding: 10px 6px;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -489,13 +524,22 @@
           0 16px 35px rgba(15, 23, 42, 0.9);
       }
 
+      .rightbar-section.rightbar-section-disabled {
+        opacity: 0.45;
+      }
+
+      .rightbar-section.rightbar-section-disabled .rightbar-templates-list,
+      .rightbar-section.rightbar-section-disabled .rightbar-muted {
+        pointer-events: none;
+      }
+
       .rightbar-section-header {
         font-size: 12px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.14em;
         color: rgba(226, 232, 240, 0.95);
-        padding: 10px 12px 8px;
+        padding: 10px 6px 8px;
         border-bottom: 1px solid rgba(56, 189, 248, 0.22);
         background: linear-gradient(
           to right,
@@ -508,7 +552,7 @@
       }
 
       .rightbar-section-body {
-        padding: 10px;
+        padding: 10px 5px;
         font-size: 12px;
         color: rgba(226, 232, 240, 0.92);
       }
@@ -525,7 +569,7 @@
       }
 
       .rightbar-actions-templates {
-        padding: 10px;
+        padding: 10px 5px;
         border-top: 1px solid rgba(148, 163, 184, 0.18);
         background: rgba(2, 6, 23, 0.12);
       }
@@ -535,7 +579,7 @@
         background: rgba(2, 6, 23, 0.28);
         color: rgba(226, 232, 240, 0.95);
         border-radius: 3px;
-        padding: 8px 10px;
+        padding: 8px 5px;
         font-size: 11px;
         letter-spacing: 0.08em;
         text-transform: uppercase;
@@ -599,7 +643,7 @@
         margin-top: 4px;
         flex: 1;
         overflow: auto;
-        padding-right: 4px;
+        padding-right: 2px;
       }
 
       .library-grid {
@@ -609,6 +653,9 @@
       }
 
       .library-item {
+        width: 100%;
+        justify-self: stretch;
+        box-sizing: border-box;
         border-radius: 10px 10px 1px 10px;
         padding: 10px 9px;
         font-size: 12px;
@@ -655,44 +702,44 @@
       }
 
       .lib-color-1 {
-        background: linear-gradient(135deg, #a855f7, #ec4899);
-        color: #f9fafb;
+        background: linear-gradient(135deg, #475569, #334155);
+        color: #f1f5f9;
       }
       .lib-color-2 {
-        background: linear-gradient(135deg, #38bdf8, #6366f1);
-        color: #f9fafb;
-      }
-      .lib-color-3 {
-        background: linear-gradient(135deg, #22c55e, #16a34a);
-        color: #ecfdf3;
-      }
-      .lib-color-4 {
-        background: linear-gradient(135deg, #f97316, #ec4899);
-        color: #fef2f2;
-      }
-      .lib-color-5 {
-        background: linear-gradient(135deg, #eab308, #f97316);
+        background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
         color: #0f172a;
       }
-      .lib-color-6 {
-        background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+      .lib-color-3 {
+        background: linear-gradient(135deg, #111827, #1f2937);
+        color: #f8fafc;
+      }
+      .lib-color-4 {
+        background: linear-gradient(135deg, #f97316, #fb923c);
+        color: #431407;
+      }
+      .lib-color-5 {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
         color: #eff6ff;
       }
+      .lib-color-6 {
+        background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+        color: #082f49;
+      }
       .lib-color-7 {
-        background: linear-gradient(135deg, #ec4899, #f97316);
-        color: #fdf2f8;
+        background: linear-gradient(135deg, #7dd3fc, #bae6fd);
+        color: #0c4a6e;
       }
       .lib-color-8 {
-        background: linear-gradient(135deg, #4ade80, #22c55e);
-        color: #052e16;
+        background: linear-gradient(135deg, #075985, #0c4a6e);
+        color: #ffffff;
       }
       .lib-color-9 {
-        background: linear-gradient(135deg, #facc15, #22c55e);
-        color: #111827;
+        background: linear-gradient(135deg, #fde68a, #fef9c3);
+        color: #713f12;
       }
       .lib-color-10 {
-        background: linear-gradient(135deg, #6366f1, #a855f7);
-        color: #eef2ff;
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        color: #0f172a;
       }
 
       .journal {
@@ -1059,9 +1106,9 @@
       .canvas-node {
         position: absolute;
         min-width: 70px;
-        max-width: 250px;
+        max-width: none;
         min-height: 30px;
-        max-height: 200px;
+        max-height: none;
         padding: 0;
         border-radius: 6px 6px 2px 6px;
         color: #0f172a;
@@ -1100,6 +1147,25 @@
         min-height: 30px;
       }
 
+      .canvas-node.canvas-node-start-finish .canvas-node-body {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .canvas-node.canvas-node-start-finish {
+        border-radius: 15px;
+      }
+
+      .start-finish-symbol {
+        color: inherit;
+        font-size: 26px;
+        line-height: 1;
+        transform: translateY(-1px);
+        user-select: none;
+      }
+
       .canvas-node-input {
         width: 100%;
         height: 100%;
@@ -1124,7 +1190,7 @@
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 0 0 12px 12px;
+        border-width: 0 0 20px 20px;
         border-color: transparent transparent rgba(100, 100, 80, 0.95)
           transparent;
         cursor: nwse-resize;
@@ -1132,6 +1198,7 @@
         bottom: 0;
         z-index: 2;
         box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.85);
+        touch-action: none;
       }
 
       .canvas-node-connector {
@@ -1170,6 +1237,10 @@
         left: -10px;
         top: 50%;
         transform: translateY(-50%);
+      }
+
+      .canvas-node.canvas-node-no-connections .canvas-node-connector {
+        display: none;
       }
 
       .canvas-node:active {
@@ -1246,34 +1317,32 @@
       }
 
       .canvas-node.lib-color-1,
-      .canvas-node.lib-color-2,
+      .canvas-node.lib-color-3,
       .canvas-node.lib-color-4,
+      .canvas-node.lib-color-5,
+      .canvas-node.lib-color-8 {
+        color: #f8fafc;
+      }
+
+      .canvas-node.lib-color-2,
       .canvas-node.lib-color-6,
       .canvas-node.lib-color-7,
+      .canvas-node.lib-color-9,
       .canvas-node.lib-color-10 {
-        color: #f9fafb;
-      }
-
-      .canvas-node.lib-color-3,
-      .canvas-node.lib-color-8 {
-        color: #052e16;
-      }
-
-      .canvas-node.lib-color-5,
-      .canvas-node.lib-color-9 {
         color: #0f172a;
       }
 
-      .canvas-node.lib-color-5 .node-badge,
-      .canvas-node.lib-color-9 .node-badge {
+      .canvas-node.lib-color-2 .node-badge,
+      .canvas-node.lib-color-6 .node-badge,
+      .canvas-node.lib-color-7 .node-badge,
+      .canvas-node.lib-color-9 .node-badge,
+      .canvas-node.lib-color-10 .node-badge {
         border-color: rgba(15, 23, 42, 0.8);
         background: rgba(15, 23, 42, 0.12);
       }
 
-      .canvas-node.lib-color-3 .node-badge,
-      .canvas-node.lib-color-8 .node-badge {
-        border-color: rgba(22, 101, 52, 0.9);
-        background: rgba(22, 163, 74, 0.2);
+      .canvas-node.lib-color-10 .canvas-node-input {
+        color: #1e3a8a;
       }
 
       .minimap {
@@ -1297,6 +1366,43 @@
         display: flex;
         justify-content: center;
         align-items: center;
+      }
+
+      .properties-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .properties-line {
+        display: grid;
+        grid-template-columns: 76px minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+      }
+
+      .properties-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(148, 163, 184, 0.85);
+      }
+
+      .properties-value {
+        min-height: 28px;
+        border-radius: 4px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(2, 6, 23, 0.25);
+        color: rgba(226, 232, 240, 0.95);
+        padding: 6px 8px;
+        font-size: 12px;
+        line-height: 1.3;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .properties-title {
+        margin-top: 2px;
       }
 
       .minimap-header {
@@ -1392,7 +1498,7 @@
 
       @media (max-width: 900px) {
         .main {
-          grid-template-columns: 200px minmax(0, 1fr) 220px;
+          grid-template-columns: 126px minmax(0, 1fr) 330px;
         }
       }
 
@@ -1491,89 +1597,106 @@
         <aside class="sidebar">
           <div class="sidebar-header">
             <span>Block library</span>
-            <span>10 prebuilt</span>
           </div>
           <div class="sidebar-scroll">
             <div class="library-grid" id="library">
               <div
                 class="library-item lib-color-1"
                 draggable="true"
-                data-template-id="trigger"
+                data-template-id="constants"
+                data-block-type-id="Constants"
+                data-max-width="700"
+                data-max-height="500"
               >
-                <div class="library-item-label">Trigger</div>
-                <div class="library-item-title">Lorem Entry Hook</div>
+                <div class="library-item-label">System</div>
+                <div class="library-item-title">Constants</div>
               </div>
               <div
                 class="library-item lib-color-2"
                 draggable="true"
-                data-template-id="http"
+                data-template-id="variables"
+                data-block-type-id="Variables"
+                data-max-width="700"
+                data-max-height="500"
               >
-                <div class="library-item-label">HTTP</div>
-                <div class="library-item-title">Ipsum Request Node</div>
+                <div class="library-item-label">System</div>
+                <div class="library-item-title">Variables</div>
               </div>
               <div
                 class="library-item lib-color-3"
                 draggable="true"
-                data-template-id="transform"
+                data-template-id="watch"
+                data-block-type-id="Watch"
+                data-max-width="500"
+                data-max-height="300"
               >
-                <div class="library-item-label">Transform</div>
-                <div class="library-item-title">Dolor Mapper</div>
+                <div class="library-item-label">Monitor</div>
+                <div class="library-item-title">Watch</div>
               </div>
               <div
                 class="library-item lib-color-4"
                 draggable="true"
-                data-template-id="branch"
+                data-template-id="start"
+                data-block-type-id="Start"
               >
-                <div class="library-item-label">Logic</div>
-                <div class="library-item-title">Sit Split Branch</div>
+                <div class="library-item-label">Flow</div>
+                <div class="library-item-title">Start</div>
               </div>
               <div
                 class="library-item lib-color-5"
                 draggable="true"
-                data-template-id="delay"
+                data-template-id="finish"
+                data-block-type-id="Finish"
               >
-                <div class="library-item-label">Timing</div>
-                <div class="library-item-title">Amet Delay Gate</div>
+                <div class="library-item-label">Flow</div>
+                <div class="library-item-title">Finish</div>
               </div>
               <div
                 class="library-item lib-color-6"
                 draggable="true"
-                data-template-id="iterate"
+                data-template-id="expressions"
+                data-block-type-id="Expressions"
               >
-                <div class="library-item-label">Loop</div>
-                <div class="library-item-title">Consectetur Iterator</div>
+                <div class="library-item-label">Logic</div>
+                <div class="library-item-title">Expressions</div>
               </div>
               <div
                 class="library-item lib-color-7"
                 draggable="true"
-                data-template-id="email"
+                data-template-id="conditions"
+                data-block-type-id="Conditions"
               >
-                <div class="library-item-label">Notify</div>
-                <div class="library-item-title">Adipiscing Mailer</div>
+                <div class="library-item-label">Logic</div>
+                <div class="library-item-title">Conditions</div>
               </div>
               <div
                 class="library-item lib-color-8"
                 draggable="true"
-                data-template-id="db"
+                data-template-id="delay"
+                data-block-type-id="Delay"
               >
-                <div class="library-item-label">Data</div>
-                <div class="library-item-title">Elit Store Node</div>
+                <div class="library-item-label">Timing</div>
+                <div class="library-item-title">Delay</div>
               </div>
               <div
                 class="library-item lib-color-9"
                 draggable="true"
-                data-template-id="script"
+                data-template-id="confirmation"
+                data-block-type-id="Confirmation"
               >
-                <div class="library-item-label">Script</div>
-                <div class="library-item-title">Sed Script Runner</div>
+                <div class="library-item-label">Interaction</div>
+                <div class="library-item-title">Confirmation</div>
               </div>
               <div
                 class="library-item lib-color-10"
                 draggable="true"
-                data-template-id="webhook"
+                data-template-id="ai"
+                data-block-type-id="AI"
+                data-max-width="1200"
+                data-max-height="700"
               >
-                <div class="library-item-label">Webhook</div>
-                <div class="library-item-title">Do Eiusmod Catcher</div>
+                <div class="library-item-label">Assistant</div>
+                <div class="library-item-title">AI</div>
               </div>
             </div>
           </div>
@@ -1671,7 +1794,7 @@ Lorem ipsum
         </div>
 
         <aside class="rightbar">
-          <div class="rightbar-section">
+          <div class="rightbar-section" id="my-templates-panel">
             <div class="rightbar-section-header">MY TEMPLATES</div>
             <div class="rightbar-section-body">
               <div class="rightbar-templates-list">
@@ -1722,6 +1845,34 @@ Lorem ipsum
             <div class="rightbar-section-body rightbar-section-body-minimap">
               <div class="minimap" aria-hidden="true">
                 <div class="minimap-body" id="minimap"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rightbar-section">
+            <div class="rightbar-section-header">Properties</div>
+            <div class="rightbar-section-body">
+              <div class="properties-grid" id="properties-panel">
+                <div class="properties-line">
+                  <div class="properties-label">ID</div>
+                  <div class="properties-value" id="prop-internal-block-id">-</div>
+                </div>
+                <div class="properties-line">
+                  <div class="properties-label">Type</div>
+                  <div class="properties-value" id="prop-block-type-id">-</div>
+                </div>
+                <div class="properties-label properties-title">
+                  Default input text
+                </div>
+                <div class="properties-value" id="prop-default-input-text">-</div>
+                <div class="properties-line">
+                  <div class="properties-label">Position</div>
+                  <div class="properties-value" id="prop-position">-</div>
+                </div>
+                <div class="properties-line">
+                  <div class="properties-label">Size</div>
+                  <div class="properties-value" id="prop-size">-</div>
+                </div>
               </div>
             </div>
           </div>
@@ -1883,9 +2034,10 @@ Lorem ipsum
             }
             if (action.id === 'new-template') {
               resetCanvasDOM();
-              templateStatusSelect.value = TemplateStatus.UNKNOWN;
+              templateStatusSelect.value = TemplateStatus.EDITING;
               templateNameInput.value = '';
               updateTemplateNameValidity();
+              updateTemplateStatusAppearance();
               try {
                 localStorage.removeItem(CANVAS_STORAGE_KEY);
               } catch {}
@@ -1902,6 +2054,7 @@ Lorem ipsum
         const tplLoadBtn = document.getElementById('tpl-load');
         const tplDeleteBtn = document.getElementById('tpl-delete');
         const tplUpdateBtn = document.getElementById('tpl-update');
+        const myTemplatesPanel = document.getElementById('my-templates-panel');
         const journalToggleBtn = document.getElementById('journal-toggle');
         const journalPanel = document.getElementById('journal-panel');
         const journalText = journalPanel?.querySelector('.journal-text');
@@ -1915,12 +2068,36 @@ Lorem ipsum
           opt.textContent = value;
           templateStatusSelect.appendChild(opt);
         });
-        templateStatusSelect.value = TemplateStatus.UNKNOWN;
+        function updateTemplateStatusAppearance() {
+          if (!(templateStatusSelect instanceof HTMLSelectElement)) return;
+          templateStatusSelect.classList.remove(
+            'template-status-unknown',
+            'template-status-rejected',
+            'template-status-editing',
+            'template-status-ready',
+            'template-status-deleted',
+          );
+
+          const status = String(templateStatusSelect.value || '').toUpperCase();
+          if (status === TemplateStatus.UNKNOWN) {
+            templateStatusSelect.classList.add('template-status-unknown');
+          } else if (status === TemplateStatus.REJECTED) {
+            templateStatusSelect.classList.add('template-status-rejected');
+          } else if (status === TemplateStatus.EDITING) {
+            templateStatusSelect.classList.add('template-status-editing');
+          } else if (status === TemplateStatus.READY) {
+            templateStatusSelect.classList.add('template-status-ready');
+          } else if (status === TemplateStatus.DELETED) {
+            templateStatusSelect.classList.add('template-status-deleted');
+          }
+        }
+
+        templateStatusSelect.value = TemplateStatus.EDITING;
+        updateTemplateStatusAppearance();
 
         function updateTemplateNameValidity() {
           const value = templateNameInput.value.trim();
-          const ok =
-            value.length === 0 || (value.length >= 4 && value.length <= 64);
+          const ok = value.length >= 4 && value.length <= 64;
           templateNameInput.classList.toggle('toolbar-control-invalid', !ok);
         }
 
@@ -1939,6 +2116,7 @@ Lorem ipsum
           templateStatusSelect.value = knownStatuses.includes(status)
             ? status
             : TemplateStatus.UNKNOWN;
+          updateTemplateStatusAppearance();
           templateNameInput.value = name;
           updateTemplateNameValidity();
         }
@@ -1948,6 +2126,7 @@ Lorem ipsum
           persistCanvasStateDebounced();
         });
         templateStatusSelect?.addEventListener('change', () => {
+          updateTemplateStatusAppearance();
           persistCanvasStateDebounced();
         });
         updateTemplateNameValidity();
@@ -1991,6 +2170,25 @@ Lorem ipsum
 
         const authStatusBadge = document.getElementById('auth-status');
 
+        function updateTemplatesPanelAvailability(isLoggedIn) {
+          if (myTemplatesPanel instanceof HTMLElement) {
+            myTemplatesPanel.classList.toggle(
+              'rightbar-section-disabled',
+              !isLoggedIn,
+            );
+            myTemplatesPanel.setAttribute(
+              'aria-disabled',
+              isLoggedIn ? 'false' : 'true',
+            );
+          }
+
+          [tplUpdateBtn, tplLoadBtn, tplDeleteBtn].forEach((btn) => {
+            if (btn instanceof HTMLButtonElement) {
+              btn.disabled = !isLoggedIn;
+            }
+          });
+        }
+
         function updateAuthButtonsVisibility() {
           const state = getAuthState();
           const isLoggedIn = Boolean(state);
@@ -2008,6 +2206,8 @@ Lorem ipsum
               ? `Logged in: ${state.login || 'user'}`
               : 'Logged out';
           }
+
+          updateTemplatesPanelAvailability(isLoggedIn);
         }
 
         async function sha256Hex(text) {
@@ -2300,6 +2500,54 @@ Lorem ipsum
         const canvasWidthInput = document.getElementById('canvas-width');
         const canvasHeightInput = document.getElementById('canvas-height');
         const canvasSetBtn = document.getElementById('canvas-set');
+        const propInternalBlockId = document.getElementById(
+          'prop-internal-block-id',
+        );
+        const propBlockTypeId = document.getElementById('prop-block-type-id');
+        const propDefaultInputText = document.getElementById(
+          'prop-default-input-text',
+        );
+        const propPosition = document.getElementById('prop-position');
+        const propSize = document.getElementById('prop-size');
+
+        function getNodeSize(node) {
+          const width =
+            Number.parseFloat(node.style.width || '') || node.offsetWidth || 0;
+          const height =
+            Number.parseFloat(node.style.height || '') || node.offsetHeight || 0;
+          return { width, height };
+        }
+
+        function updatePropertiesPanel(node) {
+          const dash = '-';
+          if (!node) {
+            if (propInternalBlockId) propInternalBlockId.textContent = dash;
+            if (propBlockTypeId) propBlockTypeId.textContent = dash;
+            if (propDefaultInputText) propDefaultInputText.textContent = dash;
+            if (propPosition) propPosition.textContent = dash;
+            if (propSize) propSize.textContent = dash;
+            return;
+          }
+
+          const id = node.dataset.internalBlockId || dash;
+          const blockTypeId = node.dataset.blockTypeId || dash;
+          const inputEl = node.querySelector('.canvas-node-input');
+          const defaultInputText =
+            inputEl?.value ?? node.dataset.defaultInputText ?? dash;
+          const posX = Number.parseFloat(node.style.left || '0') || 0;
+          const posY = Number.parseFloat(node.style.top || '0') || 0;
+          const positionText = `${Math.round(posX)}, ${Math.round(posY)} px`;
+          const { width, height } = getNodeSize(node);
+          const sizeText = `${Math.round(width)} x ${Math.round(height)} px`;
+
+          if (propInternalBlockId) propInternalBlockId.textContent = id;
+          if (propBlockTypeId) propBlockTypeId.textContent = blockTypeId;
+          if (propDefaultInputText) {
+            propDefaultInputText.textContent = defaultInputText || dash;
+          }
+          if (propPosition) propPosition.textContent = positionText;
+          if (propSize) propSize.textContent = sizeText;
+        }
 
         canvas?.addEventListener('pointerdown', (event) => {
           // Clear selection when clicking canvas background (not a node).
@@ -2505,6 +2753,7 @@ Lorem ipsum
           }
           selectedBlockNode = node instanceof HTMLElement ? node : null;
           if (selectedBlockNode) selectedBlockNode.classList.add('selected');
+          updatePropertiesPanel(selectedBlockNode);
         }
 
         function closeNodeMenu() {
@@ -2639,6 +2888,7 @@ Lorem ipsum
           );
           for (const libItem of items) {
             const title =
+              libItem.dataset.blockTypeId ||
               libItem.querySelector('.library-item-title')?.textContent?.trim() ||
               libItem.textContent?.trim() ||
               '';
@@ -2690,6 +2940,7 @@ Lorem ipsum
               node.dataset.internalBlockId = internalId;
               node.dataset.nodeId = internalId;
               node.dataset.blockTypeId = blockTypeId;
+              applyNodeSizeLimits(node, libItem);
               node.dataset.defaultInputText = defaultInputText;
 
               const titleEl = node.querySelector(
@@ -2708,7 +2959,7 @@ Lorem ipsum
                 .forEach((cp) => (cp.dataset.nodeId = internalId));
 
               // Apply restored geometry (with clamping to current canvas).
-              const rect = clampNodeRect(x, y, w, h);
+              const rect = clampNodeRect(x, y, w, h, node);
               node.style.left = rect.x + 'px';
               node.style.top = rect.y + 'px';
               node.style.width = rect.width + 'px';
@@ -2731,6 +2982,19 @@ Lorem ipsum
               const fromSide = String(l.from_side ?? '');
               const toSide = String(l.to_side ?? '');
               if (!fromId || !toId || !fromSide || !toSide) continue;
+
+              const fromNode = canvas.querySelector(
+                `.canvas-node[data-internal-block-id="${fromId}"]`,
+              );
+              const toNode = canvas.querySelector(
+                `.canvas-node[data-internal-block-id="${toId}"]`,
+              );
+              if (
+                isConnectionDisabledForNode(fromNode) ||
+                isConnectionDisabledForNode(toNode)
+              ) {
+                continue;
+              }
 
               const svgNS = 'http://www.w3.org/2000/svg';
               const path = document.createElementNS(svgNS, 'path');
@@ -2795,6 +3059,85 @@ Lorem ipsum
         const MAX_HEIGHT = 200;
         const NODE_SIZE_STEP = 5;
         const NODE_POSITION_STEP = 5;
+        const BLOCK_TYPE_SIZE_LIMITS = {
+          constants: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          variables: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          watch: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          start: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          finish: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          expressions: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          conditions: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          delay: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          confirmation: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 500,
+            maxHeight: 300,
+          },
+          ai: { minWidth: 200, minHeight: 130, maxWidth: 1200, maxHeight: 700 },
+        };
+        const TEMPLATE_SIZE_LIMITS = {
+          constants: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          variables: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          watch: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          start: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          finish: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          expressions: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          conditions: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          delay: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          confirmation: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 500,
+            maxHeight: 300,
+          },
+          ai: { minWidth: 200, minHeight: 130, maxWidth: 1200, maxHeight: 700 },
+        };
+        const CONNECTION_DISABLED_BLOCK_TYPES = new Set([
+          'constants',
+          'variables',
+          'watch',
+        ]);
         const DEFAULT_INPUT_TEXT =
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
 
@@ -2810,8 +3153,15 @@ Lorem ipsum
           }
         }
 
+        function isConnectionDisabledForNode(node) {
+          const blockTypeId = String(node?.dataset?.blockTypeId || '')
+            .trim()
+            .toLowerCase();
+          return CONNECTION_DISABLED_BLOCK_TYPES.has(blockTypeId);
+        }
+
         function createNodeFromLibraryItem(libItem, x, y) {
-          const templateId = libItem.getAttribute('data-template-id') || 'node';
+          const templateId = libItem.dataset.templateId || 'node';
           const node = document.createElement('div');
 
           const colorClasses = Array.from(libItem.classList).filter((cls) =>
@@ -2824,10 +3174,22 @@ Lorem ipsum
           node.dataset.internalBlockId = internalBlockId;
 
           const blockTypeId =
+            libItem.dataset.blockTypeId ||
             libItem.querySelector('.library-item-title')?.textContent?.trim() ||
             libItem.textContent?.trim() ||
             'Block';
           node.dataset.blockTypeId = blockTypeId.slice(0, 64);
+          const normalizedBlockTypeId = String(node.dataset.blockTypeId || '')
+            .trim()
+            .toLowerCase();
+          const isStartFinish = normalizedBlockTypeId === 'start' || normalizedBlockTypeId === 'finish';
+          if (isStartFinish) {
+            node.classList.add('canvas-node-start-finish');
+          }
+          if (isConnectionDisabledForNode(node)) {
+            node.classList.add('canvas-node-no-connections');
+          }
+          applyNodeSizeLimits(node, libItem);
           node.dataset.defaultInputText = DEFAULT_INPUT_TEXT;
 
           const top = document.createElement('div');
@@ -2882,21 +3244,30 @@ Lorem ipsum
           const body = document.createElement('div');
           body.className = 'canvas-node-body';
 
-          const input = document.createElement('textarea');
-          input.className = 'canvas-node-input';
-          input.placeholder = 'default_input_text';
-          input.maxLength = 4096;
-          input.value = node.dataset.defaultInputText;
-          input.addEventListener('input', () => {
-            persistCanvasStateDebounced();
-          });
-          body.appendChild(input);
-          node.appendChild(body);
+          if (isStartFinish) {
+            const symbol = document.createElement('div');
+            symbol.className = 'start-finish-symbol';
+            symbol.textContent = '🏁';
+            body.appendChild(symbol);
+            node.appendChild(body);
+          } else {
+            const input = document.createElement('textarea');
+            input.className = 'canvas-node-input';
+            input.placeholder = 'default_input_text';
+            input.maxLength = 4096;
+            input.value = node.dataset.defaultInputText;
+            input.addEventListener('input', () => {
+              updatePropertiesPanel(node);
+              persistCanvasStateDebounced();
+            });
+            body.appendChild(input);
+            node.appendChild(body);
 
-          const handle = document.createElement('div');
-          handle.className = 'canvas-node-resize-handle';
-          handle.dataset.resizeHandle = 'se';
-          node.appendChild(handle);
+            const handle = document.createElement('div');
+            handle.className = 'canvas-node-resize-handle';
+            handle.dataset.resizeHandle = 'se';
+            node.appendChild(handle);
+          }
 
           ['top', 'right', 'bottom', 'left'].forEach((side) => {
             const cp = document.createElement('div');
@@ -2907,7 +3278,7 @@ Lorem ipsum
             node.appendChild(cp);
           });
 
-          const initial = clampNodeRect(x, y, 180, 110);
+          const initial = clampNodeRect(x, y, 180, 110, node);
           node.style.left = initial.x + 'px';
           node.style.top = initial.y + 'px';
           node.style.width = initial.width + 'px';
@@ -2943,24 +3314,108 @@ Lorem ipsum
           return { x: clampedX, y: clampedY };
         }
 
-        function clampNodeRect(x, y, width, height) {
-          let clampedWidth = Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH);
-          let clampedHeight = Math.min(
-            Math.max(height, MIN_HEIGHT),
-            MAX_HEIGHT,
+        function getNodeMaxSize(node) {
+          const templateId = String(node?.dataset?.templateId || '')
+            .trim()
+            .toLowerCase();
+          const templateLimits = TEMPLATE_SIZE_LIMITS[templateId];
+          if (templateLimits) {
+            return {
+              minWidth: templateLimits.minWidth ?? MIN_WIDTH,
+              minHeight: templateLimits.minHeight ?? MIN_HEIGHT,
+              maxWidth: templateLimits.maxWidth,
+              maxHeight: templateLimits.maxHeight,
+            };
+          }
+
+          const normalizedBlockTypeId = String(node?.dataset?.blockTypeId || '')
+            .trim()
+            .toLowerCase();
+          const typeLimits = BLOCK_TYPE_SIZE_LIMITS[normalizedBlockTypeId];
+          if (typeLimits) {
+            return {
+              minWidth: typeLimits.minWidth ?? MIN_WIDTH,
+              minHeight: typeLimits.minHeight ?? MIN_HEIGHT,
+              maxWidth: typeLimits.maxWidth ?? MAX_WIDTH,
+              maxHeight: typeLimits.maxHeight ?? MAX_HEIGHT,
+            };
+          }
+
+          const rawMaxWidth = Number.parseInt(
+            node?.dataset?.maxWidth || String(MAX_WIDTH),
+            10,
           );
+          const rawMaxHeight = Number.parseInt(
+            node?.dataset?.maxHeight || String(MAX_HEIGHT),
+            10,
+          );
+          return {
+            minWidth: MIN_WIDTH,
+            minHeight: MIN_HEIGHT,
+            maxWidth:
+              Number.isFinite(rawMaxWidth) && rawMaxWidth > 0
+                ? rawMaxWidth
+                : MAX_WIDTH,
+            maxHeight:
+              Number.isFinite(rawMaxHeight) && rawMaxHeight > 0
+                ? rawMaxHeight
+                : MAX_HEIGHT,
+          };
+        }
+
+        function applyNodeSizeLimits(node, libItem = null) {
+          const blockTypeId = String(node?.dataset?.blockTypeId || '')
+            .trim()
+            .toLowerCase();
+          const typeLimits = BLOCK_TYPE_SIZE_LIMITS[blockTypeId];
+          const maxWidthAttr = Number.parseInt(
+            libItem?.dataset?.maxWidth || '',
+            10,
+          );
+          const maxHeightAttr = Number.parseInt(
+            libItem?.dataset?.maxHeight || '',
+            10,
+          );
+          const maxWidth =
+            typeLimits?.maxWidth ??
+            (Number.isFinite(maxWidthAttr) && maxWidthAttr > 0
+              ? maxWidthAttr
+              : null);
+          const maxHeight =
+            typeLimits?.maxHeight ??
+            (Number.isFinite(maxHeightAttr) && maxHeightAttr > 0
+              ? maxHeightAttr
+              : null);
+
+          if (Number.isFinite(maxWidth) && maxWidth > 0) {
+            node.dataset.maxWidth = String(maxWidth);
+          } else {
+            delete node.dataset.maxWidth;
+          }
+
+          if (Number.isFinite(maxHeight) && maxHeight > 0) {
+            node.dataset.maxHeight = String(maxHeight);
+          } else {
+            delete node.dataset.maxHeight;
+          }
+        }
+
+        function clampNodeRect(x, y, width, height, node = null) {
+          const { minWidth, minHeight, maxWidth, maxHeight } = getNodeMaxSize(node);
+          let clampedWidth = Math.min(Math.max(width, minWidth), maxWidth);
+          let clampedHeight = Math.min(Math.max(height, minHeight), maxHeight);
 
           clampedWidth = Math.max(
-            MIN_WIDTH,
+            minWidth,
             Math.min(
-              MAX_WIDTH,
+              maxWidth,
               Math.round(clampedWidth / NODE_SIZE_STEP) * NODE_SIZE_STEP,
             ),
           );
           clampedHeight = Math.max(
-            MIN_HEIGHT,
+            minHeight,
             Math.min(
-              MAX_HEIGHT,
+              maxHeight,
               Math.round(clampedHeight / NODE_SIZE_STEP) * NODE_SIZE_STEP,
             ),
           );
@@ -3018,11 +3473,12 @@ Lorem ipsum
               node.offsetHeight ||
               0;
 
-            const rect = clampNodeRect(x, y, w, h);
+            const rect = clampNodeRect(x, y, w, h, node);
             node.style.left = rect.x + 'px';
             node.style.top = rect.y + 'px';
             node.style.width = rect.width + 'px';
             node.style.height = rect.height + 'px';
+              if (selectedBlockNode === node) updatePropertiesPanel(node);
           });
 
           updateMinimap();
@@ -3149,12 +3605,14 @@ Lorem ipsum
                 resizeState.startTop,
                 nextWidth,
                 nextHeight,
+                node,
               );
 
               node.style.width = rect.width + 'px';
               node.style.height = rect.height + 'px';
               node.style.left = rect.x + 'px';
               node.style.top = rect.y + 'px';
+              if (selectedBlockNode === node) updatePropertiesPanel(node);
 
               autoScrollHorizontally(event);
               updateMinimap();
@@ -3171,6 +3629,7 @@ Lorem ipsum
             const { x, y } = clampNodePosition(node, nextX, nextY);
             node.style.left = x + 'px';
             node.style.top = y + 'px';
+            if (selectedBlockNode === node) updatePropertiesPanel(node);
 
             autoScrollHorizontally(event);
             updateMinimap();
@@ -3212,6 +3671,21 @@ Lorem ipsum
               dragNode = null;
             }
           });
+        }
+
+        function finishActivePointerInteractions() {
+          if (resizeState && resizeState.node instanceof HTMLElement) {
+            resizeState = null;
+            updateMinimap();
+            updateAllConnections();
+            persistCanvasStateDebounced();
+          }
+          if (dragNode instanceof HTMLElement) {
+            dragNode = null;
+            updateMinimap();
+            updateAllConnections();
+            persistCanvasStateDebounced();
+          }
         }
 
         function getPointerInCanvas(event) {
@@ -3428,11 +3902,11 @@ Lorem ipsum
           event.dataTransfer.effectAllowed = 'copy';
           event.dataTransfer.setData(
             'application/x-flow-node-template',
-            target.getAttribute('data-template-id') || '',
+            target.dataset.templateId || '',
           );
           event.dataTransfer.setData(
             'text/plain',
-            target.getAttribute('data-template-id') || '',
+            target.dataset.templateId || '',
           );
         });
 
@@ -3460,9 +3934,13 @@ Lorem ipsum
           const p = getPointerInCanvas(event);
           const rawX = p.x - 80;
           const rawY = p.y - 40;
-          const { x, y } = clampNodePosition(libItem, rawX, rawY);
+          const initialRect = clampNodeRect(rawX, rawY, 180, 110, {
+            dataset: {
+              blockTypeId: libItem.dataset.blockTypeId || '',
+            },
+          });
 
-          createNodeFromLibraryItem(libItem, x, y);
+          createNodeFromLibraryItem(libItem, initialRect.x, initialRect.y);
           persistCanvasStateDebounced();
         });
 
@@ -3525,6 +4003,11 @@ Lorem ipsum
           });
         }
         window.addEventListener('resize', scheduleCanvasRedraw);
+        window.addEventListener('pointerup', finishActivePointerInteractions);
+        window.addEventListener(
+          'pointercancel',
+          finishActivePointerInteractions,
+        );
 
         canvasSetBtn?.addEventListener('click', trySetCanvasSizeFromControls);
         canvasWidthInput?.addEventListener('keydown', (e) => {
@@ -3538,6 +4021,7 @@ Lorem ipsum
         if (!restoredOk) {
           applyCanvasSize(MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT);
         }
+        updatePropertiesPanel(null);
 
         window.addEventListener('load', () => {
           updateMinimap();
