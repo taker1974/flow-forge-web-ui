@@ -108,6 +108,17 @@
         align-items: center;
         gap: 8px;
         padding-right: 0;
+        min-width: 0;
+      }
+
+      .brand-logo {
+        display: block;
+        max-width: min(320px, 100%);
+        width: auto;
+        height: auto;
+        max-height: 44px;
+        object-fit: contain;
+        margin-left: -2px;
       }
 
       .brand-mark {
@@ -186,6 +197,25 @@
         text-transform: uppercase;
         letter-spacing: 0.16em;
         color: var(--text-muted);
+      }
+
+      .template-id-badge {
+        margin-left: 8px;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        color: rgba(125, 211, 252, 0.95);
+        text-transform: none;
+        border: 1px solid rgba(125, 211, 252, 0.4);
+        border-radius: 999px;
+        padding: 2px 7px;
+        background: rgba(2, 6, 23, 0.45);
+      }
+
+      .template-id-badge.template-id-badge-unsaved {
+        color: #dc2626;
+        background: #ffffff;
+        border-color: #ffffff;
+        font-weight: 700;
       }
 
       .toolbar-control {
@@ -373,6 +403,33 @@
         box-shadow:
           0 0 0 1px rgba(15, 23, 42, 1),
           0 6px 14px rgba(15, 23, 42, 1);
+      }
+
+      .toolbar-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+        pointer-events: none;
+        transform: none;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.85),
+          0 4px 10px rgba(15, 23, 42, 0.65);
+      }
+
+      .toolbar-button:disabled:hover {
+        border-color: rgba(148, 163, 184, 0.4);
+        transform: none;
+        background: radial-gradient(
+          circle at top,
+          rgba(248, 250, 252, 0.08),
+          rgba(15, 23, 42, 0.95)
+        );
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 10px 20px rgba(15, 23, 42, 0.9);
+      }
+
+      .toolbar-button:disabled:hover::before {
+        opacity: 0;
       }
 
       .toolbar-right {
@@ -597,6 +654,37 @@
         max-height: 120px;
         overflow: auto;
         padding: 8px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .template-list-item {
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(15, 23, 42, 0.36);
+        color: rgba(226, 232, 240, 0.94);
+        border-radius: 3px;
+        padding: 6px 8px;
+        cursor: pointer;
+        line-height: 1.35;
+        text-align: left;
+        transition:
+          border-color 140ms ease-out,
+          background-color 140ms ease-out,
+          box-shadow 140ms ease-out;
+      }
+
+      .template-list-item:hover {
+        border-color: rgba(125, 211, 252, 0.8);
+        background: rgba(2, 132, 199, 0.2);
+      }
+
+      .template-list-item.template-list-item-selected {
+        border-color: rgba(56, 189, 248, 0.95);
+        background: rgba(56, 189, 248, 0.28);
+        box-shadow:
+          inset 0 0 0 1px rgba(186, 230, 253, 0.42),
+          0 0 0 1px rgba(15, 23, 42, 0.92);
       }
 
       .action-icon {
@@ -1472,6 +1560,15 @@
         padding-top: 8px;
         display: flex;
         justify-content: flex-end;
+        align-items: flex-end;
+      }
+
+      .rightbar-footer-logo {
+        max-width: 100%;
+        width: auto;
+        height: auto;
+        display: block;
+        object-fit: contain;
       }
 
       .rightbar-footer .viewport-badge {
@@ -1531,30 +1628,23 @@
         <div class="toolbar-left">
           <div class="brand">
             <img
+              class="brand-logo"
               src="./images/flow-forge-tksoft-hr-blue-05.png"
               alt="Flow Forge"
-              style="
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-                display: block;
-                margin-left: -2px;
-              "
             />
           </div>
           <div class="toolbar-left-content">
             <div class="toolbar-buttons" id="toolbar-buttons"></div>
             <div class="toolbar-fields">
               <div class="toolbar-field">
-                <div class="toolbar-field-label">Template status</div>
-                <select
-                  class="toolbar-control"
-                  id="template-status"
-                  aria-label="Template status"
-                ></select>
-              </div>
-              <div class="toolbar-field">
-                <div class="toolbar-field-label">Template name</div>
+                <div class="toolbar-field-label">
+                  Template name
+                  <span
+                    id="template-id-badge"
+                    class="template-id-badge"
+                    aria-live="polite"
+                  ></span>
+                </div>
                 <input
                   class="toolbar-control"
                   id="template-name"
@@ -1564,6 +1654,14 @@
                   aria-label="Template name"
                   placeholder="For example: My first template"
                 />
+              </div>
+              <div class="toolbar-field">
+                <div class="toolbar-field-label">Template status</div>
+                <select
+                  class="toolbar-control"
+                  id="template-status"
+                  aria-label="Template status"
+                ></select>
               </div>
             </div>
           </div>
@@ -1604,7 +1702,7 @@
                 class="library-item lib-color-1"
                 draggable="true"
                 data-template-id="constants"
-                data-block-type-id="Constants"
+                data-block-type-id="constants"
                 data-max-width="700"
                 data-max-height="500"
               >
@@ -1615,7 +1713,7 @@
                 class="library-item lib-color-2"
                 draggable="true"
                 data-template-id="variables"
-                data-block-type-id="Variables"
+                data-block-type-id="variables"
                 data-max-width="700"
                 data-max-height="500"
               >
@@ -1626,18 +1724,18 @@
                 class="library-item lib-color-3"
                 draggable="true"
                 data-template-id="watch"
-                data-block-type-id="Watch"
+                data-block-type-id="watch"
                 data-max-width="500"
                 data-max-height="300"
               >
-                <div class="library-item-label">Monitor</div>
+                <div class="library-item-label">Debug</div>
                 <div class="library-item-title">Watch</div>
               </div>
               <div
                 class="library-item lib-color-4"
                 draggable="true"
                 data-template-id="start"
-                data-block-type-id="Start"
+                data-block-type-id="start"
               >
                 <div class="library-item-label">Flow</div>
                 <div class="library-item-title">Start</div>
@@ -1646,7 +1744,7 @@
                 class="library-item lib-color-5"
                 draggable="true"
                 data-template-id="finish"
-                data-block-type-id="Finish"
+                data-block-type-id="finish"
               >
                 <div class="library-item-label">Flow</div>
                 <div class="library-item-title">Finish</div>
@@ -1655,7 +1753,7 @@
                 class="library-item lib-color-6"
                 draggable="true"
                 data-template-id="expressions"
-                data-block-type-id="Expressions"
+                data-block-type-id="expressions"
               >
                 <div class="library-item-label">Logic</div>
                 <div class="library-item-title">Expressions</div>
@@ -1664,7 +1762,7 @@
                 class="library-item lib-color-7"
                 draggable="true"
                 data-template-id="conditions"
-                data-block-type-id="Conditions"
+                data-block-type-id="conditions"
               >
                 <div class="library-item-label">Logic</div>
                 <div class="library-item-title">Conditions</div>
@@ -1673,7 +1771,7 @@
                 class="library-item lib-color-8"
                 draggable="true"
                 data-template-id="delay"
-                data-block-type-id="Delay"
+                data-block-type-id="delay"
               >
                 <div class="library-item-label">Timing</div>
                 <div class="library-item-title">Delay</div>
@@ -1682,7 +1780,7 @@
                 class="library-item lib-color-9"
                 draggable="true"
                 data-template-id="confirmation"
-                data-block-type-id="Confirmation"
+                data-block-type-id="confirmation"
               >
                 <div class="library-item-label">Interaction</div>
                 <div class="library-item-title">Confirmation</div>
@@ -1690,8 +1788,8 @@
               <div
                 class="library-item lib-color-10"
                 draggable="true"
-                data-template-id="ai"
-                data-block-type-id="AI"
+                data-template-id="assistant-ai"
+                data-block-type-id="assistant-ai"
                 data-max-width="1200"
                 data-max-height="700"
               >
@@ -1797,7 +1895,11 @@ Lorem ipsum
           <div class="rightbar-section" id="my-templates-panel">
             <div class="rightbar-section-header">MY TEMPLATES</div>
             <div class="rightbar-section-body">
-              <div class="rightbar-templates-list">
+              <div
+                class="rightbar-templates-list"
+                id="templates-list"
+                aria-label="Template list"
+              >
                 <div class="rightbar-muted">
                   here will be a long list of templates<br />
                   ...<br />
@@ -1879,9 +1981,9 @@ Lorem ipsum
 
           <div class="rightbar-footer">
             <img
+              class="rightbar-footer-logo"
               src="./images/logo-tksoft-hr-blue-01.png"
               alt="TKSoft"
-              style="width: 100%; height: 100%; object-fit: contain; display: block"
             />
           </div>
         </aside>
@@ -1918,11 +2020,59 @@ Lorem ipsum
           REJECTED: 'REJECTED',
         });
 
+        /** Canonical block_type_id (lowercase key) -> title shown on blocks / library. */
+        const BLOCK_TYPE_DISPLAY = Object.freeze({
+          constants: 'Constants',
+          variables: 'Variables',
+          watch: 'Watch',
+          start: 'Start',
+          finish: 'Finish',
+          expressions: 'Expressions',
+          conditions: 'Conditions',
+          delay: 'Delay',
+          confirmation: 'Confirmation',
+          'assistant-ai': 'AI',
+        });
+
+        /** Canonical block_type_id -> sidebar category label. */
+        const BLOCK_TYPE_CATEGORY = Object.freeze({
+          constants: 'System',
+          variables: 'System',
+          watch: 'Debug',
+          start: 'Flow',
+          finish: 'Flow',
+          expressions: 'Logic',
+          conditions: 'Logic',
+          delay: 'Timing',
+          confirmation: 'Interaction',
+          'assistant-ai': 'Assistant',
+        });
+
+        function normalizeBlockTypeId(raw) {
+          const s = String(raw ?? '').trim();
+          if (!s) return '';
+          const lower = s.toLowerCase();
+          if (lower === 'ai') return 'assistant-ai';
+          if (Object.hasOwn(BLOCK_TYPE_DISPLAY, lower)) {
+            return lower;
+          }
+          for (const [key, title] of Object.entries(BLOCK_TYPE_DISPLAY)) {
+            if (title === s) return key;
+          }
+          return lower;
+        }
+
+        function getBlockTypeDisplayTitle(canonicalId) {
+          const c = normalizeBlockTypeId(canonicalId);
+          return BLOCK_TYPE_DISPLAY[c] || canonicalId;
+        }
+
         const toolbarContainer = document.getElementById('toolbar-buttons');
         const toolbarActions = [
           { id: 'new-template', label: 'New template' },
           { id: 'save-template', label: 'Save this template' },
         ];
+        let saveTemplateToolbarBtn = null;
 
         const modalOverlay = document.getElementById('modal-overlay');
         const modalTitleEl = document.getElementById('modal-title');
@@ -2003,6 +2153,63 @@ Lorem ipsum
           yesBtn?.addEventListener('click', onYes);
         }
 
+        function showDirtyNewTemplateConfirm(onSave, onDismiss) {
+          if (!modalOverlay || !modalTitleEl || !modalBodyEl) return;
+
+          if (modalCloseBtn instanceof HTMLElement) {
+            modalCloseBtn.style.display = 'none';
+          }
+
+          modalTitleEl.textContent = 'Unsaved changes';
+          modalBodyEl.innerHTML = `
+            <div>You have unsaved changes in the current template.</div>
+            <div class="confirm-actions">
+              <button
+                type="button"
+                class="modal-close modal-close-secondary"
+                id="confirm-cancel"
+                autofocus
+              >
+                Cancel
+              </button>
+              <button type="button" class="modal-close modal-close-secondary" id="confirm-dismiss">
+                Dismiss changes
+              </button>
+              <button type="button" class="modal-close" id="confirm-save">
+                Save template
+              </button>
+            </div>
+          `;
+          modalOverlay.classList.add('modal-overlay-open');
+
+          const cancelBtn = modalBodyEl.querySelector('#confirm-cancel');
+          const dismissBtn = modalBodyEl.querySelector('#confirm-dismiss');
+          const saveBtn = modalBodyEl.querySelector('#confirm-save');
+
+          const cleanup = () => {
+            try {
+              if (cancelBtn) cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+              if (dismissBtn) dismissBtn.replaceWith(dismissBtn.cloneNode(true));
+              if (saveBtn) saveBtn.replaceWith(saveBtn.cloneNode(true));
+            } catch {}
+          };
+
+          cancelBtn?.addEventListener('click', () => {
+            cleanup();
+            closeModal();
+          });
+          dismissBtn?.addEventListener('click', () => {
+            cleanup();
+            closeModal();
+            onDismiss?.();
+          });
+          saveBtn?.addEventListener('click', async () => {
+            cleanup();
+            closeModal();
+            await onSave?.();
+          });
+        }
+
         function closeModal() {
           if (modalCloseBtn instanceof HTMLElement) {
             modalCloseBtn.style.display = '';
@@ -2018,29 +2225,50 @@ Lorem ipsum
           if (e.key === 'Escape') closeModal();
         });
 
+        function startNewTemplate() {
+          resetCanvasDOM();
+          templateStatusSelect.value = TemplateStatus.EDITING;
+          templateNameInput.value = '';
+          currentTemplateId = null;
+          setCanvasDirtyFlag(false);
+          updateTemplateNameValidity();
+          updateTemplateStatusAppearance();
+          try {
+            localStorage.removeItem(CANVAS_STORAGE_KEY);
+          } catch {}
+        }
+
         toolbarActions.forEach((action) => {
           const btn = document.createElement('button');
           btn.className = 'toolbar-button';
           btn.type = 'button';
+          if (action.id === 'save-template') {
+            btn.id = 'toolbar-save-template';
+            btn.disabled = true;
+            saveTemplateToolbarBtn = btn;
+          }
 
           const mainSpan = document.createElement('span');
           mainSpan.textContent = action.label;
           btn.appendChild(mainSpan);
 
-          btn.addEventListener('click', () => {
+          btn.addEventListener('click', async () => {
             if (action.id === 'save-template') {
-              handleSaveTemplate();
+              await handleSaveTemplate();
               return;
             }
             if (action.id === 'new-template') {
-              resetCanvasDOM();
-              templateStatusSelect.value = TemplateStatus.EDITING;
-              templateNameInput.value = '';
-              updateTemplateNameValidity();
-              updateTemplateStatusAppearance();
-              try {
-                localStorage.removeItem(CANVAS_STORAGE_KEY);
-              } catch {}
+              if (isCanvasStateDirty) {
+                showDirtyNewTemplateConfirm(
+                  async () => {
+                    const saved = await handleSaveTemplate();
+                    if (saved) startNewTemplate();
+                  },
+                  () => startNewTemplate(),
+                );
+                return;
+              }
+              startNewTemplate();
               return;
             }
             alert(action.label);
@@ -2051,10 +2279,21 @@ Lorem ipsum
 
         const templateStatusSelect = document.getElementById('template-status');
         const templateNameInput = document.getElementById('template-name');
+        const templateIdBadge = document.getElementById('template-id-badge');
         const tplLoadBtn = document.getElementById('tpl-load');
         const tplDeleteBtn = document.getElementById('tpl-delete');
         const tplUpdateBtn = document.getElementById('tpl-update');
         const myTemplatesPanel = document.getElementById('my-templates-panel');
+        const templatesListContainer = myTemplatesPanel?.querySelector(
+          '.rightbar-templates-list',
+        );
+        let selectedTemplateListItem = null;
+        let currentTemplateId = null;
+        let isCanvasStateDirty = false;
+        function setCanvasDirtyFlag(isDirty) {
+          isCanvasStateDirty = Boolean(isDirty);
+          updateTemplateIdBadge();
+        }
         const journalToggleBtn = document.getElementById('journal-toggle');
         const journalPanel = document.getElementById('journal-panel');
         const journalText = journalPanel?.querySelector('.journal-text');
@@ -2101,6 +2340,23 @@ Lorem ipsum
           templateNameInput.classList.toggle('toolbar-control-invalid', !ok);
         }
 
+        function updateTemplateIdBadge() {
+          if (!(templateIdBadge instanceof HTMLElement)) return;
+          const dirtyMark = isCanvasStateDirty ? ' *' : '';
+          const dirtyHint = isCanvasStateDirty
+            ? ' Unsaved server changes are present.'
+            : '';
+          if (Number.isFinite(currentTemplateId) && currentTemplateId > 0) {
+            templateIdBadge.textContent = `ID: ${currentTemplateId}${dirtyMark}`;
+            templateIdBadge.classList.remove('template-id-badge-unsaved');
+            templateIdBadge.title = `Saved template ID ${currentTemplateId}.${dirtyHint}`;
+          } else {
+            templateIdBadge.textContent = `not saved${dirtyMark}`;
+            templateIdBadge.classList.add('template-id-badge-unsaved');
+            templateIdBadge.title = `Template is not saved on server yet.${dirtyHint}`;
+          }
+        }
+
         function getTemplateState() {
           return {
             status: String(templateStatusSelect?.value || TemplateStatus.UNKNOWN),
@@ -2131,19 +2387,318 @@ Lorem ipsum
         });
         updateTemplateNameValidity();
 
-        tplLoadBtn?.addEventListener('click', () => {
-          // Placeholder: load template from backend.
-          // On successful load:
-          // 1) clear local canvas+localStorage
-          // 2) applyCanvasState(loadedState)
-          // 3) persistCanvasStateDebounced()
-          alert('Load (todo)');
+        function getSelectedTemplateMeta() {
+          if (!(selectedTemplateListItem instanceof HTMLElement)) {
+            return null;
+          }
+          const templateId = Number(
+            selectedTemplateListItem.dataset.templateId || '',
+          );
+          const templateName = String(
+            selectedTemplateListItem.dataset.templateName || '',
+          ).trim();
+          if (!Number.isFinite(templateId) || templateId <= 0 || !templateName) {
+            return null;
+          }
+          return { templateId, templateName };
+        }
+
+        function buildCanvasStateFromBackend(logicResp, visualsResp, fallbackTemplateId) {
+          const templateId = Number(
+            logicResp?.template_id ?? logicResp?.templateId ?? fallbackTemplateId,
+          );
+          const templateName = String(
+            logicResp?.name || visualsResp?.name || '',
+          ).trim();
+          const templateStatus = String(
+            logicResp?.status || TemplateStatus.UNKNOWN,
+          ).toUpperCase();
+          const knownStatuses = Object.values(TemplateStatus);
+          const safeStatus = knownStatuses.includes(templateStatus)
+            ? templateStatus
+            : TemplateStatus.UNKNOWN;
+
+          let visualsData = {};
+          if (visualsResp?.data != null) {
+            if (typeof visualsResp.data !== 'string') {
+              throw new Error('Template visuals "data" must be a JSON string.');
+            }
+            try {
+              visualsData = JSON.parse(visualsResp.data);
+            } catch {
+              throw new Error('Cannot parse template visuals JSON.');
+            }
+          }
+
+          const visualBlocks = Array.isArray(visualsData?.blocks)
+            ? visualsData.blocks
+            : [];
+          const visualBlockById = new Map();
+          visualBlocks.forEach((b) => {
+            const key = String(b?.internal_block_id ?? '');
+            if (key) visualBlockById.set(key, b);
+          });
+
+          const visualLines = Array.isArray(visualsData?.lines) ? visualsData.lines : [];
+          const visualLineById = new Map();
+          visualLines.forEach((l) => {
+            const key = String(l?.internal_line_id ?? '');
+            if (key) visualLineById.set(key, l);
+          });
+
+          const logicBlocks = Array.isArray(logicResp?.blocks) ? logicResp.blocks : [];
+          const blocks = logicBlocks.map((b) => {
+            const internalId = String(b?.internal_block_id ?? b?.internalBlockId ?? '');
+            const visualBlock = visualBlockById.get(internalId) || {};
+            return {
+              internal_block_id: internalId,
+              block_type_id: normalizeBlockTypeId(
+                String(b?.block_type_id ?? b?.blockTypeId ?? ''),
+              ),
+              default_input_text: String(
+                b?.default_input_text ?? b?.defaultInputText ?? '',
+              ),
+              x: Number(visualBlock?.x ?? 0),
+              y: Number(visualBlock?.y ?? 0),
+              width: Number(visualBlock?.width ?? 160),
+              height: Number(visualBlock?.height ?? 80),
+            };
+          });
+
+          const logicLines = Array.isArray(logicResp?.lines) ? logicResp.lines : [];
+          const lines = logicLines.map((l) => {
+            const internalLineId = String(
+              l?.internal_line_id ?? l?.internalLineId ?? '',
+            );
+            const visualLine = visualLineById.get(internalLineId) || {};
+            return {
+              internal_line_id: internalLineId,
+              block_from_internal_id: String(
+                l?.block_from_internal_id ?? l?.blockFromInternalId ?? '',
+              ),
+              block_to_internal_id: String(
+                l?.block_to_internal_id ?? l?.blockToInternalId ?? '',
+              ),
+              from_side: String(visualLine?.from_side ?? ''),
+              to_side: String(visualLine?.to_side ?? ''),
+            };
+          });
+
+          const width = Number(
+            visualsData?.canvas?.width ?? visualsData?.canvasWidth ?? MIN_CANVAS_WIDTH,
+          );
+          const height = Number(
+            visualsData?.canvas?.height ??
+              visualsData?.canvasHeight ??
+              MIN_CANVAS_HEIGHT,
+          );
+          const normalizeCanvasDimension = (raw, min, max) => {
+            if (!Number.isFinite(raw)) return min;
+            const snapped =
+              Math.round(raw / CANVAS_SIZE_STEP) * CANVAS_SIZE_STEP;
+            if (!Number.isFinite(snapped)) return min;
+            return Math.min(max, Math.max(min, snapped));
+          };
+
+          return {
+            v: CANVAS_STATE_VERSION,
+            template: {
+              name: templateName,
+              status: safeStatus,
+            },
+            template_id:
+              Number.isFinite(templateId) && templateId > 0 ? templateId : null,
+            canvas: {
+              width: normalizeCanvasDimension(
+                width,
+                MIN_CANVAS_WIDTH,
+                MAX_CANVAS_WIDTH,
+              ),
+              height: normalizeCanvasDimension(
+                height,
+                MIN_CANVAS_HEIGHT,
+                MAX_CANVAS_HEIGHT,
+              ),
+            },
+            blocks,
+            lines,
+          };
+        }
+
+        async function loadTemplateBySelection() {
+          const authState = getAuthState();
+          const accessToken = authState?.access_token;
+          if (!accessToken) {
+            showModal(
+              'Cannot load template',
+              'Please login before loading a template.',
+            );
+            return false;
+          }
+
+          const selected = getSelectedTemplateMeta();
+          if (!selected) {
+            showModal(
+              'Cannot load template',
+              'Please select a template from "My templates" first.',
+            );
+            return false;
+          }
+
+          try {
+            const templateGetPath = `/templates/get?template_id=${encodeURIComponent(
+              String(selected.templateId),
+            )}`;
+            const visualsGetPath = `/templates/visuals/get?template_name=${encodeURIComponent(
+              selected.templateName,
+            )}`;
+            const [logicResp, visualsResp] = await Promise.all([
+              apiGet(CONFIG.templateServiceUrl, templateGetPath, accessToken),
+              apiGet(CONFIG.templateServiceUrl, visualsGetPath, accessToken),
+            ]);
+
+            const loadedState = buildCanvasStateFromBackend(
+              logicResp,
+              visualsResp,
+              selected.templateId,
+            );
+
+            resetCanvasDOM();
+            const applied = applyCanvasState(loadedState);
+            if (!applied) {
+              throw new Error('Loaded template data is invalid.');
+            }
+            persistCanvasState();
+            setCanvasDirtyFlag(false);
+            return true;
+          } catch (e) {
+            showModal('Load template error', String(e?.message || e));
+            return false;
+          }
+        }
+
+        tplLoadBtn?.addEventListener('click', async () => {
+          if (isCanvasStateDirty) {
+            showDirtyNewTemplateConfirm(
+              async () => {
+                const saved = await handleSaveTemplate();
+                if (saved) {
+                  await loadTemplateBySelection();
+                }
+              },
+              async () => {
+                await loadTemplateBySelection();
+              },
+            );
+            return;
+          }
+          await loadTemplateBySelection();
         });
-        tplDeleteBtn?.addEventListener('click', () => alert('Delete (todo)'));
-        tplUpdateBtn?.addEventListener('click', () => alert('Update (todo)'));
+        async function deleteTemplateBySelection() {
+          const escapeHtml = (value) =>
+            String(value)
+              .replaceAll('&', '&amp;')
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')
+              .replaceAll('"', '&quot;')
+              .replaceAll("'", '&#39;');
+          const authState = getAuthState();
+          const accessToken = authState?.access_token;
+          if (!accessToken) {
+            showModal(
+              'Cannot delete template',
+              'Please login before deleting a template.',
+            );
+            return false;
+          }
+
+          const selected = getSelectedTemplateMeta();
+          if (!selected) {
+            showModal(
+              'Cannot delete template',
+              'Please select a template from "My templates" first.',
+            );
+            return false;
+          }
+
+          const isOpenedTemplate =
+            Number.isFinite(currentTemplateId) &&
+            currentTemplateId > 0 &&
+            currentTemplateId === selected.templateId;
+
+          const performDelete = async () => {
+            try {
+              const deleteTemplatePath = `/templates/delete?template_id=${encodeURIComponent(
+                String(selected.templateId),
+              )}`;
+              const deleteVisualsPath = `/templates/visuals/delete?template_name=${encodeURIComponent(
+                selected.templateName,
+              )}`;
+              await Promise.all([
+                apiDeleteTo(CONFIG.templateServiceUrl, deleteTemplatePath, accessToken),
+                apiDeleteTo(CONFIG.templateServiceUrl, deleteVisualsPath, accessToken),
+              ]);
+
+              if (isOpenedTemplate) {
+                startNewTemplate();
+              }
+
+              await refreshTemplateList({
+                preferredTemplateId:
+                  Number.isFinite(currentTemplateId) && currentTemplateId > 0
+                    ? currentTemplateId
+                    : null,
+                preferredTemplateName: templateNameInput?.value?.trim() || '',
+              });
+              return true;
+            } catch (e) {
+              showModal('Delete template error', String(e?.message || e));
+              return false;
+            }
+          };
+
+          showModalHtml(
+            'Delete template',
+            `
+              <div>
+                You are about to delete template "<b>${escapeHtml(selected.templateName)}</b>".
+              </div>
+              <div class="confirm-actions">
+                <button
+                  type="button"
+                  class="modal-close modal-close-secondary"
+                  id="confirm-cancel"
+                  autofocus
+                >
+                  Cancel
+                </button>
+                <button type="button" class="modal-close" id="confirm-delete">
+                  Yes, delete
+                </button>
+              </div>
+            `,
+          );
+          if (modalCloseBtn instanceof HTMLElement) {
+            modalCloseBtn.style.display = 'none';
+          }
+
+          const cancelBtn = modalBodyEl?.querySelector('#confirm-cancel');
+          const deleteBtn = modalBodyEl?.querySelector('#confirm-delete');
+          cancelBtn?.addEventListener('click', closeModal);
+          deleteBtn?.addEventListener('click', async () => {
+            closeModal();
+            await performDelete();
+          });
+          return true;
+        }
+
+        tplDeleteBtn?.addEventListener('click', async () => {
+          await deleteTemplateBySelection();
+        });
 
         const CONFIG = Object.freeze({
           userServiceUrl: 'http://localhost:8082',
+          templateServiceUrl: 'http://localhost:8080',
           storageKey: 'flowForgeAuth',
           refreshIntervalMinutes: 10,
         });
@@ -2187,6 +2742,21 @@ Lorem ipsum
               btn.disabled = !isLoggedIn;
             }
           });
+          if (tplDeleteBtn instanceof HTMLButtonElement) {
+            const hasSelection = selectedTemplateListItem instanceof HTMLElement;
+            tplDeleteBtn.disabled = !isLoggedIn || !hasSelection;
+          }
+
+          const saveBtn =
+            document.getElementById('toolbar-save-template') ||
+            saveTemplateToolbarBtn;
+          if (saveBtn instanceof HTMLButtonElement) {
+            saveBtn.disabled = !isLoggedIn;
+            saveBtn.setAttribute(
+              'aria-disabled',
+              isLoggedIn ? 'false' : 'true',
+            );
+          }
         }
 
         function updateAuthButtonsVisibility() {
@@ -2210,6 +2780,9 @@ Lorem ipsum
           updateTemplatesPanelAvailability(isLoggedIn);
         }
 
+        updateAuthButtonsVisibility();
+        updateTemplateIdBadge();
+
         async function sha256Hex(text) {
           const data = new TextEncoder().encode(text);
           const hash = await crypto.subtle.digest('SHA-256', data);
@@ -2226,15 +2799,31 @@ Lorem ipsum
         }
 
         async function apiPost(path, body, accessToken) {
-          const res = await fetch(`${CONFIG.userServiceUrl}${path}`, {
-            method: 'POST',
+          return await apiRequest('POST', CONFIG.userServiceUrl, path, body, accessToken);
+        }
+
+        async function apiPostTo(baseUrl, path, body, accessToken) {
+          return await apiRequest('POST', baseUrl, path, body, accessToken);
+        }
+
+        async function apiGet(baseUrl, path, accessToken) {
+          return await apiRequest('GET', baseUrl, path, null, accessToken);
+        }
+
+        async function apiDeleteTo(baseUrl, path, accessToken) {
+          return await apiRequest('DELETE', baseUrl, path, null, accessToken);
+        }
+
+        async function apiRequest(method, baseUrl, path, body, accessToken) {
+          const res = await fetch(`${baseUrl}${path}`, {
+            method,
             headers: {
               'Content-Type': 'application/json',
               ...(accessToken
                 ? { Authorization: `Bearer ${accessToken}` }
                 : {}),
             },
-            body: JSON.stringify(body),
+            ...(body == null ? {} : { body: JSON.stringify(body) }),
           });
 
           const contentType = res.headers.get('content-type') || '';
@@ -2261,6 +2850,133 @@ Lorem ipsum
 
           return payload;
         }
+
+        function clearTemplateListView() {
+          if (!(templatesListContainer instanceof HTMLElement)) return;
+          selectedTemplateListItem = null;
+          templatesListContainer.innerHTML =
+            '<div class="rightbar-muted">Template list is empty.</div>';
+          updateTemplatesPanelAvailability(Boolean(getAuthState()));
+        }
+
+        function setSelectedTemplateListItem(node) {
+          if (selectedTemplateListItem instanceof HTMLElement) {
+            selectedTemplateListItem.classList.remove('template-list-item-selected');
+          }
+          if (node instanceof HTMLElement) {
+            selectedTemplateListItem = node;
+            selectedTemplateListItem.classList.add('template-list-item-selected');
+          } else {
+            selectedTemplateListItem = null;
+          }
+          updateTemplatesPanelAvailability(Boolean(getAuthState()));
+        }
+
+        function renderTemplateList(items, options = {}) {
+          const { preferredTemplateId = null, preferredTemplateName = '' } = options;
+          if (!(templatesListContainer instanceof HTMLElement)) return;
+          selectedTemplateListItem = null;
+          if (!Array.isArray(items) || items.length === 0) {
+            clearTemplateListView();
+            return;
+          }
+
+          templatesListContainer.innerHTML = '';
+          const fragment = document.createDocumentFragment();
+          items.forEach((item, idx) => {
+            const name = String(item?.name || '').trim() || 'Unnamed';
+            const status = String(item?.status || TemplateStatus.UNKNOWN).toUpperCase();
+            const row = document.createElement('button');
+            row.type = 'button';
+            row.className = 'template-list-item';
+            row.id = `template-list-item-${idx + 1}`;
+            row.textContent = `${name} (${status})`;
+            const templateId = Number(
+              item?.template_id ?? item?.templateId ?? item?.projectId,
+            );
+            if (Number.isFinite(templateId) && templateId > 0) {
+              row.dataset.templateId = String(templateId);
+            }
+            row.dataset.templateName = name;
+            row.addEventListener('click', () => {
+              setSelectedTemplateListItem(row);
+            });
+            fragment.appendChild(row);
+          });
+          templatesListContainer.appendChild(fragment);
+
+          const rows = Array.from(
+            templatesListContainer.querySelectorAll('.template-list-item'),
+          );
+          const preferredName = String(preferredTemplateName || '').trim();
+          const selectedByPreference = rows.find((row) => {
+            const rowId = Number(row.dataset.templateId || '');
+            const rowName = String(row.dataset.templateName || '').trim();
+            const byId =
+              Number.isFinite(preferredTemplateId) &&
+              preferredTemplateId > 0 &&
+              rowId === preferredTemplateId;
+            const byName = preferredName && rowName === preferredName;
+            return byId || byName;
+          });
+          setSelectedTemplateListItem(selectedByPreference || rows[0] || null);
+        }
+
+        async function refreshTemplateList(options = {}) {
+          const {
+            showError = true,
+            keepSelection = true,
+            preferredTemplateId = null,
+            preferredTemplateName = '',
+          } = options;
+          const state = getAuthState();
+          const accessToken = state?.access_token;
+          const selectedBefore = keepSelection ? getSelectedTemplateMeta() : null;
+          const openedTemplateId =
+            Number.isFinite(currentTemplateId) && currentTemplateId > 0
+              ? currentTemplateId
+              : null;
+          const openedTemplateName = templateNameInput?.value?.trim() || '';
+
+          if (!accessToken) {
+            clearTemplateListView();
+            return;
+          }
+
+          try {
+            const resp = await apiGet(
+              CONFIG.templateServiceUrl,
+              '/templates/list',
+              accessToken,
+            );
+            const items = Array.isArray(resp?.items) ? resp.items : [];
+            renderTemplateList(items, {
+              preferredTemplateId:
+                Number.isFinite(preferredTemplateId) && preferredTemplateId > 0
+                  ? preferredTemplateId
+                  : openedTemplateId ?? selectedBefore?.templateId ?? null,
+              preferredTemplateName:
+                String(preferredTemplateName || '').trim() ||
+                openedTemplateName ||
+                selectedBefore?.templateName ||
+                '',
+            });
+          } catch (e) {
+            clearTemplateListView();
+            if (showError) {
+              const message = String(e?.message || e);
+              const humanFriendlyMessage =
+                message === 'Failed to fetch'
+                  ? 'Failed to fetch template list. The browser request was blocked before receiving a response. Please check template-service CORS/OPTIONS configuration and that the service is reachable at http://localhost:8080.'
+                  : message;
+              showModal('Template list error', humanFriendlyMessage);
+            }
+          }
+        }
+
+        tplUpdateBtn?.addEventListener('click', () => {
+          refreshTemplateList();
+        });
 
         function openAuthForm(kind) {
           function wirePasswordToggle(inputId, toggleId) {
@@ -2405,6 +3121,10 @@ Lorem ipsum
                   setAuthState({ access_token, refresh_token, login });
                   closeModal();
                   updateAuthButtonsVisibility();
+                  await refreshTemplateList({
+                    preferredTemplateId: currentTemplateId,
+                    preferredTemplateName: templateNameInput?.value?.trim() || '',
+                  });
                   showModal('Login', 'Login completed successfully.');
                 }
               } catch (e) {
@@ -2437,6 +3157,7 @@ Lorem ipsum
           } finally {
             setAuthState(null);
             updateAuthButtonsVisibility();
+            clearTemplateListView();
           }
         });
 
@@ -2460,6 +3181,7 @@ Lorem ipsum
             // silent auto-refresh fail -> drop auth
             setAuthState(null);
             updateAuthButtonsVisibility();
+            clearTemplateListView();
           }
         }
 
@@ -2479,7 +3201,6 @@ Lorem ipsum
         }
 
         function writeJournal(text) {
-          forceOpenJournal();
           if (journalText) {
             journalText.value = text;
             journalText.scrollTop = 0;
@@ -2495,6 +3216,18 @@ Lorem ipsum
         const canvas = document.getElementById('canvas');
         const minimap = document.getElementById('minimap');
         const library = document.getElementById('library');
+        library?.querySelectorAll('.library-item').forEach((item) => {
+          const id = normalizeBlockTypeId(
+            item.dataset.blockTypeId || item.dataset.templateId || '',
+          );
+          if (!id) return;
+          const cat = BLOCK_TYPE_CATEGORY[id];
+          const disp = BLOCK_TYPE_DISPLAY[id];
+          const labEl = item.querySelector('.library-item-label');
+          const titleEl = item.querySelector('.library-item-title');
+          if (cat && labEl) labEl.textContent = cat;
+          if (disp && titleEl) titleEl.textContent = disp;
+        });
         const connectionsLayer = document.getElementById('canvas-connections');
         const canvasViewport = canvas?.closest('.canvas-viewport');
         const canvasWidthInput = document.getElementById('canvas-width');
@@ -2530,7 +3263,10 @@ Lorem ipsum
           }
 
           const id = node.dataset.internalBlockId || dash;
-          const blockTypeId = node.dataset.blockTypeId || dash;
+          const blockTypeCanonical = normalizeBlockTypeId(node.dataset.blockTypeId);
+          const blockTypeId = blockTypeCanonical
+            ? getBlockTypeDisplayTitle(blockTypeCanonical)
+            : dash;
           const inputEl = node.querySelector('.canvas-node-input');
           const defaultInputText =
             inputEl?.value ?? node.dataset.defaultInputText ?? dash;
@@ -2635,7 +3371,16 @@ Lorem ipsum
           closeNodeMenu();
         });
 
-        function handleSaveTemplate() {
+        async function handleSaveTemplate() {
+          const authState = getAuthState();
+          if (!authState?.access_token) {
+            showModal(
+              'Cannot save template',
+              'Please login before saving a template.',
+            );
+            return false;
+          }
+
           const status = templateStatusSelect.value;
           const name = templateNameInput.value.trim();
 
@@ -2648,7 +3393,7 @@ Lorem ipsum
               'Cannot save template',
               'The "Template status" field must not be UNKNOWN.',
             );
-            return;
+            return false;
           }
 
           if (name.length < 4 || name.length > 64) {
@@ -2657,19 +3402,19 @@ Lorem ipsum
               'Cannot save template',
               'The "Template name" field must be between 4 and 64 characters.',
             );
-            return;
+            return false;
           }
 
           const blocks = Array.from(
             canvas.querySelectorAll('.canvas-node'),
-          ).map((node) => ({
-            internal_block_id: node.dataset.internalBlockId,
-            block_type_id: node.dataset.blockTypeId,
-            default_input_text:
-              node.querySelector('.canvas-node-input')?.value ??
-              node.dataset.defaultInputText ??
-              '',
-          }));
+          ).map((node) => {
+            const canonical = normalizeBlockTypeId(node.dataset.blockTypeId);
+            return {
+              internal_block_id: node.dataset.internalBlockId,
+              block_type_id: canonical,
+              default_input_text: ensureDefaultInputForBackend(node, canonical),
+            };
+          });
 
           const lines = connections.map((c) => ({
             internal_line_id: c.internal_line_id,
@@ -2714,8 +3459,8 @@ Lorem ipsum
 
           const canvasState = {
             canvas: {
-              width: 1200,
-              height: 700,
+              width: canvasWidth,
+              height: canvasHeight,
               canvas_size_step: CANVAS_SIZE_STEP,
               block_position_step: NODE_POSITION_STEP,
               block_size_step: NODE_SIZE_STEP,
@@ -2727,6 +3472,66 @@ Lorem ipsum
           writeJournal(
             `${JSON.stringify(payload, null, 2)},\n\n${JSON.stringify(canvasState, null, 2)}`,
           );
+          const accessToken = authState.access_token;
+
+          try {
+            if (currentTemplateId == null) {
+              const created = await apiPostTo(
+                CONFIG.templateServiceUrl,
+                '/templates/create',
+                payload,
+                accessToken,
+              );
+              const createdTemplateId = Number(
+                created?.template_id ?? created?.templateId,
+              );
+              if (!Number.isFinite(createdTemplateId) || createdTemplateId <= 0) {
+                throw new Error('Invalid create response (missing template_id)');
+              }
+              currentTemplateId = createdTemplateId;
+              updateTemplateIdBadge();
+              persistCanvasState();
+            } else {
+              await apiPostTo(
+                CONFIG.templateServiceUrl,
+                '/templates/update',
+                {
+                  template_id: currentTemplateId,
+                  name,
+                  data: payload.data,
+                },
+                accessToken,
+              );
+            }
+
+            const visualsResp = await apiPostTo(
+              CONFIG.templateServiceUrl,
+              '/templates/visuals/set-or-update',
+              {
+                name,
+                data: JSON.stringify(canvasState),
+              },
+              accessToken,
+            );
+            if (visualsResp?.completed === false) {
+              throw new Error('Visuals were not saved (completed=false)');
+            }
+
+            persistCanvasState();
+            setCanvasDirtyFlag(false);
+            showModal(
+              'Template saved',
+              `Template "${name}" was saved successfully.`,
+            );
+            await refreshTemplateList({
+              preferredTemplateId: currentTemplateId,
+              preferredTemplateName: name,
+            });
+            return true;
+          } catch (e) {
+            showModal('Save template error', String(e?.message || e));
+            return false;
+          }
         }
 
         let dragNode = null;
@@ -2800,7 +3605,7 @@ Lorem ipsum
 
               return {
                 internal_block_id: node.dataset.internalBlockId,
-                block_type_id: node.dataset.blockTypeId,
+                block_type_id: normalizeBlockTypeId(node.dataset.blockTypeId),
                 default_input_text: defaultInputText,
                 x,
                 y,
@@ -2821,6 +3626,7 @@ Lorem ipsum
           return {
             v: CANVAS_STATE_VERSION,
             template: getTemplateState(),
+            template_id: currentTemplateId,
             canvas: { width: canvasWidth, height: canvasHeight },
             blocks,
             lines,
@@ -2838,6 +3644,7 @@ Lorem ipsum
 
         function persistCanvasStateDebounced() {
           if (suppressPersistence) return;
+          setCanvasDirtyFlag(true);
           if (persistTimer) globalThis.clearTimeout(persistTimer);
           persistTimer = globalThis.setTimeout(() => {
             persistTimer = null;
@@ -2881,19 +3688,20 @@ Lorem ipsum
         }
 
         function findLibraryItemByBlockTypeId(blockTypeId) {
-          const target =
-            typeof blockTypeId === 'string' ? blockTypeId.slice(0, 64) : '';
+          const target = normalizeBlockTypeId(
+            typeof blockTypeId === 'string' ? blockTypeId.slice(0, 64) : '',
+          );
           const items = Array.from(
             library?.querySelectorAll('.library-item') || [],
           );
           for (const libItem of items) {
-            const title =
+            const candidate = normalizeBlockTypeId(
               libItem.dataset.blockTypeId ||
-              libItem.querySelector('.library-item-title')?.textContent?.trim() ||
-              libItem.textContent?.trim() ||
-              '';
-            const normalized = title.slice(0, 64);
-            if (normalized === target) return libItem;
+                libItem.dataset.templateId ||
+                libItem.querySelector('.library-item-title')?.textContent?.trim() ||
+                '',
+            );
+            if (candidate === target) return libItem;
           }
           // Fallback: just use the first available library item.
           return items[0] || null;
@@ -2908,6 +3716,12 @@ Lorem ipsum
           try {
             if (!state?.canvas) return false;
             applyTemplateState(state.template);
+            const restoredTemplateId = Number(state.template_id);
+            currentTemplateId =
+              Number.isFinite(restoredTemplateId) && restoredTemplateId > 0
+                ? restoredTemplateId
+                : null;
+            updateTemplateIdBadge();
 
             const width = Number(state.canvas.width);
             const height = Number(state.canvas.height);
@@ -2922,16 +3736,17 @@ Lorem ipsum
             for (const b of blocks) {
               if (!b) continue;
               const internalId = String(b.internal_block_id ?? '').slice(0, 16);
-              const blockTypeId = String(b.block_type_id ?? '').slice(0, 64);
+              const blockTypeIdRaw = String(b.block_type_id ?? '').slice(0, 64);
+              const canonicalType = normalizeBlockTypeId(blockTypeIdRaw);
               const defaultInputText = String(b.default_input_text ?? '');
               const x = Number(b.x);
               const y = Number(b.y);
               const w = Number(b.width);
               const h = Number(b.height);
 
-              if (!internalId || !blockTypeId) continue;
+              if (!internalId || !canonicalType) continue;
 
-              const libItem = findLibraryItemByBlockTypeId(blockTypeId);
+              const libItem = findLibraryItemByBlockTypeId(canonicalType);
               if (!libItem) continue;
 
               const node = createNodeFromLibraryItem(libItem, x, y);
@@ -2939,14 +3754,21 @@ Lorem ipsum
               // Override restored ids/types/text.
               node.dataset.internalBlockId = internalId;
               node.dataset.nodeId = internalId;
-              node.dataset.blockTypeId = blockTypeId;
+              node.dataset.blockTypeId = canonicalType;
+              node.dataset.templateId = canonicalType;
               applyNodeSizeLimits(node, libItem);
-              node.dataset.defaultInputText = defaultInputText;
+              if (canonicalType === 'start' || canonicalType === 'finish') {
+                node.dataset.defaultInputText = getBlockTypeDisplayTitle(
+                  canonicalType,
+                );
+              } else {
+                node.dataset.defaultInputText = defaultInputText;
+              }
 
               const titleEl = node.querySelector(
                 '.canvas-node-topline-title',
               );
-              if (titleEl) titleEl.textContent = blockTypeId;
+              if (titleEl) titleEl.textContent = getBlockTypeDisplayTitle(canonicalType);
 
               const badgeEl = node.querySelector('.node-badge');
               if (badgeEl) badgeEl.textContent = '#' + internalId;
@@ -3042,6 +3864,7 @@ Lorem ipsum
 
             resetCanvasDOM();
             applyCanvasState(state);
+            setCanvasDirtyFlag(false);
             return true;
           } catch {
             return false;
@@ -3095,6 +3918,12 @@ Lorem ipsum
             maxHeight: 300,
           },
           ai: { minWidth: 200, minHeight: 130, maxWidth: 1200, maxHeight: 700 },
+          'assistant-ai': {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 1200,
+            maxHeight: 700,
+          },
         };
         const TEMPLATE_SIZE_LIMITS = {
           constants: {
@@ -3132,6 +3961,12 @@ Lorem ipsum
             maxHeight: 300,
           },
           ai: { minWidth: 200, minHeight: 130, maxWidth: 1200, maxHeight: 700 },
+          'assistant-ai': {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 1200,
+            maxHeight: 700,
+          },
         };
         const CONNECTION_DISABLED_BLOCK_TYPES = new Set([
           'constants',
@@ -3140,6 +3975,25 @@ Lorem ipsum
         ]);
         const DEFAULT_INPUT_TEXT =
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+
+        function ensureDefaultInputForBackend(node, canonicalBlockTypeId) {
+          if (
+            canonicalBlockTypeId === 'start' ||
+            canonicalBlockTypeId === 'finish'
+          ) {
+            return getBlockTypeDisplayTitle(canonicalBlockTypeId);
+          }
+          const inputEl = node.querySelector('.canvas-node-input');
+          let v =
+            (inputEl && inputEl.value) || node.dataset.defaultInputText || '';
+          v = String(v);
+          if (v.trim().length < 4) {
+            return DEFAULT_INPUT_TEXT.length >= 4
+              ? DEFAULT_INPUT_TEXT.slice(0, 4)
+              : '....';
+          }
+          return v;
+        }
 
         function autoScrollHorizontally(event) {
           if (!(canvasViewport instanceof HTMLElement)) return;
@@ -3161,24 +4015,29 @@ Lorem ipsum
         }
 
         function createNodeFromLibraryItem(libItem, x, y) {
-          const templateId = libItem.dataset.templateId || 'node';
+          const fallbackTemplateId = libItem.dataset.templateId || 'node';
           const node = document.createElement('div');
 
           const colorClasses = Array.from(libItem.classList).filter((cls) =>
             cls.startsWith('lib-color-'),
           );
           node.className = 'canvas-node ' + colorClasses.join(' ');
-          node.dataset.templateId = templateId;
           const internalBlockId = String(++nodeIdCounter).slice(0, 16);
           node.dataset.nodeId = internalBlockId;
           node.dataset.internalBlockId = internalBlockId;
 
-          const blockTypeId =
+          const rawBlockType =
             libItem.dataset.blockTypeId ||
+            libItem.dataset.templateId ||
             libItem.querySelector('.library-item-title')?.textContent?.trim() ||
             libItem.textContent?.trim() ||
             'Block';
-          node.dataset.blockTypeId = blockTypeId.slice(0, 64);
+          const canonicalBlockType = normalizeBlockTypeId(
+            String(rawBlockType).slice(0, 64),
+          );
+          node.dataset.blockTypeId = canonicalBlockType;
+          node.dataset.templateId = canonicalBlockType || fallbackTemplateId;
+
           const normalizedBlockTypeId = String(node.dataset.blockTypeId || '')
             .trim()
             .toLowerCase();
@@ -3190,14 +4049,21 @@ Lorem ipsum
             node.classList.add('canvas-node-no-connections');
           }
           applyNodeSizeLimits(node, libItem);
-          node.dataset.defaultInputText = DEFAULT_INPUT_TEXT;
+
+          if (canonicalBlockType === 'start' || canonicalBlockType === 'finish') {
+            node.dataset.defaultInputText = getBlockTypeDisplayTitle(
+              canonicalBlockType,
+            );
+          } else {
+            node.dataset.defaultInputText = DEFAULT_INPUT_TEXT;
+          }
 
           const top = document.createElement('div');
           top.className = 'canvas-node-topline';
 
           const title = document.createElement('div');
           title.className = 'canvas-node-topline-title';
-          title.textContent = `${node.dataset.blockTypeId}`;
+          title.textContent = getBlockTypeDisplayTitle(canonicalBlockType);
           top.appendChild(title);
 
           const badge = document.createElement('span');
@@ -3860,6 +4726,13 @@ Lorem ipsum
                 'url(#conn-arrow)',
               );
               const internalLineId = `${activeConnection.from.nodeId}-${toNodeId}`;
+              const duplicateInternalLineId = connections.some(
+                (existing) => existing.internal_line_id === internalLineId,
+              );
+              if (duplicateInternalLineId) {
+                // Silently skip duplicate connection id creation.
+                return;
+              }
               const conn = {
                 id: 'conn-' + ++connectionCounter,
                 internal_line_id: internalLineId,
@@ -4021,6 +4894,10 @@ Lorem ipsum
         if (!restoredOk) {
           applyCanvasSize(MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT);
         }
+        refreshTemplateList({
+          preferredTemplateId: currentTemplateId,
+          preferredTemplateName: templateNameInput?.value?.trim() || '',
+        });
         updatePropertiesPanel(null);
 
         window.addEventListener('load', () => {
