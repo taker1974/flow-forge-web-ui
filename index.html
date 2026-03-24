@@ -2525,7 +2525,14 @@ Lorem ipsum
           };
         }
 
-        async function loadTemplateBySelection() {
+        function isValidTemplateListMeta(meta) {
+          if (!meta) return false;
+          const id = Number(meta.templateId);
+          const name = String(meta.templateName || '').trim();
+          return Number.isFinite(id) && id > 0 && Boolean(name);
+        }
+
+        async function loadTemplateBySelection(metaOverride) {
           const authState = getAuthState();
           const accessToken = authState?.access_token;
           if (!accessToken) {
@@ -2536,7 +2543,9 @@ Lorem ipsum
             return false;
           }
 
-          const selected = getSelectedTemplateMeta();
+          const selected = isValidTemplateListMeta(metaOverride)
+            ? metaOverride
+            : getSelectedTemplateMeta();
           if (!selected) {
             showModal(
               'Cannot load template',
@@ -2570,6 +2579,10 @@ Lorem ipsum
             }
             persistCanvasState();
             setCanvasDirtyFlag(false);
+            await refreshTemplateList({
+              preferredTemplateId: selected.templateId,
+              preferredTemplateName: selected.templateName,
+            });
             return true;
           } catch (e) {
             showModal('Load template error', String(e?.message || e));
@@ -2577,22 +2590,27 @@ Lorem ipsum
           }
         }
 
-        tplLoadBtn?.addEventListener('click', async () => {
+        async function runLoadTemplateWithDirtyGuard() {
+          const loadTarget = getSelectedTemplateMeta();
           if (isCanvasStateDirty) {
             showDirtyNewTemplateConfirm(
               async () => {
                 const saved = await handleSaveTemplate();
                 if (saved) {
-                  await loadTemplateBySelection();
+                  await loadTemplateBySelection(loadTarget);
                 }
               },
               async () => {
-                await loadTemplateBySelection();
+                await loadTemplateBySelection(loadTarget);
               },
             );
             return;
           }
-          await loadTemplateBySelection();
+          await loadTemplateBySelection(loadTarget);
+        }
+
+        tplLoadBtn?.addEventListener('click', async () => {
+          await runLoadTemplateWithDirtyGuard();
         });
         async function deleteTemplateBySelection() {
           const escapeHtml = (value) =>
@@ -2900,6 +2918,11 @@ Lorem ipsum
             row.dataset.templateName = name;
             row.addEventListener('click', () => {
               setSelectedTemplateListItem(row);
+            });
+            row.addEventListener('dblclick', (e) => {
+              e.preventDefault();
+              setSelectedTemplateListItem(row);
+              runLoadTemplateWithDirtyGuard();
             });
             fragment.appendChild(row);
           });
@@ -3975,6 +3998,14 @@ Lorem ipsum
         ]);
         const DEFAULT_INPUT_TEXT =
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+        /** Matches TemplateBlockRequestDto: @NotNull, @Size(min=0, max=1048576). */
+        const DEFAULT_INPUT_TEXT_MAX_BACKEND = 1048576;
+
+        function clampDefaultInputForBackend(value) {
+          const s = String(value ?? '');
+          if (s.length <= DEFAULT_INPUT_TEXT_MAX_BACKEND) return s;
+          return s.slice(0, DEFAULT_INPUT_TEXT_MAX_BACKEND);
+        }
 
         function ensureDefaultInputForBackend(node, canonicalBlockTypeId) {
           if (
@@ -3984,15 +4015,9 @@ Lorem ipsum
             return getBlockTypeDisplayTitle(canonicalBlockTypeId);
           }
           const inputEl = node.querySelector('.canvas-node-input');
-          let v =
+          const v =
             (inputEl && inputEl.value) || node.dataset.defaultInputText || '';
-          v = String(v);
-          if (v.trim().length < 4) {
-            return DEFAULT_INPUT_TEXT.length >= 4
-              ? DEFAULT_INPUT_TEXT.slice(0, 4)
-              : '....';
-          }
-          return v;
+          return clampDefaultInputForBackend(v);
         }
 
         function autoScrollHorizontally(event) {
@@ -4120,7 +4145,7 @@ Lorem ipsum
             const input = document.createElement('textarea');
             input.className = 'canvas-node-input';
             input.placeholder = 'default_input_text';
-            input.maxLength = 4096;
+            input.maxLength = DEFAULT_INPUT_TEXT_MAX_BACKEND;
             input.value = node.dataset.defaultInputText;
             input.addEventListener('input', () => {
               updatePropertiesPanel(node);
