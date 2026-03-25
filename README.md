@@ -8,7 +8,13 @@ This is a minimal standalone prototype of an n8n/make-style canvas:
   - **Dragged from the library** onto the canvas (copy behaviour, the original stays in the library).
   - **Freely moved around** inside the canvas after they have been added.
 
-No build step is required: everything is in a single `index.html` file.
+No build step is required: static HTML, CSS, and JavaScript only. Shared assets (`font/`, `images/`) live in the project root; each app entry point references them with relative paths.
+
+## Project layout
+
+- **`index.html`** (root) — landing page with links to the apps below.
+- **`developer/index.html`** — **FlowForge Developer Studio**: editing workflow templates (blocks, connections, defaults).
+- **`runner/index.html`** — **FlowForge Runner**: placeholder aligned with the future “run template instance” experience (currently a copy of the developer UI).
 
 ## Run locally
 
@@ -19,4 +25,4 @@ npm install
 npm run start
 ```
 
-Then open the printed URL (for example `http://localhost:3000` or `http://localhost:5000`, depending on `serve`) in your browser.
+Then open the printed URL (for example `http://localhost:3000` or `http://localhost:5000`, depending on `serve`) in your browser. Use **`/`** for the hub, **`/developer/`** for the studio, or **`/runner/`** for the runner.

@@ -1,0 +1,4934 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>FlowForge Developer Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      :root {
+        --bg: #0f172a;
+        --surface: #020617;
+        --surface-alt: #020617;
+        --border-subtle: #1e293b;
+        --accent: #38bdf8;
+        --accent-soft: rgba(56, 189, 248, 0.1);
+        --text: #e5e7eb;
+        --text-muted: #9ca3af;
+        --canvas-bg: #020617;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'SF Pro Text',
+          'Segoe UI',
+          sans-serif;
+        background: radial-gradient(
+          circle at top left,
+          #1e293b 0,
+          #020617 45%,
+          #000000 100%
+        );
+        color: var(--text);
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .app-shell {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        backdrop-filter: blur(18px);
+        background: linear-gradient(
+          145deg,
+          rgba(15, 23, 42, 0.96),
+          rgba(2, 6, 23, 0.98)
+        );
+        box-shadow:
+          0 24px 80px rgba(15, 23, 42, 0.85),
+          0 0 0 1px rgba(148, 163, 184, 0.08),
+          inset 0 0 0 1px rgba(15, 23, 42, 0.9);
+        border-radius: 3px;
+        margin: 10px;
+        overflow: hidden;
+      }
+
+      /* Top toolbar */
+      .toolbar {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 16px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(56, 189, 248, 0.2),
+            transparent 60%
+          ),
+          linear-gradient(
+            to right,
+            rgba(15, 23, 42, 0.98),
+            rgba(15, 23, 42, 0.96)
+          );
+      }
+
+      .toolbar-left {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .toolbar-left-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 10px;
+        min-width: 520px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-right: 0;
+        min-width: 0;
+      }
+
+      .brand-logo {
+        display: block;
+        max-width: min(320px, 100%);
+        width: auto;
+        height: auto;
+        max-height: 44px;
+        object-fit: contain;
+        margin-left: -2px;
+      }
+
+      .brand-mark {
+        width: 22px;
+        height: 22px;
+        border-radius: 8px;
+        background: conic-gradient(
+          from 200deg,
+          #38bdf8,
+          #a855f7,
+          #ec4899,
+          #f97316,
+          #38bdf8
+        );
+        position: relative;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 10px 30px rgba(56, 189, 248, 0.45);
+        overflow: hidden;
+      }
+
+      .brand-mark::after {
+        content: '';
+        position: absolute;
+        inset: 3px;
+        border-radius: 6px;
+        background: radial-gradient(
+          circle at 20% 0%,
+          rgba(248, 250, 252, 0.7),
+          transparent 55%
+        );
+        mix-blend-mode: screen;
+      }
+
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+      }
+
+      .brand-title {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .brand-sub {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--text-muted);
+      }
+
+      .toolbar-buttons {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-left: 2px;
+      }
+
+      .toolbar-fields {
+        display: flex;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .toolbar-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .toolbar-field-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--text-muted);
+      }
+
+      .template-id-badge {
+        margin-left: 8px;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        color: rgba(125, 211, 252, 0.95);
+        text-transform: none;
+        border: 1px solid rgba(125, 211, 252, 0.4);
+        border-radius: 999px;
+        padding: 2px 7px;
+        background: rgba(2, 6, 23, 0.45);
+      }
+
+      .template-id-badge.template-id-badge-unsaved {
+        color: #dc2626;
+        background: #ffffff;
+        border-color: #ffffff;
+        font-weight: 700;
+      }
+
+      .toolbar-control {
+        height: 34px;
+        border-radius: 3px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(2, 6, 23, 0.35);
+        color: var(--text);
+        padding: 0 10px;
+        outline: none;
+        box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.8);
+      }
+
+      /* Template fields: make text inputs bright + readable */
+      #template-name {
+        background: rgba(248, 250, 252, 0.98);
+        color: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(15, 23, 42, 0.18);
+        box-shadow: none;
+        padding: 0 10px 0 14px;
+        text-align: left;
+      }
+
+      #template-name::placeholder {
+        color: rgba(15, 23, 42, 0.45);
+      }
+
+      #template-status {
+        background: rgba(248, 250, 252, 0.98);
+        color: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(15, 23, 42, 0.18);
+        box-shadow: none;
+      }
+
+      #template-status.template-status-unknown {
+        background: #ff00ff;
+        color: #ffffff;
+      }
+
+      #template-status.template-status-rejected {
+        background: #dc2626;
+        color: #ffffff;
+      }
+
+      #template-status.template-status-editing {
+        background: #38bdf8;
+        color: #001018;
+      }
+
+      #template-status.template-status-ready {
+        background: #a3e635;
+        color: #365314;
+      }
+
+      #template-status.template-status-deleted {
+        background: #0f172a;
+        color: #94a3b8;
+      }
+
+      #template-status:focus {
+        border-color: rgba(56, 189, 248, 0.85);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+        outline: none;
+      }
+
+      /* Auth modal inputs: light background + readable text */
+      #modal-body .toolbar-control {
+        background: rgba(248, 250, 252, 0.98);
+        color: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(15, 23, 42, 0.18);
+        box-shadow: none;
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      #modal-body .toolbar-control::placeholder {
+        color: rgba(15, 23, 42, 0.45);
+      }
+
+      #modal-body .toolbar-control:focus {
+        border-color: rgba(56, 189, 248, 0.85);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+      }
+
+      .toolbar-control:focus {
+        border-color: rgba(56, 189, 248, 0.85);
+        box-shadow:
+          inset 0 0 0 1px rgba(15, 23, 42, 0.8),
+          0 0 0 3px rgba(56, 189, 248, 0.18);
+      }
+
+      .toolbar-control-invalid {
+        border-color: rgba(248, 113, 113, 0.9);
+        box-shadow:
+          inset 0 0 0 1px rgba(15, 23, 42, 0.8),
+          0 0 0 3px rgba(248, 113, 113, 0.18);
+      }
+
+      #template-name.toolbar-control-invalid {
+        background: rgba(220, 38, 38, 0.22);
+        border-color: rgba(248, 113, 113, 0.95);
+        color: #94a3b8;
+      }
+
+      #template-name.toolbar-control-invalid::placeholder {
+        color: #94a3b8;
+      }
+
+      .toolbar-button {
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        background: radial-gradient(
+          circle at top,
+          rgba(248, 250, 252, 0.08),
+          rgba(15, 23, 42, 0.95)
+        );
+        color: var(--text);
+        border-radius: 3px;
+        padding: 10px 20px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          border-color 120ms ease-out,
+          transform 100ms ease-out,
+          box-shadow 120ms ease-out,
+          background 160ms ease-out;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 10px 20px rgba(15, 23, 42, 0.9);
+      }
+
+      .toolbar-button::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at top left,
+          rgba(56, 189, 248, 0.3),
+          transparent 55%
+        );
+        opacity: 0;
+        transition: opacity 180ms ease-out;
+      }
+
+      .toolbar-button span {
+        position: relative;
+        z-index: 1;
+      }
+
+      .toolbar-button-key {
+        font-size: 10px;
+        padding: 2px 5px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--text-muted);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+      }
+
+      .toolbar-button:hover {
+        border-color: rgba(56, 189, 248, 0.8);
+        transform: translateY(-1px);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 1),
+          0 16px 35px rgba(15, 23, 42, 1),
+          0 0 25px rgba(56, 189, 248, 0.55);
+        background: radial-gradient(
+          circle at top,
+          rgba(248, 250, 252, 0.12),
+          rgba(2, 6, 23, 0.98)
+        );
+      }
+
+      .toolbar-button:hover::before {
+        opacity: 1;
+      }
+
+      .toolbar-button:active {
+        transform: translateY(0);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 1),
+          0 6px 14px rgba(15, 23, 42, 1);
+      }
+
+      .toolbar-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+        pointer-events: none;
+        transform: none;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.85),
+          0 4px 10px rgba(15, 23, 42, 0.65);
+      }
+
+      .toolbar-button:disabled:hover {
+        border-color: rgba(148, 163, 184, 0.4);
+        transform: none;
+        background: radial-gradient(
+          circle at top,
+          rgba(248, 250, 252, 0.08),
+          rgba(15, 23, 42, 0.95)
+        );
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 10px 20px rgba(15, 23, 42, 0.9);
+      }
+
+      .toolbar-button:disabled:hover::before {
+        opacity: 0;
+      }
+
+      .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .toolbar-auth {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .auth-badge {
+        border-radius: 3px;
+        padding: 6px 10px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(2, 6, 23, 0.28);
+        color: rgba(226, 232, 240, 0.92);
+        max-width: 220px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .auth-badge-on {
+        border-color: rgba(34, 197, 94, 0.6);
+        color: rgba(187, 247, 208, 0.95);
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+      }
+
+      .auth-badge-off {
+        border-color: rgba(148, 163, 184, 0.28);
+        color: rgba(148, 163, 184, 0.95);
+      }
+
+      .toolbar-toggle {
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(2, 6, 23, 0.28);
+        color: rgba(226, 232, 240, 0.95);
+        border-radius: 3px;
+        padding: 6px 10px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition:
+          border-color 120ms ease-out,
+          transform 100ms ease-out,
+          box-shadow 160ms ease-out;
+      }
+
+      .toolbar-toggle:hover {
+        border-color: rgba(56, 189, 248, 0.75);
+        transform: translateY(-1px);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 14px 28px rgba(15, 23, 42, 1);
+      }
+
+      .toolbar-toggle:active {
+        transform: translateY(0);
+      }
+
+      .toolbar-caption {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      @media (max-width: 1040px) {
+        .toolbar-left-content {
+          min-width: 0;
+        }
+
+        .toolbar-fields {
+          width: 100%;
+          flex-direction: column;
+        }
+      }
+
+      /* Main layout */
+      .main {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 151px minmax(0, 1fr) 360px;
+        min-height: 0;
+      }
+
+      .sidebar {
+        border-right: 1px solid rgba(148, 163, 184, 0.2);
+        background: radial-gradient(
+          circle at top left,
+          rgba(56, 189, 248, 0.06),
+          transparent 55%
+        );
+        padding: 10px 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 10px 2px 2px;
+        border-top: 1px solid rgba(148, 163, 184, 0.18);
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.25;
+      }
+
+      .sidebar-footer strong {
+        color: rgba(226, 232, 240, 0.9);
+        font-weight: 600;
+      }
+
+      .center {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        gap: 10px;
+        padding: 10px 12px 12px;
+      }
+
+      .rightbar {
+        border-left: 1px solid rgba(148, 163, 184, 0.2);
+        background: radial-gradient(
+          circle at top right,
+          rgba(56, 189, 248, 0.06),
+          transparent 55%
+        );
+        padding: 10px 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 0;
+      }
+
+      .rightbar-section {
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 3px;
+        background: rgba(2, 6, 23, 0.18);
+        overflow: hidden;
+        box-shadow:
+          inset 0 0 0 1px rgba(15, 23, 42, 0.85),
+          0 16px 35px rgba(15, 23, 42, 0.9);
+      }
+
+      .rightbar-section.rightbar-section-disabled {
+        opacity: 0.45;
+      }
+
+      .rightbar-section.rightbar-section-disabled .rightbar-templates-list,
+      .rightbar-section.rightbar-section-disabled .rightbar-muted {
+        pointer-events: none;
+      }
+
+      .rightbar-section-header {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: rgba(226, 232, 240, 0.95);
+        padding: 10px 6px 8px;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0.98),
+          rgba(2, 6, 23, 0.55)
+        );
+        box-shadow:
+          inset 0 -1px 0 rgba(148, 163, 184, 0.18),
+          0 10px 25px rgba(0, 0, 0, 0.18);
+      }
+
+      .rightbar-section-body {
+        padding: 10px 5px;
+        font-size: 12px;
+        color: rgba(226, 232, 240, 0.92);
+      }
+
+      .rightbar-muted {
+        color: rgba(148, 163, 184, 0.9);
+        line-height: 1.35;
+      }
+
+      .rightbar-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+      }
+
+      .rightbar-actions-templates {
+        padding: 10px 5px;
+        border-top: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.12);
+      }
+
+      .rightbar-action {
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        background: rgba(2, 6, 23, 0.28);
+        color: rgba(226, 232, 240, 0.95);
+        border-radius: 3px;
+        padding: 8px 5px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          border-color 120ms ease-out,
+          transform 100ms ease-out,
+          box-shadow 160ms ease-out;
+      }
+
+      .rightbar-templates-list {
+        max-height: 120px;
+        overflow: auto;
+        padding: 8px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .template-list-item {
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(15, 23, 42, 0.36);
+        color: rgba(226, 232, 240, 0.94);
+        border-radius: 3px;
+        padding: 6px 8px;
+        cursor: pointer;
+        line-height: 1.35;
+        text-align: left;
+        transition:
+          border-color 140ms ease-out,
+          background-color 140ms ease-out,
+          box-shadow 140ms ease-out;
+      }
+
+      .template-list-item:hover {
+        border-color: rgba(125, 211, 252, 0.8);
+        background: rgba(2, 132, 199, 0.2);
+      }
+
+      .template-list-item.template-list-item-selected {
+        border-color: rgba(56, 189, 248, 0.95);
+        background: rgba(56, 189, 248, 0.28);
+        box-shadow:
+          inset 0 0 0 1px rgba(186, 230, 253, 0.42),
+          0 0 0 1px rgba(15, 23, 42, 0.92);
+      }
+
+      .action-icon {
+        font-size: 16px;
+        line-height: 1;
+      }
+
+      .action-icon-update {
+        color: #38bdf8;
+      }
+
+      .action-icon-load {
+        color: #7dd3fc;
+      }
+
+      .action-icon-delete {
+        color: #fb7185;
+      }
+
+      .rightbar-action:hover {
+        border-color: rgba(56, 189, 248, 0.75);
+        transform: translateY(-1px);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 14px 28px rgba(15, 23, 42, 1);
+      }
+
+      .rightbar-action:active {
+        transform: translateY(0);
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--text-muted);
+        padding: 4px 2px 0;
+      }
+
+      .sidebar-scroll {
+        margin-top: 4px;
+        flex: 1;
+        overflow: auto;
+        padding-right: 2px;
+      }
+
+      .library-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .library-item {
+        width: 100%;
+        justify-self: stretch;
+        box-sizing: border-box;
+        border-radius: 10px 10px 1px 10px;
+        padding: 10px 9px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #0f172a;
+        cursor: grab;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.45),
+          0 10px 18px rgba(15, 23, 42, 0.85);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+      }
+
+      .library-item-label {
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 10px;
+        opacity: 0.85;
+      }
+
+      .library-item-title {
+        font-size: 13px;
+      }
+
+      .library-item::after {
+        content: '⇢';
+        position: absolute;
+        right: 10px;
+        bottom: 6px;
+        font-size: 14px;
+        opacity: 0.7;
+      }
+
+      .library-item:active {
+        cursor: grabbing;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.7),
+          0 12px 22px rgba(15, 23, 42, 1);
+        transform: translateY(1px);
+      }
+
+      .lib-color-1 {
+        background: linear-gradient(135deg, #475569, #334155);
+        color: #f1f5f9;
+      }
+      .lib-color-2 {
+        background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+        color: #0f172a;
+      }
+      .lib-color-3 {
+        background: linear-gradient(135deg, #111827, #1f2937);
+        color: #f8fafc;
+      }
+      .lib-color-4 {
+        background: linear-gradient(135deg, #f97316, #fb923c);
+        color: #431407;
+      }
+      .lib-color-5 {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: #eff6ff;
+      }
+      .lib-color-6 {
+        background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+        color: #082f49;
+      }
+      .lib-color-7 {
+        background: linear-gradient(135deg, #7dd3fc, #bae6fd);
+        color: #0c4a6e;
+      }
+      .lib-color-8 {
+        background: linear-gradient(135deg, #075985, #0c4a6e);
+        color: #ffffff;
+      }
+      .lib-color-9 {
+        background: linear-gradient(135deg, #fde68a, #fef9c3);
+        color: #713f12;
+      }
+      .lib-color-10 {
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        color: #0f172a;
+      }
+
+      .journal {
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 3px;
+        background: rgba(2, 6, 23, 0.18);
+        overflow: hidden;
+        box-shadow:
+          inset 0 0 0 1px rgba(15, 23, 42, 0.85),
+          0 16px 35px rgba(15, 23, 42, 0.9);
+      }
+
+      .journal-collapsed {
+        height: 0;
+        border: none;
+        box-shadow: none;
+      }
+
+      .journal-header {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--text-muted);
+        padding: 10px 10px 8px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0.9),
+          rgba(2, 6, 23, 0.2)
+        );
+      }
+
+      .journal-body {
+        padding: 10px;
+        height: 180px;
+      }
+
+      .journal-text {
+        width: 100%;
+        height: 100%;
+        resize: none;
+        border-radius: 3px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(2, 6, 23, 0.35);
+        color: rgba(226, 232, 240, 0.95);
+        padding: 10px;
+        font-size: 12px;
+        line-height: 1.4;
+        outline: none;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 23, 0.72);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 20px;
+      }
+
+      .modal-overlay-open {
+        display: flex;
+      }
+
+      .modal {
+        width: min(560px, 100%);
+        border-radius: 3px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(56, 189, 248, 0.18),
+            transparent 55%
+          ),
+          rgba(2, 6, 23, 0.92);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.95),
+          0 30px 80px rgba(0, 0, 0, 0.75);
+        overflow: hidden;
+      }
+
+      .modal-header {
+        padding: 12px 14px 10px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .modal-title {
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(226, 232, 240, 0.95);
+      }
+
+      .modal-close {
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: rgba(2, 6, 23, 0.2);
+        color: rgba(226, 232, 240, 0.95);
+        border-radius: 3px;
+        padding: 6px 10px;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .modal-body {
+        padding: 12px 14px 14px;
+        color: rgba(226, 232, 240, 0.92);
+        font-size: 13px;
+        line-height: 1.4;
+        white-space: pre-wrap;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .form-grid .form-field-full {
+        grid-column: 1 / -1;
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .form-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: rgba(148, 163, 184, 0.95);
+      }
+
+      .password-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .password-wrap .toolbar-control {
+        width: 100%;
+        padding-right: 44px;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 26px;
+        min-width: 34px;
+        border-radius: 3px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(2, 6, 23, 0.18);
+        color: rgba(226, 232, 240, 0.9);
+        cursor: pointer;
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .password-toggle:hover {
+        border-color: rgba(56, 189, 248, 0.6);
+      }
+
+      .form-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .confirm-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .modal-close-secondary {
+        opacity: 0.9;
+      }
+
+      /* Canvas area */
+      .canvas-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-height: 0;
+      }
+
+      .canvas-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--text-muted);
+        padding: 2px 4px 4px;
+      }
+
+      .canvas-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .canvas-meta-pill {
+        border-radius: 999px;
+        padding: 2px 8px;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--text-muted);
+        background: radial-gradient(
+          circle at top,
+          rgba(148, 163, 184, 0.2),
+          transparent 60%
+        );
+      }
+
+      .canvas-size-controls {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .canvas-size-controls input {
+        width: 78px;
+        height: 28px;
+        border-radius: 3px;
+        border: 1px solid rgba(15, 23, 42, 0.18);
+        background: rgba(248, 250, 252, 0.98);
+        color: rgba(15, 23, 42, 0.95);
+        padding: 0 10px;
+        outline: none;
+        box-shadow: none;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-align: center;
+      }
+
+      .canvas-size-controls input:focus {
+        border-color: rgba(56, 189, 248, 0.85);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+      }
+
+      .canvas-size-controls .canvas-size-sep {
+        font-size: 11px;
+        color: rgba(148, 163, 184, 0.9);
+      }
+
+      .canvas-size-controls button {
+        height: 28px;
+        border-radius: 3px;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        background: rgba(2, 6, 23, 0.28);
+        color: rgba(226, 232, 240, 0.95);
+        padding: 0 10px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .canvas-size-controls button:hover {
+        border-color: rgba(56, 189, 248, 0.75);
+      }
+
+      .canvas-viewport {
+        flex: 1;
+        background: #f8fafc;
+        border-radius: 3px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        box-shadow:
+          inset 0 0 0 1px rgba(15, 23, 42, 0.08),
+          0 22px 60px rgba(15, 23, 42, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: auto;
+        position: relative;
+      }
+
+      .canvas-inner {
+        position: relative;
+        width: 1200px;
+        height: 700px;
+        flex-shrink: 0;
+        background-color: #f8fafc;
+        /* Engineering-paper grid:
+           minor grid = 50px (10px * 5)
+           major grid = 250px (minor * 5) */
+        background-image:
+          /* minor (all squares) */
+          linear-gradient(
+            to right,
+            rgba(15, 23, 42, 0.06) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(15, 23, 42, 0.06) 1px,
+            transparent 1px
+          ),
+          /* major (every 5 minor squares) */
+          linear-gradient(to right, rgba(15, 23, 42, 0.12) 1px, transparent 1px),
+          linear-gradient(
+            to bottom,
+            rgba(15, 23, 42, 0.12) 1px,
+            transparent 1px
+          );
+        background-size:
+          50px 50px,
+          50px 50px,
+          250px 250px,
+          250px 250px;
+        background-position:
+          0 0,
+          0 0,
+          0 0,
+          0 0;
+        border-radius: 3px;
+        border: 1px solid rgba(15, 23, 42, 0.14);
+        box-shadow:
+          inset 0 0 0 1px rgba(15, 23, 42, 0.06),
+          0 0 70px rgba(15, 23, 42, 0.06),
+          0 0 120px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+      }
+
+      .canvas-connections {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: visible;
+      }
+
+      .connection-path {
+        fill: none;
+        stroke: rgba(148, 163, 184, 0.9);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        filter: drop-shadow(0 0 6px rgba(15, 23, 42, 0.8));
+      }
+
+      .connection-path-active {
+        stroke: rgba(56, 189, 248, 0.95);
+        stroke-dasharray: 4 4;
+      }
+
+      .canvas-node {
+        position: absolute;
+        min-width: 70px;
+        max-width: none;
+        min-height: 30px;
+        max-height: none;
+        padding: 0;
+        border-radius: 6px 6px 2px 6px;
+        color: #0f172a;
+        cursor: grab;
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.72),
+          0 16px 30px rgba(15, 23, 42, 0.95);
+        user-select: none;
+        transform-origin: center;
+        transition:
+          box-shadow 120ms ease-out,
+          transform 80ms ease-out;
+      }
+
+      .canvas-node-topline {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 10px;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.35);
+      }
+
+      .canvas-node-topline-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        line-height: 1.2;
+      }
+
+      .canvas-node-body {
+        padding: 8px 10px 10px;
+        height: calc(100% - 36px);
+        min-height: 30px;
+      }
+
+      .canvas-node.canvas-node-start-finish .canvas-node-body {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .canvas-node.canvas-node-start-finish {
+        border-radius: 15px;
+      }
+
+      .start-finish-symbol {
+        color: inherit;
+        font-size: 26px;
+        line-height: 1;
+        transform: translateY(-1px);
+        user-select: none;
+      }
+
+      .canvas-node-input {
+        width: 100%;
+        height: 100%;
+        resize: none;
+        border-radius: 6px;
+        border: 1px solid rgba(15, 23, 42, 0.35);
+        background: rgba(2, 6, 23, 0.12);
+        color: inherit;
+        padding: 8px;
+        font-size: 12px;
+        line-height: 1.3;
+        outline: none;
+      }
+
+      .canvas-node-input:focus {
+        border-color: rgba(56, 189, 248, 0.85);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+      }
+
+      .canvas-node-resize-handle {
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 0 20px 20px;
+        border-color: transparent transparent rgba(100, 100, 80, 0.95)
+          transparent;
+        cursor: nwse-resize;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.85);
+        touch-action: none;
+      }
+
+      .canvas-node-connector {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.9);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.95),
+          0 0 10px rgba(15, 23, 42, 0.95);
+        cursor: crosshair;
+        z-index: 3;
+      }
+
+      .canvas-node-connector-top {
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .canvas-node-connector-right {
+        right: -10px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .canvas-node-connector-bottom {
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .canvas-node-connector-left {
+        left: -10px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .canvas-node.canvas-node-no-connections .canvas-node-connector {
+        display: none;
+      }
+
+      .canvas-node:active {
+        cursor: grabbing;
+        transform: scale(1.02);
+        box-shadow:
+          0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 16px 40px rgba(15, 23, 42, 1);
+      }
+
+      .canvas-node.selected {
+        box-shadow:
+          0 0 0 2px rgba(56, 189, 248, 1),
+          0 0 0 4px rgba(37, 99, 235, 0.75),
+          0 0 24px rgba(59, 130, 246, 1),
+          0 0 60px rgba(56, 189, 248, 0.95),
+          0 16px 55px rgba(0, 0, 0, 0.9);
+        transform: scale(1.01);
+      }
+
+      .node-badge {
+        font-size: 9px;
+        padding: 2px 5px;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 23, 42, 0.7);
+        background: rgba(15, 23, 42, 0.08);
+      }
+
+      .node-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: calc(100% + 6px);
+        z-index: 20;
+        min-width: 160px;
+        padding: 8px;
+        border-radius: 6px;
+        background: rgba(2, 6, 23, 0.97);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        box-shadow:
+          0 20px 70px rgba(0, 0, 0, 0.65),
+          0 0 0 1px rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(6px);
+      }
+
+      .canvas-node.node-menu-open .node-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .node-menu-item {
+        width: 100%;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(2, 6, 23, 0.35);
+        color: rgba(226, 232, 240, 0.95);
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 12px;
+        line-height: 1.2;
+        cursor: pointer;
+        text-align: left;
+        letter-spacing: 0.03em;
+      }
+
+      .node-menu-item:hover:not(:disabled) {
+        border-color: rgba(56, 189, 248, 0.55);
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.25);
+      }
+
+      .node-menu-item:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .canvas-node.lib-color-1,
+      .canvas-node.lib-color-3,
+      .canvas-node.lib-color-4,
+      .canvas-node.lib-color-5,
+      .canvas-node.lib-color-8 {
+        color: #f8fafc;
+      }
+
+      .canvas-node.lib-color-2,
+      .canvas-node.lib-color-6,
+      .canvas-node.lib-color-7,
+      .canvas-node.lib-color-9,
+      .canvas-node.lib-color-10 {
+        color: #0f172a;
+      }
+
+      .canvas-node.lib-color-2 .node-badge,
+      .canvas-node.lib-color-6 .node-badge,
+      .canvas-node.lib-color-7 .node-badge,
+      .canvas-node.lib-color-9 .node-badge,
+      .canvas-node.lib-color-10 .node-badge {
+        border-color: rgba(15, 23, 42, 0.8);
+        background: rgba(15, 23, 42, 0.12);
+      }
+
+      .canvas-node.lib-color-10 .canvas-node-input {
+        color: #1e3a8a;
+      }
+
+      .minimap {
+        position: relative;
+        width: 150px;
+        height: 90px;
+        border-radius: 3px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: radial-gradient(
+          circle at 10% 0%,
+          rgba(15, 23, 42, 0.9),
+          rgba(15, 23, 42, 0.96)
+        );
+        box-shadow:
+          0 10px 30px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 1);
+        overflow: hidden;
+      }
+
+      .rightbar-section-body-minimap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .properties-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .properties-line {
+        display: grid;
+        grid-template-columns: 76px minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+      }
+
+      .properties-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(148, 163, 184, 0.85);
+      }
+
+      .properties-value {
+        min-height: 28px;
+        border-radius: 4px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(2, 6, 23, 0.25);
+        color: rgba(226, 232, 240, 0.95);
+        padding: 6px 8px;
+        font-size: 12px;
+        line-height: 1.3;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .properties-title {
+        margin-top: 2px;
+      }
+
+      .minimap-header {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--text-muted);
+        padding: 4px 6px;
+        border-bottom: 1px solid rgba(30, 64, 175, 0.8);
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0.98),
+          rgba(30, 64, 175, 0.85)
+        );
+      }
+
+      .minimap-body {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-image:
+          linear-gradient(
+            transparent 9px,
+            rgba(30, 64, 175, 0.5) 10px,
+            transparent 10px
+          ),
+          linear-gradient(
+            90deg,
+            transparent 9px,
+            rgba(30, 64, 175, 0.5) 10px,
+            transparent 10px
+          );
+        background-size: 10px 10px;
+      }
+
+      .minimap-node {
+        position: absolute;
+        border-radius: 2px;
+        opacity: 0.85;
+      }
+
+      .minimap-node-primary {
+        background: rgba(56, 189, 248, 0.9);
+      }
+      .minimap-node-secondary {
+        background: rgba(236, 72, 153, 0.9);
+      }
+      .minimap-node-tertiary {
+        background: rgba(34, 197, 94, 0.9);
+      }
+
+      .viewport-badge {
+        position: relative;
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 3px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        color: rgba(226, 232, 240, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .rightbar-footer {
+        margin-top: auto;
+        padding-top: 8px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+      }
+
+      .rightbar-footer-logo {
+        max-width: 100%;
+        width: auto;
+        height: auto;
+        display: block;
+        object-fit: contain;
+      }
+
+      .rightbar-footer .viewport-badge {
+        border-color: rgba(148, 163, 184, 0.18);
+        color: rgba(148, 163, 184, 0.85);
+        background: rgba(2, 6, 23, 0.18);
+        box-shadow: none;
+      }
+
+      .rightbar-footer .viewport-dot {
+        opacity: 0.55;
+        box-shadow: none;
+      }
+
+      .viewport-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 0%, #38bdf8, #0ea5e9);
+        box-shadow:
+          0 0 0 3px rgba(56, 189, 248, 0.4),
+          0 0 14px rgba(56, 189, 248, 0.9);
+      }
+
+      @media (max-width: 900px) {
+        .main {
+          grid-template-columns: 126px minmax(0, 1fr) 330px;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .app-shell {
+          margin: 0;
+          border-radius: 0;
+        }
+
+        .main {
+          grid-template-columns: 1fr;
+          grid-template-rows: 210px minmax(0, 1fr) 220px;
+        }
+
+        .sidebar {
+          border-right: none;
+          border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .rightbar {
+          border-left: none;
+          border-top: 1px solid rgba(148, 163, 184, 0.2);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="toolbar">
+        <div class="toolbar-left">
+          <div class="brand">
+            <img
+              class="brand-logo"
+              src="../images/flow-forge-tksoft-hr-blue-05.png"
+              alt="Flow Forge"
+            />
+          </div>
+          <div class="toolbar-left-content">
+            <div class="toolbar-buttons" id="toolbar-buttons"></div>
+            <div class="toolbar-fields">
+              <div class="toolbar-field">
+                <div class="toolbar-field-label">
+                  Template name
+                  <span
+                    id="template-id-badge"
+                    class="template-id-badge"
+                    aria-live="polite"
+                  ></span>
+                </div>
+                <input
+                  class="toolbar-control"
+                  id="template-name"
+                  type="text"
+                  minlength="4"
+                  maxlength="64"
+                  aria-label="Template name"
+                  placeholder="For example: My first template"
+                />
+              </div>
+              <div class="toolbar-field">
+                <div class="toolbar-field-label">Template status</div>
+                <select
+                  class="toolbar-control"
+                  id="template-status"
+                  aria-label="Template status"
+                ></select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="toolbar-right">
+          <div class="toolbar-auth">
+            <button class="toolbar-toggle" type="button" id="auth-register">
+              Register
+            </button>
+            <button class="toolbar-toggle" type="button" id="auth-login">
+              Login
+            </button>
+            <button class="toolbar-toggle" type="button" id="auth-logout">
+              Logout
+            </button>
+          </div>
+          <div
+            class="auth-badge auth-badge-off"
+            id="auth-status"
+            aria-label="Authorization status"
+          >
+            Logged out
+          </div>
+          <button class="toolbar-toggle" type="button" id="journal-toggle">
+            Journal
+          </button>
+        </div>
+      </header>
+
+      <div class="main">
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <span>Block library</span>
+          </div>
+          <div class="sidebar-scroll">
+            <div class="library-grid" id="library">
+              <div
+                class="library-item lib-color-1"
+                draggable="true"
+                data-template-id="constants"
+                data-block-type-id="constants"
+                data-max-width="700"
+                data-max-height="500"
+              >
+                <div class="library-item-label">System</div>
+                <div class="library-item-title">Constants</div>
+              </div>
+              <div
+                class="library-item lib-color-2"
+                draggable="true"
+                data-template-id="variables"
+                data-block-type-id="variables"
+                data-max-width="700"
+                data-max-height="500"
+              >
+                <div class="library-item-label">System</div>
+                <div class="library-item-title">Variables</div>
+              </div>
+              <div
+                class="library-item lib-color-3"
+                draggable="true"
+                data-template-id="watch"
+                data-block-type-id="watch"
+                data-max-width="500"
+                data-max-height="300"
+              >
+                <div class="library-item-label">Debug</div>
+                <div class="library-item-title">Watch</div>
+              </div>
+              <div
+                class="library-item lib-color-4"
+                draggable="true"
+                data-template-id="start"
+                data-block-type-id="start"
+              >
+                <div class="library-item-label">Flow</div>
+                <div class="library-item-title">Start</div>
+              </div>
+              <div
+                class="library-item lib-color-5"
+                draggable="true"
+                data-template-id="finish"
+                data-block-type-id="finish"
+              >
+                <div class="library-item-label">Flow</div>
+                <div class="library-item-title">Finish</div>
+              </div>
+              <div
+                class="library-item lib-color-6"
+                draggable="true"
+                data-template-id="expressions"
+                data-block-type-id="expressions"
+              >
+                <div class="library-item-label">Logic</div>
+                <div class="library-item-title">Expressions</div>
+              </div>
+              <div
+                class="library-item lib-color-7"
+                draggable="true"
+                data-template-id="conditions"
+                data-block-type-id="conditions"
+              >
+                <div class="library-item-label">Logic</div>
+                <div class="library-item-title">Conditions</div>
+              </div>
+              <div
+                class="library-item lib-color-8"
+                draggable="true"
+                data-template-id="delay"
+                data-block-type-id="delay"
+              >
+                <div class="library-item-label">Timing</div>
+                <div class="library-item-title">Delay</div>
+              </div>
+              <div
+                class="library-item lib-color-9"
+                draggable="true"
+                data-template-id="confirmation"
+                data-block-type-id="confirmation"
+              >
+                <div class="library-item-label">Interaction</div>
+                <div class="library-item-title">Confirmation</div>
+              </div>
+              <div
+                class="library-item lib-color-10"
+                draggable="true"
+                data-template-id="assistant-ai"
+                data-block-type-id="assistant-ai"
+                data-max-width="1200"
+                data-max-height="700"
+              >
+                <div class="library-item-label">Assistant</div>
+                <div class="library-item-title">AI</div>
+              </div>
+            </div>
+          </div>
+          <div class="sidebar-footer">
+            <strong>Tip</strong>: drag a block from here onto the canvas.
+          </div>
+        </aside>
+
+        <div class="center">
+          <section class="canvas-wrapper">
+            <div class="canvas-header">
+              <div>Workspace</div>
+              <div class="canvas-meta">
+                <div
+                  class="canvas-size-controls"
+                  aria-label="Canvas size controls"
+                >
+                  <input
+                    id="canvas-width"
+                    type="number"
+                    min="1200"
+                    max="10000"
+                    step="10"
+                    value="1200"
+                    aria-label="Canvas width"
+                  />
+                  <span class="canvas-size-sep">×</span>
+                  <input
+                    id="canvas-height"
+                    type="number"
+                    min="700"
+                    max="10000"
+                    step="10"
+                    value="700"
+                    aria-label="Canvas height"
+                  />
+                  <button type="button" id="canvas-set">Set</button>
+                </div>
+              </div>
+            </div>
+            <div class="canvas-viewport">
+              <div class="canvas-inner" id="canvas">
+                <svg
+                  class="canvas-connections"
+                  id="canvas-connections"
+                  width="100%"
+                  height="100%"
+                  viewBox="0 0 1200 700"
+                  preserveAspectRatio="none"
+                >
+                  <defs>
+                    <marker
+                      id="conn-arrow"
+                      markerWidth="14"
+                      markerHeight="14"
+                      refX="12"
+                      refY="7"
+                      orient="auto"
+                      markerUnits="userSpaceOnUse"
+                    >
+                      <!-- Small triangle arrowhead -->
+                      <path
+                        d="M 0 0 L 14 7 L 0 14 z"
+                        fill="rgba(148, 163, 184, 0.9)"
+                      />
+                    </marker>
+                    <marker
+                      id="conn-arrow-active"
+                      markerWidth="14"
+                      markerHeight="14"
+                      refX="12"
+                      refY="7"
+                      orient="auto"
+                      markerUnits="userSpaceOnUse"
+                    >
+                      <path
+                        d="M 0 0 L 14 7 L 0 14 z"
+                        fill="rgba(56, 189, 248, 0.95)"
+                      />
+                    </marker>
+                  </defs>
+                </svg>
+              </div>
+            </div>
+          </section>
+
+          <section class="journal journal-collapsed" id="journal-panel">
+            <div class="journal-header">Journal</div>
+            <div class="journal-body">
+              <textarea class="journal-text" readonly aria-label="Journal">
+Lorem ipsum
+              </textarea>
+            </div>
+          </section>
+        </div>
+
+        <aside class="rightbar">
+          <div class="rightbar-section" id="my-templates-panel">
+            <div class="rightbar-section-header">MY TEMPLATES</div>
+            <div class="rightbar-section-body">
+              <div
+                class="rightbar-templates-list"
+                id="templates-list"
+                aria-label="Template list"
+              >
+                <div class="rightbar-muted">
+                  here will be a long list of templates<br />
+                  ...<br />
+                  ...<br />
+                  ...<br />
+                  ...<br />
+                  ...<br />
+                  ...
+                </div>
+              </div>
+              <div class="rightbar-actions rightbar-actions-templates">
+                <button
+                  class="rightbar-action"
+                  type="button"
+                  id="tpl-update"
+                  title="Update"
+                  aria-label="Update"
+                >
+                  <span class="action-icon action-icon-update">↻</span>
+                </button>
+                <button
+                  class="rightbar-action"
+                  type="button"
+                  id="tpl-load"
+                  title="Load"
+                  aria-label="Load"
+                >
+                  <span class="action-icon action-icon-load">⤓</span>
+                </button>
+                <button
+                  class="rightbar-action"
+                  type="button"
+                  id="tpl-delete"
+                  title="Delete"
+                  aria-label="Delete"
+                >
+                  <span class="action-icon action-icon-delete">🗑</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="rightbar-section">
+            <div class="rightbar-section-header">Mini-map</div>
+            <div class="rightbar-section-body rightbar-section-body-minimap">
+              <div class="minimap" aria-hidden="true">
+                <div class="minimap-body" id="minimap"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rightbar-section">
+            <div class="rightbar-section-header">Properties</div>
+            <div class="rightbar-section-body">
+              <div class="properties-grid" id="properties-panel">
+                <div class="properties-line">
+                  <div class="properties-label">ID</div>
+                  <div class="properties-value" id="prop-internal-block-id">-</div>
+                </div>
+                <div class="properties-line">
+                  <div class="properties-label">Type</div>
+                  <div class="properties-value" id="prop-block-type-id">-</div>
+                </div>
+                <div class="properties-label properties-title">
+                  Default input text
+                </div>
+                <div class="properties-value" id="prop-default-input-text">-</div>
+                <div class="properties-line">
+                  <div class="properties-label">Position</div>
+                  <div class="properties-value" id="prop-position">-</div>
+                </div>
+                <div class="properties-line">
+                  <div class="properties-label">Size</div>
+                  <div class="properties-value" id="prop-size">-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rightbar-footer">
+            <img
+              class="rightbar-footer-logo"
+              src="../images/logo-tksoft-hr-blue-01.png"
+              alt="TKSoft"
+            />
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div
+      class="modal-overlay"
+      id="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="modal" role="document">
+        <div class="modal-header">
+          <div class="modal-title" id="modal-title">Notice</div>
+          <button class="modal-close" type="button" id="modal-close">OK</button>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const TemplateStatus = Object.freeze({
+          /** Template status is unknown: not set, wrong value, etc. */
+          UNKNOWN: 'UNKNOWN',
+          /** Template is ready for use. */
+          READY: 'READY',
+          /** Template is being edited. */
+          EDITING: 'EDITING',
+          /** Template has been deleted. */
+          DELETED: 'DELETED',
+          /** Template has been rejected. */
+          REJECTED: 'REJECTED',
+        });
+
+        /** Canonical block_type_id (lowercase key) -> title shown on blocks / library. */
+        const BLOCK_TYPE_DISPLAY = Object.freeze({
+          constants: 'Constants',
+          variables: 'Variables',
+          watch: 'Watch',
+          start: 'Start',
+          finish: 'Finish',
+          expressions: 'Expressions',
+          conditions: 'Conditions',
+          delay: 'Delay',
+          confirmation: 'Confirmation',
+          'assistant-ai': 'AI',
+        });
+
+        /** Canonical block_type_id -> sidebar category label. */
+        const BLOCK_TYPE_CATEGORY = Object.freeze({
+          constants: 'System',
+          variables: 'System',
+          watch: 'Debug',
+          start: 'Flow',
+          finish: 'Flow',
+          expressions: 'Logic',
+          conditions: 'Logic',
+          delay: 'Timing',
+          confirmation: 'Interaction',
+          'assistant-ai': 'Assistant',
+        });
+
+        function normalizeBlockTypeId(raw) {
+          const s = String(raw ?? '').trim();
+          if (!s) return '';
+          const lower = s.toLowerCase();
+          if (lower === 'ai') return 'assistant-ai';
+          if (Object.hasOwn(BLOCK_TYPE_DISPLAY, lower)) {
+            return lower;
+          }
+          for (const [key, title] of Object.entries(BLOCK_TYPE_DISPLAY)) {
+            if (title === s) return key;
+          }
+          return lower;
+        }
+
+        function getBlockTypeDisplayTitle(canonicalId) {
+          const c = normalizeBlockTypeId(canonicalId);
+          return BLOCK_TYPE_DISPLAY[c] || canonicalId;
+        }
+
+        const toolbarContainer = document.getElementById('toolbar-buttons');
+        const toolbarActions = [
+          { id: 'new-template', label: 'New template' },
+          { id: 'save-template', label: 'Save this template' },
+        ];
+        let saveTemplateToolbarBtn = null;
+
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalTitleEl = document.getElementById('modal-title');
+        const modalBodyEl = document.getElementById('modal-body');
+        const modalCloseBtn = document.getElementById('modal-close');
+
+        function showModal(title, message) {
+          if (!modalOverlay || !modalTitleEl || !modalBodyEl) return;
+          modalTitleEl.textContent = title;
+          modalBodyEl.textContent = message;
+          modalOverlay.classList.add('modal-overlay-open');
+        }
+
+        function showModalHtml(title, html) {
+          if (!modalOverlay || !modalTitleEl || !modalBodyEl) return;
+          modalTitleEl.textContent = title;
+          modalBodyEl.innerHTML = html;
+          modalOverlay.classList.add('modal-overlay-open');
+        }
+
+        function showConfirm(title, message, onConfirm) {
+          if (!modalOverlay || !modalTitleEl || !modalBodyEl) {
+            onConfirm?.();
+            return;
+          }
+
+          if (modalCloseBtn instanceof HTMLElement) {
+            // Hide "OK" header button for confirmation dialogs.
+            modalCloseBtn.style.display = 'none';
+          }
+
+          modalTitleEl.textContent = title;
+          modalBodyEl.innerHTML = `
+            <div>${message}</div>
+            <div class="confirm-actions">
+              <button
+                type="button"
+                class="modal-close"
+                id="confirm-cancel"
+                autofocus
+              >
+                CANCEL
+              </button>
+              <button type="button" class="modal-close" id="confirm-yes">YES</button>
+            </div>
+          `;
+          modalOverlay.classList.add('modal-overlay-open');
+
+          const yesBtn = modalBodyEl.querySelector('#confirm-yes');
+          const cancelBtn = modalBodyEl.querySelector('#confirm-cancel');
+
+          const cleanup = () => {
+            // remove listeners (best-effort)
+            try {
+              if (yesBtn) {
+                yesBtn.replaceWith(yesBtn.cloneNode(true));
+              }
+              if (cancelBtn) {
+                cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+              }
+            } catch {
+              // ignore
+            }
+          };
+
+          const onCancel = () => {
+            cleanup();
+            closeModal();
+          };
+
+          const onYes = () => {
+            cleanup();
+            closeModal();
+            onConfirm?.();
+          };
+
+          cancelBtn?.addEventListener('click', onCancel);
+          yesBtn?.addEventListener('click', onYes);
+        }
+
+        function showDirtyNewTemplateConfirm(onSave, onDismiss) {
+          if (!modalOverlay || !modalTitleEl || !modalBodyEl) return;
+
+          if (modalCloseBtn instanceof HTMLElement) {
+            modalCloseBtn.style.display = 'none';
+          }
+
+          modalTitleEl.textContent = 'Unsaved changes';
+          modalBodyEl.innerHTML = `
+            <div>You have unsaved changes in the current template.</div>
+            <div class="confirm-actions">
+              <button
+                type="button"
+                class="modal-close modal-close-secondary"
+                id="confirm-cancel"
+                autofocus
+              >
+                Cancel
+              </button>
+              <button type="button" class="modal-close modal-close-secondary" id="confirm-dismiss">
+                Dismiss changes
+              </button>
+              <button type="button" class="modal-close" id="confirm-save">
+                Save template
+              </button>
+            </div>
+          `;
+          modalOverlay.classList.add('modal-overlay-open');
+
+          const cancelBtn = modalBodyEl.querySelector('#confirm-cancel');
+          const dismissBtn = modalBodyEl.querySelector('#confirm-dismiss');
+          const saveBtn = modalBodyEl.querySelector('#confirm-save');
+
+          const cleanup = () => {
+            try {
+              if (cancelBtn) cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+              if (dismissBtn) dismissBtn.replaceWith(dismissBtn.cloneNode(true));
+              if (saveBtn) saveBtn.replaceWith(saveBtn.cloneNode(true));
+            } catch {}
+          };
+
+          cancelBtn?.addEventListener('click', () => {
+            cleanup();
+            closeModal();
+          });
+          dismissBtn?.addEventListener('click', () => {
+            cleanup();
+            closeModal();
+            onDismiss?.();
+          });
+          saveBtn?.addEventListener('click', async () => {
+            cleanup();
+            closeModal();
+            await onSave?.();
+          });
+        }
+
+        function closeModal() {
+          if (modalCloseBtn instanceof HTMLElement) {
+            modalCloseBtn.style.display = '';
+          }
+          modalOverlay?.classList.remove('modal-overlay-open');
+        }
+
+        modalCloseBtn?.addEventListener('click', closeModal);
+        modalOverlay?.addEventListener('click', (e) => {
+          if (e.target === modalOverlay) closeModal();
+        });
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') closeModal();
+        });
+
+        function startNewTemplate() {
+          resetCanvasDOM();
+          templateStatusSelect.value = TemplateStatus.EDITING;
+          templateNameInput.value = '';
+          currentTemplateId = null;
+          setCanvasDirtyFlag(false);
+          updateTemplateNameValidity();
+          updateTemplateStatusAppearance();
+          try {
+            localStorage.removeItem(CANVAS_STORAGE_KEY);
+          } catch {}
+        }
+
+        toolbarActions.forEach((action) => {
+          const btn = document.createElement('button');
+          btn.className = 'toolbar-button';
+          btn.type = 'button';
+          if (action.id === 'save-template') {
+            btn.id = 'toolbar-save-template';
+            btn.disabled = true;
+            saveTemplateToolbarBtn = btn;
+          }
+
+          const mainSpan = document.createElement('span');
+          mainSpan.textContent = action.label;
+          btn.appendChild(mainSpan);
+
+          btn.addEventListener('click', async () => {
+            if (action.id === 'save-template') {
+              await handleSaveTemplate();
+              return;
+            }
+            if (action.id === 'new-template') {
+              if (isCanvasStateDirty) {
+                showDirtyNewTemplateConfirm(
+                  async () => {
+                    const saved = await handleSaveTemplate();
+                    if (saved) startNewTemplate();
+                  },
+                  () => startNewTemplate(),
+                );
+                return;
+              }
+              startNewTemplate();
+              return;
+            }
+            alert(action.label);
+          });
+
+          toolbarContainer.appendChild(btn);
+        });
+
+        const templateStatusSelect = document.getElementById('template-status');
+        const templateNameInput = document.getElementById('template-name');
+        const templateIdBadge = document.getElementById('template-id-badge');
+        const tplLoadBtn = document.getElementById('tpl-load');
+        const tplDeleteBtn = document.getElementById('tpl-delete');
+        const tplUpdateBtn = document.getElementById('tpl-update');
+        const myTemplatesPanel = document.getElementById('my-templates-panel');
+        const templatesListContainer = myTemplatesPanel?.querySelector(
+          '.rightbar-templates-list',
+        );
+        let selectedTemplateListItem = null;
+        let currentTemplateId = null;
+        let isCanvasStateDirty = false;
+        function setCanvasDirtyFlag(isDirty) {
+          isCanvasStateDirty = Boolean(isDirty);
+          updateTemplateIdBadge();
+        }
+        const journalToggleBtn = document.getElementById('journal-toggle');
+        const journalPanel = document.getElementById('journal-panel');
+        const journalText = journalPanel?.querySelector('.journal-text');
+        const authRegisterBtn = document.getElementById('auth-register');
+        const authLoginBtn = document.getElementById('auth-login');
+        const authLogoutBtn = document.getElementById('auth-logout');
+
+        Object.values(TemplateStatus).forEach((value) => {
+          const opt = document.createElement('option');
+          opt.value = value;
+          opt.textContent = value;
+          templateStatusSelect.appendChild(opt);
+        });
+        function updateTemplateStatusAppearance() {
+          if (!(templateStatusSelect instanceof HTMLSelectElement)) return;
+          templateStatusSelect.classList.remove(
+            'template-status-unknown',
+            'template-status-rejected',
+            'template-status-editing',
+            'template-status-ready',
+            'template-status-deleted',
+          );
+
+          const status = String(templateStatusSelect.value || '').toUpperCase();
+          if (status === TemplateStatus.UNKNOWN) {
+            templateStatusSelect.classList.add('template-status-unknown');
+          } else if (status === TemplateStatus.REJECTED) {
+            templateStatusSelect.classList.add('template-status-rejected');
+          } else if (status === TemplateStatus.EDITING) {
+            templateStatusSelect.classList.add('template-status-editing');
+          } else if (status === TemplateStatus.READY) {
+            templateStatusSelect.classList.add('template-status-ready');
+          } else if (status === TemplateStatus.DELETED) {
+            templateStatusSelect.classList.add('template-status-deleted');
+          }
+        }
+
+        templateStatusSelect.value = TemplateStatus.EDITING;
+        updateTemplateStatusAppearance();
+
+        function updateTemplateNameValidity() {
+          const value = templateNameInput.value.trim();
+          const ok = value.length >= 4 && value.length <= 64;
+          templateNameInput.classList.toggle('toolbar-control-invalid', !ok);
+        }
+
+        function updateTemplateIdBadge() {
+          if (!(templateIdBadge instanceof HTMLElement)) return;
+          const dirtyMark = isCanvasStateDirty ? ' *' : '';
+          const dirtyHint = isCanvasStateDirty
+            ? ' Unsaved server changes are present.'
+            : '';
+          if (Number.isFinite(currentTemplateId) && currentTemplateId > 0) {
+            templateIdBadge.textContent = `ID: ${currentTemplateId}${dirtyMark}`;
+            templateIdBadge.classList.remove('template-id-badge-unsaved');
+            templateIdBadge.title = `Saved template ID ${currentTemplateId}.${dirtyHint}`;
+          } else {
+            templateIdBadge.textContent = `not saved${dirtyMark}`;
+            templateIdBadge.classList.add('template-id-badge-unsaved');
+            templateIdBadge.title = `Template is not saved on server yet.${dirtyHint}`;
+          }
+        }
+
+        function getTemplateState() {
+          return {
+            status: String(templateStatusSelect?.value || TemplateStatus.UNKNOWN),
+            name: String(templateNameInput?.value || ''),
+          };
+        }
+
+        function applyTemplateState(template) {
+          if (!template) return;
+          const status = String(template.status || TemplateStatus.UNKNOWN);
+          const name = String(template.name || '');
+          const knownStatuses = Object.values(TemplateStatus);
+          templateStatusSelect.value = knownStatuses.includes(status)
+            ? status
+            : TemplateStatus.UNKNOWN;
+          updateTemplateStatusAppearance();
+          templateNameInput.value = name;
+          updateTemplateNameValidity();
+        }
+
+        templateNameInput.addEventListener('input', () => {
+          updateTemplateNameValidity();
+          persistCanvasStateDebounced();
+        });
+        templateStatusSelect?.addEventListener('change', () => {
+          updateTemplateStatusAppearance();
+          persistCanvasStateDebounced();
+        });
+        updateTemplateNameValidity();
+
+        function getSelectedTemplateMeta() {
+          if (!(selectedTemplateListItem instanceof HTMLElement)) {
+            return null;
+          }
+          const templateId = Number(
+            selectedTemplateListItem.dataset.templateId || '',
+          );
+          const templateName = String(
+            selectedTemplateListItem.dataset.templateName || '',
+          ).trim();
+          if (!Number.isFinite(templateId) || templateId <= 0 || !templateName) {
+            return null;
+          }
+          return { templateId, templateName };
+        }
+
+        function buildCanvasStateFromBackend(logicResp, visualsResp, fallbackTemplateId) {
+          const templateId = Number(
+            logicResp?.template_id ?? logicResp?.templateId ?? fallbackTemplateId,
+          );
+          const templateName = String(
+            logicResp?.name || visualsResp?.name || '',
+          ).trim();
+          const templateStatus = String(
+            logicResp?.status || TemplateStatus.UNKNOWN,
+          ).toUpperCase();
+          const knownStatuses = Object.values(TemplateStatus);
+          const safeStatus = knownStatuses.includes(templateStatus)
+            ? templateStatus
+            : TemplateStatus.UNKNOWN;
+
+          let visualsData = {};
+          if (visualsResp?.data != null) {
+            if (typeof visualsResp.data !== 'string') {
+              throw new Error('Template visuals "data" must be a JSON string.');
+            }
+            try {
+              visualsData = JSON.parse(visualsResp.data);
+            } catch {
+              throw new Error('Cannot parse template visuals JSON.');
+            }
+          }
+
+          const visualBlocks = Array.isArray(visualsData?.blocks)
+            ? visualsData.blocks
+            : [];
+          const visualBlockById = new Map();
+          visualBlocks.forEach((b) => {
+            const key = String(b?.internal_block_id ?? '');
+            if (key) visualBlockById.set(key, b);
+          });
+
+          const visualLines = Array.isArray(visualsData?.lines) ? visualsData.lines : [];
+          const visualLineById = new Map();
+          visualLines.forEach((l) => {
+            const key = String(l?.internal_line_id ?? '');
+            if (key) visualLineById.set(key, l);
+          });
+
+          const logicBlocks = Array.isArray(logicResp?.blocks) ? logicResp.blocks : [];
+          const blocks = logicBlocks.map((b) => {
+            const internalId = String(b?.internal_block_id ?? b?.internalBlockId ?? '');
+            const visualBlock = visualBlockById.get(internalId) || {};
+            return {
+              internal_block_id: internalId,
+              block_type_id: normalizeBlockTypeId(
+                String(b?.block_type_id ?? b?.blockTypeId ?? ''),
+              ),
+              default_input_text: String(
+                b?.default_input_text ?? b?.defaultInputText ?? '',
+              ),
+              x: Number(visualBlock?.x ?? 0),
+              y: Number(visualBlock?.y ?? 0),
+              width: Number(visualBlock?.width ?? 160),
+              height: Number(visualBlock?.height ?? 80),
+            };
+          });
+
+          const logicLines = Array.isArray(logicResp?.lines) ? logicResp.lines : [];
+          const lines = logicLines.map((l) => {
+            const internalLineId = String(
+              l?.internal_line_id ?? l?.internalLineId ?? '',
+            );
+            const visualLine = visualLineById.get(internalLineId) || {};
+            return {
+              internal_line_id: internalLineId,
+              block_from_internal_id: String(
+                l?.block_from_internal_id ?? l?.blockFromInternalId ?? '',
+              ),
+              block_to_internal_id: String(
+                l?.block_to_internal_id ?? l?.blockToInternalId ?? '',
+              ),
+              from_side: String(visualLine?.from_side ?? ''),
+              to_side: String(visualLine?.to_side ?? ''),
+            };
+          });
+
+          const width = Number(
+            visualsData?.canvas?.width ?? visualsData?.canvasWidth ?? MIN_CANVAS_WIDTH,
+          );
+          const height = Number(
+            visualsData?.canvas?.height ??
+              visualsData?.canvasHeight ??
+              MIN_CANVAS_HEIGHT,
+          );
+          const normalizeCanvasDimension = (raw, min, max) => {
+            if (!Number.isFinite(raw)) return min;
+            const snapped =
+              Math.round(raw / CANVAS_SIZE_STEP) * CANVAS_SIZE_STEP;
+            if (!Number.isFinite(snapped)) return min;
+            return Math.min(max, Math.max(min, snapped));
+          };
+
+          return {
+            v: CANVAS_STATE_VERSION,
+            template: {
+              name: templateName,
+              status: safeStatus,
+            },
+            template_id:
+              Number.isFinite(templateId) && templateId > 0 ? templateId : null,
+            canvas: {
+              width: normalizeCanvasDimension(
+                width,
+                MIN_CANVAS_WIDTH,
+                MAX_CANVAS_WIDTH,
+              ),
+              height: normalizeCanvasDimension(
+                height,
+                MIN_CANVAS_HEIGHT,
+                MAX_CANVAS_HEIGHT,
+              ),
+            },
+            blocks,
+            lines,
+          };
+        }
+
+        function isValidTemplateListMeta(meta) {
+          if (!meta) return false;
+          const id = Number(meta.templateId);
+          const name = String(meta.templateName || '').trim();
+          return Number.isFinite(id) && id > 0 && Boolean(name);
+        }
+
+        async function loadTemplateBySelection(metaOverride) {
+          const authState = getAuthState();
+          const accessToken = authState?.access_token;
+          if (!accessToken) {
+            showModal(
+              'Cannot load template',
+              'Please login before loading a template.',
+            );
+            return false;
+          }
+
+          const selected = isValidTemplateListMeta(metaOverride)
+            ? metaOverride
+            : getSelectedTemplateMeta();
+          if (!selected) {
+            showModal(
+              'Cannot load template',
+              'Please select a template from "My templates" first.',
+            );
+            return false;
+          }
+
+          try {
+            const templateGetPath = `/templates/get?template_id=${encodeURIComponent(
+              String(selected.templateId),
+            )}`;
+            const visualsGetPath = `/templates/visuals/get?template_name=${encodeURIComponent(
+              selected.templateName,
+            )}`;
+            const [logicResp, visualsResp] = await Promise.all([
+              apiGet(CONFIG.templateServiceUrl, templateGetPath, accessToken),
+              apiGet(CONFIG.templateServiceUrl, visualsGetPath, accessToken),
+            ]);
+
+            const loadedState = buildCanvasStateFromBackend(
+              logicResp,
+              visualsResp,
+              selected.templateId,
+            );
+
+            resetCanvasDOM();
+            const applied = applyCanvasState(loadedState);
+            if (!applied) {
+              throw new Error('Loaded template data is invalid.');
+            }
+            persistCanvasState();
+            setCanvasDirtyFlag(false);
+            await refreshTemplateList({
+              preferredTemplateId: selected.templateId,
+              preferredTemplateName: selected.templateName,
+            });
+            return true;
+          } catch (e) {
+            showModal('Load template error', String(e?.message || e));
+            return false;
+          }
+        }
+
+        async function runLoadTemplateWithDirtyGuard() {
+          const loadTarget = getSelectedTemplateMeta();
+          if (isCanvasStateDirty) {
+            showDirtyNewTemplateConfirm(
+              async () => {
+                const saved = await handleSaveTemplate();
+                if (saved) {
+                  await loadTemplateBySelection(loadTarget);
+                }
+              },
+              async () => {
+                await loadTemplateBySelection(loadTarget);
+              },
+            );
+            return;
+          }
+          await loadTemplateBySelection(loadTarget);
+        }
+
+        tplLoadBtn?.addEventListener('click', async () => {
+          await runLoadTemplateWithDirtyGuard();
+        });
+        async function deleteTemplateBySelection() {
+          const escapeHtml = (value) =>
+            String(value)
+              .replaceAll('&', '&amp;')
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')
+              .replaceAll('"', '&quot;')
+              .replaceAll("'", '&#39;');
+          const authState = getAuthState();
+          const accessToken = authState?.access_token;
+          if (!accessToken) {
+            showModal(
+              'Cannot delete template',
+              'Please login before deleting a template.',
+            );
+            return false;
+          }
+
+          const selected = getSelectedTemplateMeta();
+          if (!selected) {
+            showModal(
+              'Cannot delete template',
+              'Please select a template from "My templates" first.',
+            );
+            return false;
+          }
+
+          const isOpenedTemplate =
+            Number.isFinite(currentTemplateId) &&
+            currentTemplateId > 0 &&
+            currentTemplateId === selected.templateId;
+
+          const performDelete = async () => {
+            try {
+              const deleteTemplatePath = `/templates/delete?template_id=${encodeURIComponent(
+                String(selected.templateId),
+              )}`;
+              const deleteVisualsPath = `/templates/visuals/delete?template_name=${encodeURIComponent(
+                selected.templateName,
+              )}`;
+              await Promise.all([
+                apiDeleteTo(CONFIG.templateServiceUrl, deleteTemplatePath, accessToken),
+                apiDeleteTo(CONFIG.templateServiceUrl, deleteVisualsPath, accessToken),
+              ]);
+
+              if (isOpenedTemplate) {
+                startNewTemplate();
+              }
+
+              await refreshTemplateList({
+                preferredTemplateId:
+                  Number.isFinite(currentTemplateId) && currentTemplateId > 0
+                    ? currentTemplateId
+                    : null,
+                preferredTemplateName: templateNameInput?.value?.trim() || '',
+              });
+              return true;
+            } catch (e) {
+              showModal('Delete template error', String(e?.message || e));
+              return false;
+            }
+          };
+
+          showModalHtml(
+            'Delete template',
+            `
+              <div>
+                You are about to delete template "<b>${escapeHtml(selected.templateName)}</b>".
+              </div>
+              <div class="confirm-actions">
+                <button
+                  type="button"
+                  class="modal-close modal-close-secondary"
+                  id="confirm-cancel"
+                  autofocus
+                >
+                  Cancel
+                </button>
+                <button type="button" class="modal-close" id="confirm-delete">
+                  Yes, delete
+                </button>
+              </div>
+            `,
+          );
+          if (modalCloseBtn instanceof HTMLElement) {
+            modalCloseBtn.style.display = 'none';
+          }
+
+          const cancelBtn = modalBodyEl?.querySelector('#confirm-cancel');
+          const deleteBtn = modalBodyEl?.querySelector('#confirm-delete');
+          cancelBtn?.addEventListener('click', closeModal);
+          deleteBtn?.addEventListener('click', async () => {
+            closeModal();
+            await performDelete();
+          });
+          return true;
+        }
+
+        tplDeleteBtn?.addEventListener('click', async () => {
+          await deleteTemplateBySelection();
+        });
+
+        const CONFIG = Object.freeze({
+          userServiceUrl: 'http://localhost:8082',
+          templateServiceUrl: 'http://localhost:8080',
+          storageKey: 'flowForgeAuth',
+          refreshIntervalMinutes: 10,
+        });
+
+        function getAuthState() {
+          try {
+            const raw = localStorage.getItem(CONFIG.storageKey);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            if (!parsed?.access_token || !parsed?.refresh_token) return null;
+            return parsed;
+          } catch {
+            return null;
+          }
+        }
+
+        function setAuthState(state) {
+          if (!state) {
+            localStorage.removeItem(CONFIG.storageKey);
+            return;
+          }
+          localStorage.setItem(CONFIG.storageKey, JSON.stringify(state));
+        }
+
+        const authStatusBadge = document.getElementById('auth-status');
+
+        function updateTemplatesPanelAvailability(isLoggedIn) {
+          if (myTemplatesPanel instanceof HTMLElement) {
+            myTemplatesPanel.classList.toggle(
+              'rightbar-section-disabled',
+              !isLoggedIn,
+            );
+            myTemplatesPanel.setAttribute(
+              'aria-disabled',
+              isLoggedIn ? 'false' : 'true',
+            );
+          }
+
+          [tplUpdateBtn, tplLoadBtn, tplDeleteBtn].forEach((btn) => {
+            if (btn instanceof HTMLButtonElement) {
+              btn.disabled = !isLoggedIn;
+            }
+          });
+          if (tplDeleteBtn instanceof HTMLButtonElement) {
+            const hasSelection = selectedTemplateListItem instanceof HTMLElement;
+            tplDeleteBtn.disabled = !isLoggedIn || !hasSelection;
+          }
+
+          const saveBtn =
+            document.getElementById('toolbar-save-template') ||
+            saveTemplateToolbarBtn;
+          if (saveBtn instanceof HTMLButtonElement) {
+            saveBtn.disabled = !isLoggedIn;
+            saveBtn.setAttribute(
+              'aria-disabled',
+              isLoggedIn ? 'false' : 'true',
+            );
+          }
+        }
+
+        function updateAuthButtonsVisibility() {
+          const state = getAuthState();
+          const isLoggedIn = Boolean(state);
+          if (authRegisterBtn)
+            authRegisterBtn.style.display = isLoggedIn ? 'none' : '';
+          if (authLoginBtn)
+            authLoginBtn.style.display = isLoggedIn ? 'none' : '';
+          if (authLogoutBtn)
+            authLogoutBtn.style.display = isLoggedIn ? '' : 'none';
+
+          if (authStatusBadge) {
+            authStatusBadge.classList.toggle('auth-badge-on', isLoggedIn);
+            authStatusBadge.classList.toggle('auth-badge-off', !isLoggedIn);
+            authStatusBadge.textContent = isLoggedIn
+              ? `Logged in: ${state.login || 'user'}`
+              : 'Logged out';
+          }
+
+          updateTemplatesPanelAvailability(isLoggedIn);
+        }
+
+        updateAuthButtonsVisibility();
+        updateTemplateIdBadge();
+
+        async function sha256Hex(text) {
+          const data = new TextEncoder().encode(text);
+          const hash = await crypto.subtle.digest('SHA-256', data);
+          const bytes = Array.from(new Uint8Array(hash));
+          return bytes.map((b) => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function getPasswordHashFromInput(rawPassword) {
+          const value = String(rawPassword || '');
+          if (value.startsWith('hash:')) {
+            return value.slice('hash:'.length).trim();
+          }
+          return await sha256Hex(value);
+        }
+
+        async function apiPost(path, body, accessToken) {
+          return await apiRequest('POST', CONFIG.userServiceUrl, path, body, accessToken);
+        }
+
+        async function apiPostTo(baseUrl, path, body, accessToken) {
+          return await apiRequest('POST', baseUrl, path, body, accessToken);
+        }
+
+        async function apiGet(baseUrl, path, accessToken) {
+          return await apiRequest('GET', baseUrl, path, null, accessToken);
+        }
+
+        async function apiDeleteTo(baseUrl, path, accessToken) {
+          return await apiRequest('DELETE', baseUrl, path, null, accessToken);
+        }
+
+        async function apiRequest(method, baseUrl, path, body, accessToken) {
+          const res = await fetch(`${baseUrl}${path}`, {
+            method,
+            headers: {
+              'Content-Type': 'application/json',
+              ...(accessToken
+                ? { Authorization: `Bearer ${accessToken}` }
+                : {}),
+            },
+            ...(body == null ? {} : { body: JSON.stringify(body) }),
+          });
+
+          const contentType = res.headers.get('content-type') || '';
+          let payload = null;
+          if (contentType.includes('application/json')) {
+            try {
+              payload = await res.json();
+            } catch {}
+          } else {
+            try {
+              payload = await res.text();
+            } catch {}
+          }
+
+          if (!res.ok) {
+            const msg =
+              (payload &&
+                typeof payload === 'object' &&
+                (payload.message || payload.error)) ||
+              (typeof payload === 'string' ? payload : '') ||
+              `HTTP ${res.status}`;
+            throw new Error(msg);
+          }
+
+          return payload;
+        }
+
+        function clearTemplateListView() {
+          if (!(templatesListContainer instanceof HTMLElement)) return;
+          selectedTemplateListItem = null;
+          templatesListContainer.innerHTML =
+            '<div class="rightbar-muted">Template list is empty.</div>';
+          updateTemplatesPanelAvailability(Boolean(getAuthState()));
+        }
+
+        function setSelectedTemplateListItem(node) {
+          if (selectedTemplateListItem instanceof HTMLElement) {
+            selectedTemplateListItem.classList.remove('template-list-item-selected');
+          }
+          if (node instanceof HTMLElement) {
+            selectedTemplateListItem = node;
+            selectedTemplateListItem.classList.add('template-list-item-selected');
+          } else {
+            selectedTemplateListItem = null;
+          }
+          updateTemplatesPanelAvailability(Boolean(getAuthState()));
+        }
+
+        function renderTemplateList(items, options = {}) {
+          const { preferredTemplateId = null, preferredTemplateName = '' } = options;
+          if (!(templatesListContainer instanceof HTMLElement)) return;
+          selectedTemplateListItem = null;
+          if (!Array.isArray(items) || items.length === 0) {
+            clearTemplateListView();
+            return;
+          }
+
+          templatesListContainer.innerHTML = '';
+          const fragment = document.createDocumentFragment();
+          items.forEach((item, idx) => {
+            const name = String(item?.name || '').trim() || 'Unnamed';
+            const status = String(item?.status || TemplateStatus.UNKNOWN).toUpperCase();
+            const row = document.createElement('button');
+            row.type = 'button';
+            row.className = 'template-list-item';
+            row.id = `template-list-item-${idx + 1}`;
+            row.textContent = `${name} (${status})`;
+            const templateId = Number(
+              item?.template_id ?? item?.templateId ?? item?.projectId,
+            );
+            if (Number.isFinite(templateId) && templateId > 0) {
+              row.dataset.templateId = String(templateId);
+            }
+            row.dataset.templateName = name;
+            row.addEventListener('click', () => {
+              setSelectedTemplateListItem(row);
+            });
+            row.addEventListener('dblclick', (e) => {
+              e.preventDefault();
+              setSelectedTemplateListItem(row);
+              runLoadTemplateWithDirtyGuard();
+            });
+            fragment.appendChild(row);
+          });
+          templatesListContainer.appendChild(fragment);
+
+          const rows = Array.from(
+            templatesListContainer.querySelectorAll('.template-list-item'),
+          );
+          const preferredName = String(preferredTemplateName || '').trim();
+          const selectedByPreference = rows.find((row) => {
+            const rowId = Number(row.dataset.templateId || '');
+            const rowName = String(row.dataset.templateName || '').trim();
+            const byId =
+              Number.isFinite(preferredTemplateId) &&
+              preferredTemplateId > 0 &&
+              rowId === preferredTemplateId;
+            const byName = preferredName && rowName === preferredName;
+            return byId || byName;
+          });
+          setSelectedTemplateListItem(selectedByPreference || rows[0] || null);
+        }
+
+        async function refreshTemplateList(options = {}) {
+          const {
+            showError = true,
+            keepSelection = true,
+            preferredTemplateId = null,
+            preferredTemplateName = '',
+          } = options;
+          const state = getAuthState();
+          const accessToken = state?.access_token;
+          const selectedBefore = keepSelection ? getSelectedTemplateMeta() : null;
+          const openedTemplateId =
+            Number.isFinite(currentTemplateId) && currentTemplateId > 0
+              ? currentTemplateId
+              : null;
+          const openedTemplateName = templateNameInput?.value?.trim() || '';
+
+          if (!accessToken) {
+            clearTemplateListView();
+            return;
+          }
+
+          try {
+            const resp = await apiGet(
+              CONFIG.templateServiceUrl,
+              '/templates/list',
+              accessToken,
+            );
+            const items = Array.isArray(resp?.items) ? resp.items : [];
+            renderTemplateList(items, {
+              preferredTemplateId:
+                Number.isFinite(preferredTemplateId) && preferredTemplateId > 0
+                  ? preferredTemplateId
+                  : openedTemplateId ?? selectedBefore?.templateId ?? null,
+              preferredTemplateName:
+                String(preferredTemplateName || '').trim() ||
+                openedTemplateName ||
+                selectedBefore?.templateName ||
+                '',
+            });
+          } catch (e) {
+            clearTemplateListView();
+            if (showError) {
+              const message = String(e?.message || e);
+              const humanFriendlyMessage =
+                message === 'Failed to fetch'
+                  ? 'Failed to fetch template list. The browser request was blocked before receiving a response. Please check template-service CORS/OPTIONS configuration and that the service is reachable at http://localhost:8080.'
+                  : message;
+              showModal('Template list error', humanFriendlyMessage);
+            }
+          }
+        }
+
+        tplUpdateBtn?.addEventListener('click', () => {
+          refreshTemplateList();
+        });
+
+        function openAuthForm(kind) {
+          function wirePasswordToggle(inputId, toggleId) {
+            const input = document.getElementById(inputId);
+            const btn = document.getElementById(toggleId);
+            if (
+              !(input instanceof HTMLInputElement) ||
+              !(btn instanceof HTMLButtonElement)
+            ) {
+              return;
+            }
+            btn.addEventListener('click', () => {
+              const next = input.type === 'password' ? 'text' : 'password';
+              input.type = next;
+              btn.textContent = next === 'password' ? '👁' : '🙈';
+            });
+          }
+
+          if (kind === 'register') {
+            showModalHtml(
+              'Register',
+              `
+                <div class="form-grid">
+                  <div class="form-field">
+                    <div class="form-label">Login</div>
+                    <input class="toolbar-control" id="reg-login" type="text" minlength="4" maxlength="64" />
+                  </div>
+                  <div class="form-field">
+                    <div class="form-label">Password</div>
+                    <div class="password-wrap">
+                      <input class="toolbar-control" id="reg-password" type="password" minlength="8" maxlength="128" />
+                      <button class="password-toggle" type="button" id="reg-password-toggle" aria-label="Show/hide password">👁</button>
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <div class="form-label">First name</div>
+                    <input class="toolbar-control" id="reg-first" type="text" minlength="1" maxlength="64" />
+                  </div>
+                  <div class="form-field">
+                    <div class="form-label">Last name</div>
+                    <input class="toolbar-control" id="reg-last" type="text" minlength="1" maxlength="64" />
+                  </div>
+                  <div class="form-field form-field-full">
+                    <div class="form-label">Email</div>
+                    <input class="toolbar-control" id="reg-email" type="email" minlength="5" maxlength="64" />
+                  </div>
+                  <div class="form-field form-field-full">
+                    <div class="form-label">Phone (+79001234567)</div>
+                    <input class="toolbar-control" id="reg-phone" type="tel" minlength="11" maxlength="16" placeholder="+79001234567" />
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="modal-close modal-close-secondary" type="button" id="auth-cancel">Cancel</button>
+                  <button class="modal-close" type="button" id="auth-submit">Submit</button>
+                </div>
+              `,
+            );
+            wirePasswordToggle('reg-password', 'reg-password-toggle');
+          } else if (kind === 'login') {
+            showModalHtml(
+              'Login',
+              `
+                <div class="form-grid">
+                  <div class="form-field form-field-full">
+                    <div class="form-label">Login</div>
+                    <input class="toolbar-control" id="login-login" type="text" minlength="4" maxlength="64" />
+                  </div>
+                  <div class="form-field form-field-full">
+                    <div class="form-label">Password</div>
+                    <div class="password-wrap">
+                      <input class="toolbar-control" id="login-password" type="password" minlength="8" maxlength="128" />
+                      <button class="password-toggle" type="button" id="login-password-toggle" aria-label="Show/hide password">👁</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="modal-close modal-close-secondary" type="button" id="auth-cancel">Cancel</button>
+                  <button class="modal-close" type="button" id="auth-submit">Login</button>
+                </div>
+              `,
+            );
+            wirePasswordToggle('login-password', 'login-password-toggle');
+          }
+
+          document
+            .getElementById('auth-cancel')
+            ?.addEventListener('click', closeModal);
+          document
+            .getElementById('auth-submit')
+            ?.addEventListener('click', async () => {
+              try {
+                if (kind === 'register') {
+                  const login =
+                    document.getElementById('reg-login')?.value?.trim() || '';
+                  const password =
+                    document.getElementById('reg-password')?.value || '';
+                  const firstName =
+                    document.getElementById('reg-first')?.value?.trim() || '';
+                  const lastName =
+                    document.getElementById('reg-last')?.value?.trim() || '';
+                  const email =
+                    document.getElementById('reg-email')?.value?.trim() || '';
+                  const phone =
+                    document.getElementById('reg-phone')?.value?.trim() || '';
+
+                  const password_hash =
+                    await getPasswordHashFromInput(password);
+                  await apiPost('/auth/register', {
+                    login,
+                    password_hash,
+                    first_name: firstName,
+                    last_name: lastName,
+                    email,
+                    phone,
+                  });
+
+                  closeModal();
+                  showModal(
+                    'Register',
+                    'Registration completed successfully. You can now login.',
+                  );
+                }
+
+                if (kind === 'login') {
+                  const login =
+                    document.getElementById('login-login')?.value?.trim() || '';
+                  const password =
+                    document.getElementById('login-password')?.value || '';
+                  const password_hash =
+                    await getPasswordHashFromInput(password);
+                  const resp = await apiPost('/auth/login', {
+                    login,
+                    password_hash,
+                  });
+                  const access_token = resp?.access_token;
+                  const refresh_token = resp?.refresh_token;
+
+                  if (!access_token || !refresh_token) {
+                    throw new Error('Invalid login response (missing tokens)');
+                  }
+
+                  setAuthState({ access_token, refresh_token, login });
+                  closeModal();
+                  updateAuthButtonsVisibility();
+                  await refreshTemplateList({
+                    preferredTemplateId: currentTemplateId,
+                    preferredTemplateName: templateNameInput?.value?.trim() || '',
+                  });
+                  showModal('Login', 'Login completed successfully.');
+                }
+              } catch (e) {
+                showModal('Auth error', String(e?.message || e));
+              }
+            });
+        }
+
+        authRegisterBtn?.addEventListener('click', () =>
+          openAuthForm('register'),
+        );
+        authLoginBtn?.addEventListener('click', () => openAuthForm('login'));
+        authLogoutBtn?.addEventListener('click', async () => {
+          const state = getAuthState();
+          if (!state) {
+            updateAuthButtonsVisibility();
+            return;
+          }
+          try {
+            await apiPost(
+              '/auth/logout',
+              {
+                refresh_token: state.refresh_token,
+                access_token: state.access_token,
+              },
+              state.access_token,
+            );
+          } catch {
+            // silent by requirement
+          } finally {
+            setAuthState(null);
+            updateAuthButtonsVisibility();
+            clearTemplateListView();
+          }
+        });
+
+        updateAuthButtonsVisibility();
+
+        async function refreshTokens() {
+          const state = getAuthState();
+          if (!state) return;
+          try {
+            const resp = await apiPost('/auth/refresh', {
+              refresh_token: state.refresh_token,
+            });
+            const access_token = resp?.access_token;
+            const refresh_token = resp?.refresh_token;
+            if (!access_token || !refresh_token) {
+              throw new Error('Invalid refresh response (missing tokens)');
+            }
+            setAuthState({ ...state, access_token, refresh_token });
+            updateAuthButtonsVisibility();
+          } catch {
+            // silent auto-refresh fail -> drop auth
+            setAuthState(null);
+            updateAuthButtonsVisibility();
+            clearTemplateListView();
+          }
+        }
+
+        const refreshIntervalMs =
+          Math.max(1, CONFIG.refreshIntervalMinutes) * 60 * 1000;
+        setInterval(refreshTokens, refreshIntervalMs);
+        refreshTokens();
+
+        function forceOpenJournal() {
+          if (!journalPanel) return;
+          const collapsed =
+            journalPanel.classList.contains('journal-collapsed');
+          if (collapsed) {
+            journalPanel.classList.remove('journal-collapsed');
+            if (journalToggleBtn) journalToggleBtn.textContent = 'Journal ▾';
+          }
+        }
+
+        function writeJournal(text) {
+          if (journalText) {
+            journalText.value = text;
+            journalText.scrollTop = 0;
+          }
+        }
+
+        journalToggleBtn?.addEventListener('click', () => {
+          if (!journalPanel) return;
+          const collapsed = journalPanel.classList.toggle('journal-collapsed');
+          journalToggleBtn.textContent = collapsed ? 'Journal' : 'Journal ▾';
+        });
+
+        const canvas = document.getElementById('canvas');
+        const minimap = document.getElementById('minimap');
+        const library = document.getElementById('library');
+        library?.querySelectorAll('.library-item').forEach((item) => {
+          const id = normalizeBlockTypeId(
+            item.dataset.blockTypeId || item.dataset.templateId || '',
+          );
+          if (!id) return;
+          const cat = BLOCK_TYPE_CATEGORY[id];
+          const disp = BLOCK_TYPE_DISPLAY[id];
+          const labEl = item.querySelector('.library-item-label');
+          const titleEl = item.querySelector('.library-item-title');
+          if (cat && labEl) labEl.textContent = cat;
+          if (disp && titleEl) titleEl.textContent = disp;
+        });
+        const connectionsLayer = document.getElementById('canvas-connections');
+        const canvasViewport = canvas?.closest('.canvas-viewport');
+        const canvasWidthInput = document.getElementById('canvas-width');
+        const canvasHeightInput = document.getElementById('canvas-height');
+        const canvasSetBtn = document.getElementById('canvas-set');
+        const propInternalBlockId = document.getElementById(
+          'prop-internal-block-id',
+        );
+        const propBlockTypeId = document.getElementById('prop-block-type-id');
+        const propDefaultInputText = document.getElementById(
+          'prop-default-input-text',
+        );
+        const propPosition = document.getElementById('prop-position');
+        const propSize = document.getElementById('prop-size');
+
+        function getNodeSize(node) {
+          const width =
+            Number.parseFloat(node.style.width || '') || node.offsetWidth || 0;
+          const height =
+            Number.parseFloat(node.style.height || '') || node.offsetHeight || 0;
+          return { width, height };
+        }
+
+        function updatePropertiesPanel(node) {
+          const dash = '-';
+          if (!node) {
+            if (propInternalBlockId) propInternalBlockId.textContent = dash;
+            if (propBlockTypeId) propBlockTypeId.textContent = dash;
+            if (propDefaultInputText) propDefaultInputText.textContent = dash;
+            if (propPosition) propPosition.textContent = dash;
+            if (propSize) propSize.textContent = dash;
+            return;
+          }
+
+          const id = node.dataset.internalBlockId || dash;
+          const blockTypeCanonical = normalizeBlockTypeId(node.dataset.blockTypeId);
+          const blockTypeId = blockTypeCanonical
+            ? getBlockTypeDisplayTitle(blockTypeCanonical)
+            : dash;
+          const inputEl = node.querySelector('.canvas-node-input');
+          const defaultInputText =
+            inputEl?.value ?? node.dataset.defaultInputText ?? dash;
+          const posX = Number.parseFloat(node.style.left || '0') || 0;
+          const posY = Number.parseFloat(node.style.top || '0') || 0;
+          const positionText = `${Math.round(posX)}, ${Math.round(posY)} px`;
+          const { width, height } = getNodeSize(node);
+          const sizeText = `${Math.round(width)} x ${Math.round(height)} px`;
+
+          if (propInternalBlockId) propInternalBlockId.textContent = id;
+          if (propBlockTypeId) propBlockTypeId.textContent = blockTypeId;
+          if (propDefaultInputText) {
+            propDefaultInputText.textContent = defaultInputText || dash;
+          }
+          if (propPosition) propPosition.textContent = positionText;
+          if (propSize) propSize.textContent = sizeText;
+        }
+
+        canvas?.addEventListener('pointerdown', (event) => {
+          // Clear selection when clicking canvas background (not a node).
+          const targetEl = event.target instanceof HTMLElement ? event.target : null;
+          const closestNode = targetEl?.closest('.canvas-node') || null;
+          if (!closestNode) {
+            setSelectedBlockNode(null);
+            closeNodeMenu();
+          }
+        });
+
+        function deleteSelectedBlock() {
+          if (!(selectedBlockNode instanceof HTMLElement)) return;
+          closeNodeMenu();
+          const nodeId = selectedBlockNode.dataset.internalBlockId;
+          if (!nodeId) return;
+
+          // If user was in the middle of creating a connection, cancel it.
+          if (activeConnectionPath?.parentNode === connectionsLayer) {
+            connectionsLayer.removeChild(activeConnectionPath);
+          }
+          activeConnection = null;
+          activeConnectionPath = null;
+
+          for (let i = connections.length - 1; i >= 0; i--) {
+            const c = connections[i];
+            const hit =
+              c.block_from_internal_id === nodeId ||
+              c.block_to_internal_id === nodeId;
+            if (!hit) continue;
+
+            if (c.path && c.path.parentNode === connectionsLayer) {
+              connectionsLayer.removeChild(c.path);
+            }
+            connections.splice(i, 1);
+          }
+
+          selectedBlockNode.remove();
+          setSelectedBlockNode(null);
+
+          updateMinimap();
+          updateAllConnections();
+          persistCanvasStateDebounced();
+        }
+
+        function confirmDeleteSelectedBlock() {
+          if (!(selectedBlockNode instanceof HTMLElement)) return;
+          const nodeId = selectedBlockNode.dataset.internalBlockId;
+          if (!nodeId) return;
+          closeNodeMenu();
+
+          showConfirm(
+            'Delete block',
+            `You are going to delete block #${nodeId}. Are you sure?`,
+            () => deleteSelectedBlock(),
+          );
+        }
+
+        window.addEventListener('keydown', (e) => {
+          if (e.key !== 'Delete') return;
+          if (modalOverlay?.classList.contains('modal-overlay-open')) return;
+
+          const ae = globalThis.document?.activeElement;
+          if (
+            ae instanceof HTMLElement &&
+            (ae.closest('.canvas-node-input') || ae.isContentEditable)
+          ) {
+            // Don't delete while user is editing textarea.
+            return;
+          }
+
+          if (!selectedBlockNode) return;
+          e.preventDefault();
+          confirmDeleteSelectedBlock();
+        });
+
+        window.addEventListener('pointerdown', (e) => {
+          if (!(nodeMenuOpenNode instanceof HTMLElement)) return;
+          const targetEl = e.target instanceof HTMLElement ? e.target : null;
+          if (!targetEl) return;
+
+          if (targetEl.closest('.node-menu')) return;
+          if (targetEl.closest('.node-badge')) return;
+
+          closeNodeMenu();
+        });
+
+        async function handleSaveTemplate() {
+          const authState = getAuthState();
+          if (!authState?.access_token) {
+            showModal(
+              'Cannot save template',
+              'Please login before saving a template.',
+            );
+            return false;
+          }
+
+          const status = templateStatusSelect.value;
+          const name = templateNameInput.value.trim();
+
+          templateNameInput.classList.remove('toolbar-control-invalid');
+          templateStatusSelect.classList.remove('toolbar-control-invalid');
+
+          if (status === TemplateStatus.UNKNOWN) {
+            templateStatusSelect.classList.add('toolbar-control-invalid');
+            showModal(
+              'Cannot save template',
+              'The "Template status" field must not be UNKNOWN.',
+            );
+            return false;
+          }
+
+          if (name.length < 4 || name.length > 64) {
+            templateNameInput.classList.add('toolbar-control-invalid');
+            showModal(
+              'Cannot save template',
+              'The "Template name" field must be between 4 and 64 characters.',
+            );
+            return false;
+          }
+
+          const blocks = Array.from(
+            canvas.querySelectorAll('.canvas-node'),
+          ).map((node) => {
+            const canonical = normalizeBlockTypeId(node.dataset.blockTypeId);
+            return {
+              internal_block_id: node.dataset.internalBlockId,
+              block_type_id: canonical,
+              default_input_text: ensureDefaultInputForBackend(node, canonical),
+            };
+          });
+
+          const lines = connections.map((c) => ({
+            internal_line_id: c.internal_line_id,
+            block_from_internal_id: c.block_from_internal_id,
+            block_to_internal_id: c.block_to_internal_id,
+          }));
+
+          const payload = {
+            name,
+            data: {
+              status,
+              blocks,
+              lines,
+            },
+          };
+
+          const blocksLayout = Array.from(
+            canvas.querySelectorAll('.canvas-node'),
+          ).map((node) => {
+            const x = Number.parseFloat(node.style.left || '0') || 0;
+            const y = Number.parseFloat(node.style.top || '0') || 0;
+            const width =
+              Number.parseFloat(node.style.width || '') || node.offsetWidth;
+            const height =
+              Number.parseFloat(node.style.height || '') || node.offsetHeight;
+            return {
+              internal_block_id: node.dataset.internalBlockId,
+              x,
+              y,
+              width,
+              height,
+            };
+          });
+
+          const linesLayout = connections.map((c) => ({
+            internal_line_id: c.internal_line_id,
+            block_from_internal_id: c.block_from_internal_id,
+            block_to_internal_id: c.block_to_internal_id,
+            from_side: c.from?.side,
+            to_side: c.to?.side,
+          }));
+
+          const canvasState = {
+            canvas: {
+              width: canvasWidth,
+              height: canvasHeight,
+              canvas_size_step: CANVAS_SIZE_STEP,
+              block_position_step: NODE_POSITION_STEP,
+              block_size_step: NODE_SIZE_STEP,
+            },
+            blocks: blocksLayout,
+            lines: linesLayout,
+          };
+
+          writeJournal(
+            `${JSON.stringify(payload, null, 2)},\n\n${JSON.stringify(canvasState, null, 2)}`,
+          );
+          const accessToken = authState.access_token;
+
+          try {
+            if (currentTemplateId == null) {
+              const created = await apiPostTo(
+                CONFIG.templateServiceUrl,
+                '/templates/create',
+                payload,
+                accessToken,
+              );
+              const createdTemplateId = Number(
+                created?.template_id ?? created?.templateId,
+              );
+              if (!Number.isFinite(createdTemplateId) || createdTemplateId <= 0) {
+                throw new Error('Invalid create response (missing template_id)');
+              }
+              currentTemplateId = createdTemplateId;
+              updateTemplateIdBadge();
+              persistCanvasState();
+            } else {
+              await apiPostTo(
+                CONFIG.templateServiceUrl,
+                '/templates/update',
+                {
+                  template_id: currentTemplateId,
+                  name,
+                  data: payload.data,
+                },
+                accessToken,
+              );
+            }
+
+            const visualsResp = await apiPostTo(
+              CONFIG.templateServiceUrl,
+              '/templates/visuals/set-or-update',
+              {
+                name,
+                data: JSON.stringify(canvasState),
+              },
+              accessToken,
+            );
+            if (visualsResp?.completed === false) {
+              throw new Error('Visuals were not saved (completed=false)');
+            }
+
+            persistCanvasState();
+            setCanvasDirtyFlag(false);
+            showModal(
+              'Template saved',
+              `Template "${name}" was saved successfully.`,
+            );
+            await refreshTemplateList({
+              preferredTemplateId: currentTemplateId,
+              preferredTemplateName: name,
+            });
+            return true;
+          } catch (e) {
+            showModal('Save template error', String(e?.message || e));
+            return false;
+          }
+        }
+
+        let dragNode = null;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+        let resizeState = null;
+        let nodeIdCounter = 0;
+        let connectionCounter = 0;
+        let activeConnection = null;
+        let activeConnectionPath = null;
+        const connections = [];
+
+        let selectedBlockNode = null;
+
+        let nodeMenuOpenNode = null;
+
+        function setSelectedBlockNode(node) {
+          if (nodeMenuOpenNode instanceof HTMLElement && node !== nodeMenuOpenNode) {
+            closeNodeMenu();
+          }
+          if (selectedBlockNode === node) return;
+          if (selectedBlockNode instanceof HTMLElement) {
+            selectedBlockNode.classList.remove('selected');
+          }
+          selectedBlockNode = node instanceof HTMLElement ? node : null;
+          if (selectedBlockNode) selectedBlockNode.classList.add('selected');
+          updatePropertiesPanel(selectedBlockNode);
+        }
+
+        function closeNodeMenu() {
+          if (nodeMenuOpenNode instanceof HTMLElement) {
+            nodeMenuOpenNode.classList.remove('node-menu-open');
+          }
+          nodeMenuOpenNode = null;
+        }
+
+        function toggleNodeMenu(node, open) {
+          if (!(node instanceof HTMLElement)) return;
+          if (open === undefined) open = nodeMenuOpenNode !== node;
+
+          if (open) {
+            closeNodeMenu();
+            nodeMenuOpenNode = node;
+            nodeMenuOpenNode.classList.add('node-menu-open');
+          } else {
+            closeNodeMenu();
+          }
+        }
+
+        const CANVAS_STORAGE_KEY = 'flowForgeCanvasState';
+        const CANVAS_STATE_VERSION = 1;
+        let persistTimer = null;
+        let suppressPersistence = false;
+
+        function serializeCanvasState() {
+          const blocks = Array.from(canvas.querySelectorAll('.canvas-node')).map(
+            (node) => {
+              const inputEl = node.querySelector('.canvas-node-input');
+              const defaultInputText =
+                (inputEl && inputEl.value) || node.dataset.defaultInputText || '';
+              const x = Number.parseFloat(node.style.left || '0') || 0;
+              const y = Number.parseFloat(node.style.top || '0') || 0;
+              const width =
+                Number.parseFloat(node.style.width || '') ||
+                node.offsetWidth ||
+                0;
+              const height =
+                Number.parseFloat(node.style.height || '') ||
+                node.offsetHeight ||
+                0;
+
+              return {
+                internal_block_id: node.dataset.internalBlockId,
+                block_type_id: normalizeBlockTypeId(node.dataset.blockTypeId),
+                default_input_text: defaultInputText,
+                x,
+                y,
+                width,
+                height,
+              };
+            },
+          );
+
+          const lines = connections.map((c) => ({
+            internal_line_id: c.internal_line_id,
+            block_from_internal_id: c.block_from_internal_id,
+            block_to_internal_id: c.block_to_internal_id,
+            from_side: c.from?.side,
+            to_side: c.to?.side,
+          }));
+
+          return {
+            v: CANVAS_STATE_VERSION,
+            template: getTemplateState(),
+            template_id: currentTemplateId,
+            canvas: { width: canvasWidth, height: canvasHeight },
+            blocks,
+            lines,
+          };
+        }
+
+        function persistCanvasState() {
+          try {
+            const state = serializeCanvasState();
+            localStorage.setItem(CANVAS_STORAGE_KEY, JSON.stringify(state));
+          } catch {
+            // localStorage may be unavailable/quota exceeded -> ignore
+          }
+        }
+
+        function persistCanvasStateDebounced() {
+          if (suppressPersistence) return;
+          setCanvasDirtyFlag(true);
+          if (persistTimer) globalThis.clearTimeout(persistTimer);
+          persistTimer = globalThis.setTimeout(() => {
+            persistTimer = null;
+            persistCanvasState();
+          }, 350);
+        }
+
+        function resetCanvasDOM() {
+          const prev = suppressPersistence;
+          suppressPersistence = true;
+          if (persistTimer) globalThis.clearTimeout(persistTimer);
+          persistTimer = null;
+
+          try {
+            canvas
+              .querySelectorAll('.canvas-node')
+              .forEach((node) => node.remove());
+
+            if (connectionsLayer instanceof SVGSVGElement) {
+              connectionsLayer
+                .querySelectorAll('path.connection-path')
+                .forEach((p) => p.remove());
+            }
+
+            connections.splice(0, connections.length);
+            dragNode = null;
+            resizeState = null;
+            activeConnection = null;
+            activeConnectionPath = null;
+            nodeIdCounter = 0;
+            connectionCounter = 0;
+            setSelectedBlockNode(null);
+            closeNodeMenu();
+          } finally {
+            suppressPersistence = prev;
+          }
+
+          updateMinimap();
+          updateAllConnections();
+          persistCanvasStateDebounced();
+        }
+
+        function findLibraryItemByBlockTypeId(blockTypeId) {
+          const target = normalizeBlockTypeId(
+            typeof blockTypeId === 'string' ? blockTypeId.slice(0, 64) : '',
+          );
+          const items = Array.from(
+            library?.querySelectorAll('.library-item') || [],
+          );
+          for (const libItem of items) {
+            const candidate = normalizeBlockTypeId(
+              libItem.dataset.blockTypeId ||
+                libItem.dataset.templateId ||
+                libItem.querySelector('.library-item-title')?.textContent?.trim() ||
+                '',
+            );
+            if (candidate === target) return libItem;
+          }
+          // Fallback: just use the first available library item.
+          return items[0] || null;
+        }
+
+        function applyCanvasState(state) {
+          const prev = suppressPersistence;
+          suppressPersistence = true;
+          if (persistTimer) globalThis.clearTimeout(persistTimer);
+          persistTimer = null;
+
+          try {
+            if (!state?.canvas) return false;
+            applyTemplateState(state.template);
+            const restoredTemplateId = Number(state.template_id);
+            currentTemplateId =
+              Number.isFinite(restoredTemplateId) && restoredTemplateId > 0
+                ? restoredTemplateId
+                : null;
+            updateTemplateIdBadge();
+
+            const width = Number(state.canvas.width);
+            const height = Number(state.canvas.height);
+            if (!Number.isFinite(width) || !Number.isFinite(height)) return false;
+
+            applyCanvasSize(width, height);
+
+            const blocks = Array.isArray(state.blocks) ? state.blocks : [];
+            const lines = Array.isArray(state.lines) ? state.lines : [];
+
+            // Re-create blocks.
+            for (const b of blocks) {
+              if (!b) continue;
+              const internalId = String(b.internal_block_id ?? '').slice(0, 16);
+              const blockTypeIdRaw = String(b.block_type_id ?? '').slice(0, 64);
+              const canonicalType = normalizeBlockTypeId(blockTypeIdRaw);
+              const defaultInputText = String(b.default_input_text ?? '');
+              const x = Number(b.x);
+              const y = Number(b.y);
+              const w = Number(b.width);
+              const h = Number(b.height);
+
+              if (!internalId || !canonicalType) continue;
+
+              const libItem = findLibraryItemByBlockTypeId(canonicalType);
+              if (!libItem) continue;
+
+              const node = createNodeFromLibraryItem(libItem, x, y);
+
+              // Override restored ids/types/text.
+              node.dataset.internalBlockId = internalId;
+              node.dataset.nodeId = internalId;
+              node.dataset.blockTypeId = canonicalType;
+              node.dataset.templateId = canonicalType;
+              applyNodeSizeLimits(node, libItem);
+              if (canonicalType === 'start' || canonicalType === 'finish') {
+                node.dataset.defaultInputText = getBlockTypeDisplayTitle(
+                  canonicalType,
+                );
+              } else {
+                node.dataset.defaultInputText = defaultInputText;
+              }
+
+              const titleEl = node.querySelector(
+                '.canvas-node-topline-title',
+              );
+              if (titleEl) titleEl.textContent = getBlockTypeDisplayTitle(canonicalType);
+
+              const badgeEl = node.querySelector('.node-badge');
+              if (badgeEl) badgeEl.textContent = '#' + internalId;
+
+              const inputEl = node.querySelector('.canvas-node-input');
+              if (inputEl) inputEl.value = defaultInputText;
+
+              node
+                .querySelectorAll('.canvas-node-connector')
+                .forEach((cp) => (cp.dataset.nodeId = internalId));
+
+              // Apply restored geometry (with clamping to current canvas).
+              const rect = clampNodeRect(x, y, w, h, node);
+              node.style.left = rect.x + 'px';
+              node.style.top = rect.y + 'px';
+              node.style.width = rect.width + 'px';
+              node.style.height = rect.height + 'px';
+            }
+
+            // Make sure new nodes won't clash with restored ids.
+            const maxInternal = blocks.reduce((acc, b) => {
+              const n = Number.parseInt(String(b?.internal_block_id ?? ''), 10);
+              return Number.isFinite(n) ? Math.max(acc, n) : acc;
+            }, 0);
+            nodeIdCounter = Math.max(nodeIdCounter, maxInternal);
+
+            // Re-create connections.
+            connectionCounter = Math.max(connectionCounter, lines.length);
+            for (const l of lines) {
+              if (!l) continue;
+              const fromId = String(l.block_from_internal_id ?? '');
+              const toId = String(l.block_to_internal_id ?? '');
+              const fromSide = String(l.from_side ?? '');
+              const toSide = String(l.to_side ?? '');
+              if (!fromId || !toId || !fromSide || !toSide) continue;
+
+              const fromNode = canvas.querySelector(
+                `.canvas-node[data-internal-block-id="${fromId}"]`,
+              );
+              const toNode = canvas.querySelector(
+                `.canvas-node[data-internal-block-id="${toId}"]`,
+              );
+              if (
+                isConnectionDisabledForNode(fromNode) ||
+                isConnectionDisabledForNode(toNode)
+              ) {
+                continue;
+              }
+
+              const svgNS = 'http://www.w3.org/2000/svg';
+              const path = document.createElementNS(svgNS, 'path');
+              path.classList.add('connection-path');
+              path.setAttribute('marker-end', 'url(#conn-arrow)');
+              connectionsLayer.appendChild(path);
+
+              const internalLineId =
+                String(l.internal_line_id ?? `${fromId}-${toId}`);
+              const conn = {
+                id: 'conn-' + ++connectionCounter,
+                internal_line_id: internalLineId,
+                block_from_internal_id: fromId,
+                block_to_internal_id: toId,
+                from: { nodeId: fromId, side: fromSide },
+                to: { nodeId: toId, side: toSide },
+                path,
+              };
+              connections.push(conn);
+              updateConnectionPath(conn);
+            }
+
+            updateMinimap();
+            updateAllConnections();
+            return true;
+          } finally {
+            suppressPersistence = prev;
+          }
+        }
+
+        function tryRestoreCanvasState() {
+          try {
+            const raw = localStorage.getItem(CANVAS_STORAGE_KEY);
+            if (!raw) return false;
+            const state = JSON.parse(raw);
+            if (!state || state.v !== CANVAS_STATE_VERSION) return false;
+
+            if (!state.canvas || typeof state.canvas !== 'object') return false;
+            const width = Number(state.canvas.width);
+            const height = Number(state.canvas.height);
+            if (!Number.isFinite(width) || !Number.isFinite(height)) return false;
+
+            if (!Array.isArray(state.blocks) || !Array.isArray(state.lines))
+              return false;
+
+            resetCanvasDOM();
+            applyCanvasState(state);
+            setCanvasDirtyFlag(false);
+            return true;
+          } catch {
+            return false;
+          }
+        }
+
+        const CANVAS_SIZE_STEP = 10;
+        const MIN_CANVAS_WIDTH = 1200;
+        const MIN_CANVAS_HEIGHT = 700;
+        const MAX_CANVAS_WIDTH = 10000;
+        const MAX_CANVAS_HEIGHT = 10000;
+        const MIN_WIDTH = 70;
+        const MIN_HEIGHT = 30;
+        const MAX_WIDTH = 250;
+        const MAX_HEIGHT = 200;
+        const NODE_SIZE_STEP = 5;
+        const NODE_POSITION_STEP = 5;
+        const BLOCK_TYPE_SIZE_LIMITS = {
+          constants: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          variables: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          watch: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          start: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          finish: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          expressions: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          conditions: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          delay: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          confirmation: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 500,
+            maxHeight: 300,
+          },
+          ai: { minWidth: 200, minHeight: 130, maxWidth: 1200, maxHeight: 700 },
+          'assistant-ai': {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 1200,
+            maxHeight: 700,
+          },
+        };
+        const TEMPLATE_SIZE_LIMITS = {
+          constants: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          variables: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          watch: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          start: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          finish: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          expressions: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          conditions: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 700,
+            maxHeight: 500,
+          },
+          delay: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          confirmation: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 500,
+            maxHeight: 300,
+          },
+          ai: { minWidth: 200, minHeight: 130, maxWidth: 1200, maxHeight: 700 },
+          'assistant-ai': {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 1200,
+            maxHeight: 700,
+          },
+        };
+        const CONNECTION_DISABLED_BLOCK_TYPES = new Set([
+          'constants',
+          'variables',
+          'watch',
+        ]);
+        const DEFAULT_INPUT_TEXT =
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+        /** Matches TemplateBlockRequestDto: @NotNull, @Size(min=0, max=1048576). */
+        const DEFAULT_INPUT_TEXT_MAX_BACKEND = 1048576;
+
+        function clampDefaultInputForBackend(value) {
+          const s = String(value ?? '');
+          if (s.length <= DEFAULT_INPUT_TEXT_MAX_BACKEND) return s;
+          return s.slice(0, DEFAULT_INPUT_TEXT_MAX_BACKEND);
+        }
+
+        function ensureDefaultInputForBackend(node, canonicalBlockTypeId) {
+          if (
+            canonicalBlockTypeId === 'start' ||
+            canonicalBlockTypeId === 'finish'
+          ) {
+            return getBlockTypeDisplayTitle(canonicalBlockTypeId);
+          }
+          const inputEl = node.querySelector('.canvas-node-input');
+          const v =
+            (inputEl && inputEl.value) || node.dataset.defaultInputText || '';
+          return clampDefaultInputForBackend(v);
+        }
+
+        function autoScrollHorizontally(event) {
+          if (!(canvasViewport instanceof HTMLElement)) return;
+          const rect = canvasViewport.getBoundingClientRect();
+          const margin = 40;
+          const speed = 20;
+          if (event.clientX < rect.left + margin) {
+            canvasViewport.scrollLeft -= speed;
+          } else if (event.clientX > rect.right - margin) {
+            canvasViewport.scrollLeft += speed;
+          }
+        }
+
+        function isConnectionDisabledForNode(node) {
+          const blockTypeId = String(node?.dataset?.blockTypeId || '')
+            .trim()
+            .toLowerCase();
+          return CONNECTION_DISABLED_BLOCK_TYPES.has(blockTypeId);
+        }
+
+        function createNodeFromLibraryItem(libItem, x, y) {
+          const fallbackTemplateId = libItem.dataset.templateId || 'node';
+          const node = document.createElement('div');
+
+          const colorClasses = Array.from(libItem.classList).filter((cls) =>
+            cls.startsWith('lib-color-'),
+          );
+          node.className = 'canvas-node ' + colorClasses.join(' ');
+          const internalBlockId = String(++nodeIdCounter).slice(0, 16);
+          node.dataset.nodeId = internalBlockId;
+          node.dataset.internalBlockId = internalBlockId;
+
+          const rawBlockType =
+            libItem.dataset.blockTypeId ||
+            libItem.dataset.templateId ||
+            libItem.querySelector('.library-item-title')?.textContent?.trim() ||
+            libItem.textContent?.trim() ||
+            'Block';
+          const canonicalBlockType = normalizeBlockTypeId(
+            String(rawBlockType).slice(0, 64),
+          );
+          node.dataset.blockTypeId = canonicalBlockType;
+          node.dataset.templateId = canonicalBlockType || fallbackTemplateId;
+
+          const normalizedBlockTypeId = String(node.dataset.blockTypeId || '')
+            .trim()
+            .toLowerCase();
+          const isStartFinish = normalizedBlockTypeId === 'start' || normalizedBlockTypeId === 'finish';
+          if (isStartFinish) {
+            node.classList.add('canvas-node-start-finish');
+          }
+          if (isConnectionDisabledForNode(node)) {
+            node.classList.add('canvas-node-no-connections');
+          }
+          applyNodeSizeLimits(node, libItem);
+
+          if (canonicalBlockType === 'start' || canonicalBlockType === 'finish') {
+            node.dataset.defaultInputText = getBlockTypeDisplayTitle(
+              canonicalBlockType,
+            );
+          } else {
+            node.dataset.defaultInputText = DEFAULT_INPUT_TEXT;
+          }
+
+          const top = document.createElement('div');
+          top.className = 'canvas-node-topline';
+
+          const title = document.createElement('div');
+          title.className = 'canvas-node-topline-title';
+          title.textContent = getBlockTypeDisplayTitle(canonicalBlockType);
+          top.appendChild(title);
+
+          const badge = document.createElement('span');
+          badge.className = 'node-badge';
+          badge.textContent = '#' + internalBlockId;
+          top.appendChild(badge);
+
+          const menuEl = document.createElement('div');
+          menuEl.className = 'node-menu';
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.type = 'button';
+          deleteBtn.className = 'node-menu-item';
+          deleteBtn.textContent = 'Delete...';
+
+          const resetBtn = document.createElement('button');
+          resetBtn.type = 'button';
+          resetBtn.className = 'node-menu-item';
+          resetBtn.textContent = 'Reset...';
+          resetBtn.disabled = true;
+
+          deleteBtn.addEventListener('pointerdown', (event) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            setSelectedBlockNode(node);
+            confirmDeleteSelectedBlock();
+          });
+
+          menuEl.appendChild(deleteBtn);
+          menuEl.appendChild(resetBtn);
+          top.appendChild(menuEl);
+
+          badge.addEventListener('pointerdown', (event) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            setSelectedBlockNode(node);
+            toggleNodeMenu(node);
+          });
+
+          node.appendChild(top);
+
+          const body = document.createElement('div');
+          body.className = 'canvas-node-body';
+
+          if (isStartFinish) {
+            const symbol = document.createElement('div');
+            symbol.className = 'start-finish-symbol';
+            symbol.textContent = '🏁';
+            body.appendChild(symbol);
+            node.appendChild(body);
+          } else {
+            const input = document.createElement('textarea');
+            input.className = 'canvas-node-input';
+            input.placeholder = 'default_input_text';
+            input.maxLength = DEFAULT_INPUT_TEXT_MAX_BACKEND;
+            input.value = node.dataset.defaultInputText;
+            input.addEventListener('input', () => {
+              updatePropertiesPanel(node);
+              persistCanvasStateDebounced();
+            });
+            body.appendChild(input);
+            node.appendChild(body);
+
+            const handle = document.createElement('div');
+            handle.className = 'canvas-node-resize-handle';
+            handle.dataset.resizeHandle = 'se';
+            node.appendChild(handle);
+          }
+
+          ['top', 'right', 'bottom', 'left'].forEach((side) => {
+            const cp = document.createElement('div');
+            cp.className =
+              'canvas-node-connector canvas-node-connector-' + side;
+            cp.dataset.connectionHandle = side;
+            cp.dataset.nodeId = internalBlockId;
+            node.appendChild(cp);
+          });
+
+          const initial = clampNodeRect(x, y, 180, 110, node);
+          node.style.left = initial.x + 'px';
+          node.style.top = initial.y + 'px';
+          node.style.width = initial.width + 'px';
+          node.style.height = initial.height + 'px';
+
+          attachNodeDragHandlers(node);
+          attachConnectionHandlers(node);
+          canvas.appendChild(node);
+
+          updateMinimap();
+          return node;
+        }
+
+        function clampNodePosition(node, x, y) {
+          const nodeRect = node.getBoundingClientRect();
+
+          const width = node.offsetWidth || nodeRect.width;
+          const height = node.offsetHeight || nodeRect.height;
+
+          const minX = 4;
+          const minY = 4;
+          const maxX = canvasWidth - width - 4;
+          const maxY = canvasHeight - height - 4;
+
+          let clampedX = Math.min(Math.max(x, minX), maxX);
+          let clampedY = Math.min(Math.max(y, minY), maxY);
+
+          clampedX =
+            Math.round(clampedX / NODE_POSITION_STEP) * NODE_POSITION_STEP;
+          clampedY =
+            Math.round(clampedY / NODE_POSITION_STEP) * NODE_POSITION_STEP;
+
+          return { x: clampedX, y: clampedY };
+        }
+
+        function getNodeMaxSize(node) {
+          const templateId = String(node?.dataset?.templateId || '')
+            .trim()
+            .toLowerCase();
+          const templateLimits = TEMPLATE_SIZE_LIMITS[templateId];
+          if (templateLimits) {
+            return {
+              minWidth: templateLimits.minWidth ?? MIN_WIDTH,
+              minHeight: templateLimits.minHeight ?? MIN_HEIGHT,
+              maxWidth: templateLimits.maxWidth,
+              maxHeight: templateLimits.maxHeight,
+            };
+          }
+
+          const normalizedBlockTypeId = String(node?.dataset?.blockTypeId || '')
+            .trim()
+            .toLowerCase();
+          const typeLimits = BLOCK_TYPE_SIZE_LIMITS[normalizedBlockTypeId];
+          if (typeLimits) {
+            return {
+              minWidth: typeLimits.minWidth ?? MIN_WIDTH,
+              minHeight: typeLimits.minHeight ?? MIN_HEIGHT,
+              maxWidth: typeLimits.maxWidth ?? MAX_WIDTH,
+              maxHeight: typeLimits.maxHeight ?? MAX_HEIGHT,
+            };
+          }
+
+          const rawMaxWidth = Number.parseInt(
+            node?.dataset?.maxWidth || String(MAX_WIDTH),
+            10,
+          );
+          const rawMaxHeight = Number.parseInt(
+            node?.dataset?.maxHeight || String(MAX_HEIGHT),
+            10,
+          );
+          return {
+            minWidth: MIN_WIDTH,
+            minHeight: MIN_HEIGHT,
+            maxWidth:
+              Number.isFinite(rawMaxWidth) && rawMaxWidth > 0
+                ? rawMaxWidth
+                : MAX_WIDTH,
+            maxHeight:
+              Number.isFinite(rawMaxHeight) && rawMaxHeight > 0
+                ? rawMaxHeight
+                : MAX_HEIGHT,
+          };
+        }
+
+        function applyNodeSizeLimits(node, libItem = null) {
+          const blockTypeId = String(node?.dataset?.blockTypeId || '')
+            .trim()
+            .toLowerCase();
+          const typeLimits = BLOCK_TYPE_SIZE_LIMITS[blockTypeId];
+          const maxWidthAttr = Number.parseInt(
+            libItem?.dataset?.maxWidth || '',
+            10,
+          );
+          const maxHeightAttr = Number.parseInt(
+            libItem?.dataset?.maxHeight || '',
+            10,
+          );
+          const maxWidth =
+            typeLimits?.maxWidth ??
+            (Number.isFinite(maxWidthAttr) && maxWidthAttr > 0
+              ? maxWidthAttr
+              : null);
+          const maxHeight =
+            typeLimits?.maxHeight ??
+            (Number.isFinite(maxHeightAttr) && maxHeightAttr > 0
+              ? maxHeightAttr
+              : null);
+
+          if (Number.isFinite(maxWidth) && maxWidth > 0) {
+            node.dataset.maxWidth = String(maxWidth);
+          } else {
+            delete node.dataset.maxWidth;
+          }
+
+          if (Number.isFinite(maxHeight) && maxHeight > 0) {
+            node.dataset.maxHeight = String(maxHeight);
+          } else {
+            delete node.dataset.maxHeight;
+          }
+        }
+
+        function clampNodeRect(x, y, width, height, node = null) {
+          const { minWidth, minHeight, maxWidth, maxHeight } = getNodeMaxSize(node);
+          let clampedWidth = Math.min(Math.max(width, minWidth), maxWidth);
+          let clampedHeight = Math.min(Math.max(height, minHeight), maxHeight);
+
+          clampedWidth = Math.max(
+            minWidth,
+            Math.min(
+              maxWidth,
+              Math.round(clampedWidth / NODE_SIZE_STEP) * NODE_SIZE_STEP,
+            ),
+          );
+          clampedHeight = Math.max(
+            minHeight,
+            Math.min(
+              maxHeight,
+              Math.round(clampedHeight / NODE_SIZE_STEP) * NODE_SIZE_STEP,
+            ),
+          );
+
+          const maxX = canvasWidth - clampedWidth - 4;
+          const maxY = canvasHeight - clampedHeight - 4;
+          const minX = 4;
+          const minY = 4;
+
+          let clampedX = Math.min(Math.max(x, minX), maxX);
+          let clampedY = Math.min(Math.max(y, minY), maxY);
+
+          clampedX =
+            Math.round(clampedX / NODE_POSITION_STEP) * NODE_POSITION_STEP;
+          clampedY =
+            Math.round(clampedY / NODE_POSITION_STEP) * NODE_POSITION_STEP;
+
+          return {
+            x: clampedX,
+            y: clampedY,
+            width: clampedWidth,
+            height: clampedHeight,
+          };
+        }
+
+        let canvasWidth = MIN_CANVAS_WIDTH;
+        let canvasHeight = MIN_CANVAS_HEIGHT;
+
+        function applyCanvasSize(width, height) {
+          canvasWidth = width;
+          canvasHeight = height;
+
+          canvas.style.width = `${width}px`;
+          canvas.style.height = `${height}px`;
+          connectionsLayer?.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+          if (canvasWidthInput instanceof HTMLInputElement) {
+            canvasWidthInput.value = String(width);
+          }
+          if (canvasHeightInput instanceof HTMLInputElement) {
+            canvasHeightInput.value = String(height);
+          }
+
+          // Ensure all nodes are inside after resize (especially when shrinking).
+          const nodes = Array.from(canvas.querySelectorAll('.canvas-node'));
+          nodes.forEach((node) => {
+            const x = Number.parseFloat(node.style.left || '0') || 0;
+            const y = Number.parseFloat(node.style.top || '0') || 0;
+            const w =
+              Number.parseFloat(node.style.width || '') ||
+              node.offsetWidth ||
+              0;
+            const h =
+              Number.parseFloat(node.style.height || '') ||
+              node.offsetHeight ||
+              0;
+
+            const rect = clampNodeRect(x, y, w, h, node);
+            node.style.left = rect.x + 'px';
+            node.style.top = rect.y + 'px';
+            node.style.width = rect.width + 'px';
+            node.style.height = rect.height + 'px';
+              if (selectedBlockNode === node) updatePropertiesPanel(node);
+          });
+
+          updateMinimap();
+          updateAllConnections();
+          persistCanvasStateDebounced();
+        }
+
+        function parseCanvasSizeInput(value, min, max) {
+          const n = Number.parseInt(String(value || ''), 10);
+          if (!Number.isFinite(n)) return null;
+          if (n < min || n > max) return null;
+          const snapped = Math.round(n / CANVAS_SIZE_STEP) * CANVAS_SIZE_STEP;
+          if (snapped < min || snapped > max) return null;
+          return snapped;
+        }
+
+        function trySetCanvasSizeFromControls() {
+          if (!(canvasWidthInput instanceof HTMLInputElement)) return;
+          if (!(canvasHeightInput instanceof HTMLInputElement)) return;
+
+          const w = parseCanvasSizeInput(
+            canvasWidthInput.value,
+            MIN_CANVAS_WIDTH,
+            MAX_CANVAS_WIDTH,
+          );
+          const h = parseCanvasSizeInput(
+            canvasHeightInput.value,
+            MIN_CANVAS_HEIGHT,
+            MAX_CANVAS_HEIGHT,
+          );
+
+          if (!w || !h) {
+            // Requirement: if we can't set it, don't change anything.
+            canvasWidthInput.value = String(canvasWidth);
+            canvasHeightInput.value = String(canvasHeight);
+            return;
+          }
+
+          applyCanvasSize(w, h);
+        }
+
+        function attachNodeDragHandlers(node) {
+          node.addEventListener('pointerdown', (event) => {
+            if (event.button !== 0) return;
+            setSelectedBlockNode(node);
+            const target = event.target;
+
+            if (target instanceof HTMLElement && target.dataset.resizeHandle) {
+              event.preventDefault();
+              const p = getPointerInCanvas(event);
+              const startLeft = Number.parseFloat(node.style.left || '0') || 0;
+              const startTop = Number.parseFloat(node.style.top || '0') || 0;
+              const startWidth =
+                Number.parseFloat(node.style.width || '') ||
+                node.offsetWidth ||
+                0;
+              const startHeight =
+                Number.parseFloat(node.style.height || '') ||
+                node.offsetHeight ||
+                0;
+
+              resizeState = {
+                node,
+                startPointerX: p.x,
+                startPointerY: p.y,
+                startWidth,
+                startHeight,
+                startLeft,
+                startTop,
+              };
+
+              node.setPointerCapture(event.pointerId);
+              return;
+            }
+
+            if (
+              target instanceof HTMLElement &&
+              (target.dataset.connectionHandle ||
+                target.classList.contains('canvas-node-connector') ||
+                target.closest('.canvas-node-connector'))
+            ) {
+              return;
+            }
+
+            if (
+              target instanceof HTMLElement &&
+              (target.classList.contains('canvas-node-input') ||
+                target.closest('.canvas-node-input'))
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+
+            dragNode = node;
+            const p = getPointerInCanvas(event);
+            const startLeft = Number.parseFloat(node.style.left || '0') || 0;
+            const startTop = Number.parseFloat(node.style.top || '0') || 0;
+            dragOffsetX = p.x - startLeft;
+            dragOffsetY = p.y - startTop;
+
+            node.setPointerCapture(event.pointerId);
+
+            const initialX = p.x - dragOffsetX;
+            const initialY = p.y - dragOffsetY;
+            const { x, y } = clampNodePosition(node, initialX, initialY);
+            node.style.left = x + 'px';
+            node.style.top = y + 'px';
+          });
+
+          node.addEventListener('pointermove', (event) => {
+            if (resizeState && resizeState.node === node) {
+              event.preventDefault();
+
+              const p = getPointerInCanvas(event);
+              const deltaX = p.x - resizeState.startPointerX;
+              const deltaY = p.y - resizeState.startPointerY;
+
+              const nextWidth = resizeState.startWidth + deltaX;
+              const nextHeight = resizeState.startHeight + deltaY;
+
+              const rect = clampNodeRect(
+                resizeState.startLeft,
+                resizeState.startTop,
+                nextWidth,
+                nextHeight,
+                node,
+              );
+
+              node.style.width = rect.width + 'px';
+              node.style.height = rect.height + 'px';
+              node.style.left = rect.x + 'px';
+              node.style.top = rect.y + 'px';
+              if (selectedBlockNode === node) updatePropertiesPanel(node);
+
+              autoScrollHorizontally(event);
+              updateMinimap();
+              updateAllConnections();
+              return;
+            }
+
+            if (!dragNode || dragNode !== node) return;
+            event.preventDefault();
+
+            const p = getPointerInCanvas(event);
+            const nextX = p.x - dragOffsetX;
+            const nextY = p.y - dragOffsetY;
+            const { x, y } = clampNodePosition(node, nextX, nextY);
+            node.style.left = x + 'px';
+            node.style.top = y + 'px';
+            if (selectedBlockNode === node) updatePropertiesPanel(node);
+
+            autoScrollHorizontally(event);
+            updateMinimap();
+            updateAllConnections();
+          });
+
+          node.addEventListener('pointerup', (event) => {
+            if (resizeState && resizeState.node === node) {
+              try {
+                node.releasePointerCapture(event.pointerId);
+              } catch (e) {}
+              resizeState = null;
+              updateMinimap();
+              updateAllConnections();
+              persistCanvasStateDebounced();
+              return;
+            }
+
+            if (dragNode === node) {
+              dragNode.releasePointerCapture(event.pointerId);
+              dragNode = null;
+              updateMinimap();
+              persistCanvasStateDebounced();
+            }
+          });
+
+          node.addEventListener('pointercancel', (event) => {
+            if (resizeState && resizeState.node === node) {
+              try {
+                node.releasePointerCapture(event.pointerId);
+              } catch (e) {}
+              resizeState = null;
+            }
+
+            if (dragNode === node) {
+              try {
+                dragNode.releasePointerCapture(event.pointerId);
+              } catch (e) {}
+              dragNode = null;
+            }
+          });
+        }
+
+        function finishActivePointerInteractions() {
+          if (resizeState && resizeState.node instanceof HTMLElement) {
+            resizeState = null;
+            updateMinimap();
+            updateAllConnections();
+            persistCanvasStateDebounced();
+          }
+          if (dragNode instanceof HTMLElement) {
+            dragNode = null;
+            updateMinimap();
+            updateAllConnections();
+            persistCanvasStateDebounced();
+          }
+        }
+
+        function getPointerInCanvas(event) {
+          const canvasRect = canvas.getBoundingClientRect();
+          return {
+            x: event.clientX - canvasRect.left,
+            y: event.clientY - canvasRect.top,
+          };
+        }
+
+        function clientPointToSvg(x, y) {
+          if (!connectionsLayer) return { x: 0, y: 0 };
+          const ctm = connectionsLayer.getScreenCTM();
+          if (!ctm) return { x: 0, y: 0 };
+          const pt = connectionsLayer.createSVGPoint();
+          pt.x = x;
+          pt.y = y;
+          const sp = pt.matrixTransform(ctm.inverse());
+          return { x: sp.x, y: sp.y };
+        }
+
+        function getPointerInSvg(event) {
+          return clientPointToSvg(event.clientX, event.clientY);
+        }
+
+        function getHandlePositionSvg(handleEl) {
+          const rect = handleEl.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          return clientPointToSvg(cx, cy);
+        }
+
+        function buildConnectionPathD(from, to, fromSide, toSide) {
+          const dx = to.x - from.x;
+          const dy = to.y - from.y;
+
+          const base = 60;
+          const offset = Math.max(base, Math.min(180, Math.hypot(dx, dy) / 2));
+
+          function nudge(point, side, amount) {
+            if (side === 'left') return { x: point.x - amount, y: point.y };
+            if (side === 'right') return { x: point.x + amount, y: point.y };
+            if (side === 'top') return { x: point.x, y: point.y - amount };
+            if (side === 'bottom') return { x: point.x, y: point.y + amount };
+            // fallback: mostly horizontal
+            return { x: point.x + (dx >= 0 ? amount : -amount), y: point.y };
+          }
+
+          const c1 = nudge(from, fromSide, offset);
+          const c2 = nudge(to, toSide, offset);
+
+          return `M ${from.x} ${from.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${to.x} ${to.y}`;
+        }
+
+        function updateConnectionPath(connection) {
+          const fromHandle = canvas.querySelector(
+            `.canvas-node-connector[data-node-id="${connection.from.nodeId}"][data-connection-handle="${connection.from.side}"]`,
+          );
+          const toHandle = canvas.querySelector(
+            `.canvas-node-connector[data-node-id="${connection.to.nodeId}"][data-connection-handle="${connection.to.side}"]`,
+          );
+          if (!fromHandle || !toHandle) return;
+          const fromPos = getHandlePositionSvg(fromHandle);
+          const toPos = getHandlePositionSvg(toHandle);
+          connection.path.setAttribute(
+            'd',
+            buildConnectionPathD(
+              fromPos,
+              toPos,
+              connection.from?.side,
+              connection.to?.side,
+            ),
+          );
+        }
+
+        function updateAllConnections() {
+          connections.forEach((conn) => updateConnectionPath(conn));
+        }
+
+        function attachConnectionHandlers(node) {
+          const connectors = node.querySelectorAll('.canvas-node-connector');
+          connectors.forEach((connector) => {
+            connector.addEventListener('mousedown', (event) => {
+              if (event.button !== 0) return;
+              event.preventDefault();
+              event.stopPropagation();
+
+              const handleEl = event.currentTarget;
+              const nodeId = handleEl.dataset.nodeId;
+              const side = handleEl.dataset.connectionHandle;
+              if (!nodeId || !side || !connectionsLayer) return;
+
+              const pos = getHandlePositionSvg(handleEl);
+              const svgNS = 'http://www.w3.org/2000/svg';
+              const path = document.createElementNS(svgNS, 'path');
+              path.classList.add('connection-path', 'connection-path-active');
+              // Use active arrowhead while the user is dragging a connection.
+              path.setAttribute('marker-end', 'url(#conn-arrow-active)');
+              connectionsLayer.appendChild(path);
+
+              activeConnection = {
+                from: { nodeId, side, handleEl },
+              };
+              activeConnectionPath = path;
+
+              const to = getPointerInSvg(event);
+              path.setAttribute('d', buildConnectionPathD(pos, to, side));
+            });
+
+            connector.addEventListener('contextmenu', (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              const handleEl = event.currentTarget;
+              const nodeId = handleEl.dataset.nodeId;
+              const side = handleEl.dataset.connectionHandle;
+              if (!nodeId || !side) return;
+
+              const before = connections.length;
+              for (let i = connections.length - 1; i >= 0; i--) {
+                const c = connections[i];
+                const matchFrom =
+                  c.from.nodeId === nodeId && c.from.side === side;
+                const matchTo = c.to.nodeId === nodeId && c.to.side === side;
+                if (matchFrom || matchTo) {
+                  if (c.path && c.path.parentNode === connectionsLayer) {
+                    connectionsLayer.removeChild(c.path);
+                  }
+                  connections.splice(i, 1);
+                }
+              }
+              if (before !== connections.length) {
+                updateAllConnections();
+                persistCanvasStateDebounced();
+              }
+            });
+          });
+        }
+
+        canvas.addEventListener('mousemove', (event) => {
+          if (!activeConnection || !activeConnectionPath) return;
+          const fromPos = getHandlePositionSvg(activeConnection.from.handleEl);
+          const to = getPointerInSvg(event);
+          activeConnectionPath.setAttribute(
+            'd',
+            buildConnectionPathD(fromPos, to, activeConnection.from?.side),
+          );
+          autoScrollHorizontally(event);
+        });
+
+        window.addEventListener('mouseup', (event) => {
+          if (!activeConnection || !activeConnectionPath) return;
+
+          let completed = false;
+          const target = event.target;
+          if (
+            target instanceof HTMLElement &&
+            target.classList.contains('canvas-node-connector')
+          ) {
+            const toHandle = target;
+            const toNodeId = toHandle.dataset.nodeId;
+            const toSide = toHandle.dataset.connectionHandle;
+            if (
+              toNodeId &&
+              toSide &&
+              (toNodeId !== activeConnection.from.nodeId ||
+                toSide !== activeConnection.from.side)
+            ) {
+              activeConnectionPath.classList.remove('connection-path-active');
+              // Switch to the final arrowhead when the connection is completed.
+              activeConnectionPath.setAttribute(
+                'marker-end',
+                'url(#conn-arrow)',
+              );
+              const internalLineId = `${activeConnection.from.nodeId}-${toNodeId}`;
+              const duplicateInternalLineId = connections.some(
+                (existing) => existing.internal_line_id === internalLineId,
+              );
+              if (duplicateInternalLineId) {
+                // Silently skip duplicate connection id creation.
+                return;
+              }
+              const conn = {
+                id: 'conn-' + ++connectionCounter,
+                internal_line_id: internalLineId,
+                block_from_internal_id: activeConnection.from.nodeId,
+                block_to_internal_id: toNodeId,
+                from: {
+                  nodeId: activeConnection.from.nodeId,
+                  side: activeConnection.from.side,
+                },
+                to: { nodeId: toNodeId, side: toSide },
+                path: activeConnectionPath,
+              };
+              connections.push(conn);
+              updateConnectionPath(conn);
+              persistCanvasStateDebounced();
+              completed = true;
+            }
+          }
+
+          if (
+            !completed &&
+            activeConnectionPath.parentNode === connectionsLayer
+          ) {
+            connectionsLayer.removeChild(activeConnectionPath);
+          }
+
+          activeConnection = null;
+          activeConnectionPath = null;
+        });
+
+        library.addEventListener('dragstart', (event) => {
+          const target = event.target;
+          if (
+            !(target instanceof HTMLElement) ||
+            !target.classList.contains('library-item')
+          ) {
+            return;
+          }
+
+          event.dataTransfer.effectAllowed = 'copy';
+          event.dataTransfer.setData(
+            'application/x-flow-node-template',
+            target.dataset.templateId || '',
+          );
+          event.dataTransfer.setData(
+            'text/plain',
+            target.dataset.templateId || '',
+          );
+        });
+
+        canvas.addEventListener('dragover', (event) => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = 'copy';
+        });
+
+        canvas.addEventListener('drop', (event) => {
+          event.preventDefault();
+
+          const templateId =
+            event.dataTransfer.getData('application/x-flow-node-template') ||
+            event.dataTransfer.getData('text/plain');
+
+          if (!templateId) {
+            return;
+          }
+
+          const libItem = library.querySelector(
+            '.library-item[data-template-id="' + templateId + '"]',
+          );
+          if (!libItem) return;
+
+          const p = getPointerInCanvas(event);
+          const rawX = p.x - 80;
+          const rawY = p.y - 40;
+          const initialRect = clampNodeRect(rawX, rawY, 180, 110, {
+            dataset: {
+              blockTypeId: libItem.dataset.blockTypeId || '',
+            },
+          });
+
+          createNodeFromLibraryItem(libItem, initialRect.x, initialRect.y);
+          persistCanvasStateDebounced();
+        });
+
+        function updateMinimap() {
+          if (!canvas || !minimap) return;
+
+          minimap.innerHTML = '';
+
+          const canvasRect = canvas.getBoundingClientRect();
+          const scaleX = minimap.clientWidth / canvasRect.width;
+          const scaleY = minimap.clientHeight / canvasRect.height;
+          const scale = Math.min(scaleX, scaleY);
+
+          const nodes = canvas.querySelectorAll('.canvas-node');
+          nodes.forEach((node, index) => {
+            const rect = node.getBoundingClientRect();
+            const mini = document.createElement('div');
+            mini.className = 'minimap-node';
+
+            if (index === 0) {
+              mini.classList.add('minimap-node-primary');
+            } else if (index % 3 === 0) {
+              mini.classList.add('minimap-node-secondary');
+            } else {
+              mini.classList.add('minimap-node-tertiary');
+            }
+
+            const x = (rect.left - canvasRect.left) * scale;
+            const y = (rect.top - canvasRect.top) * scale;
+            const w = Math.max(6, rect.width * scale);
+            const h = Math.max(4, rect.height * scale);
+
+            mini.style.left = x + 'px';
+            mini.style.top = y + 'px';
+            mini.style.width = w + 'px';
+            mini.style.height = h + 'px';
+
+            minimap.appendChild(mini);
+          });
+        }
+
+        const resizeObserver = new ResizeObserver(() => {
+          updateMinimap();
+        });
+        resizeObserver.observe(canvas);
+
+        let rafHandle = 0;
+        function scheduleCanvasRedraw() {
+          if (rafHandle) return;
+          rafHandle = requestAnimationFrame(() => {
+            rafHandle = 0;
+            updateMinimap();
+            updateAllConnections();
+          });
+        }
+
+        if (canvasViewport instanceof HTMLElement) {
+          canvasViewport.addEventListener('scroll', scheduleCanvasRedraw, {
+            passive: true,
+          });
+        }
+        window.addEventListener('resize', scheduleCanvasRedraw);
+        window.addEventListener('pointerup', finishActivePointerInteractions);
+        window.addEventListener(
+          'pointercancel',
+          finishActivePointerInteractions,
+        );
+
+        canvasSetBtn?.addEventListener('click', trySetCanvasSizeFromControls);
+        canvasWidthInput?.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') trySetCanvasSizeFromControls();
+        });
+        canvasHeightInput?.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') trySetCanvasSizeFromControls();
+        });
+
+        const restoredOk = tryRestoreCanvasState();
+        if (!restoredOk) {
+          applyCanvasSize(MIN_CANVAS_WIDTH, MIN_CANVAS_HEIGHT);
+        }
+        refreshTemplateList({
+          preferredTemplateId: currentTemplateId,
+          preferredTemplateName: templateNameInput?.value?.trim() || '',
+        });
+        updatePropertiesPanel(null);
+
+        window.addEventListener('load', () => {
+          updateMinimap();
+        });
+      })();
+    </script>
+  </body>
+</html>
