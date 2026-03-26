@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       :root {
-        --bg: #0f172a;
-        --surface: #020617;
-        --surface-alt: #020617;
-        --border-subtle: #1e293b;
-        --accent: #38bdf8;
-        --accent-soft: rgba(56, 189, 248, 0.1);
+        --bg: #1a0f0a;
+        --surface: #120806;
+        --surface-alt: #0f0705;
+        --border-subtle: #3a241c;
+        --accent: #c07a4a;
+        --accent-soft: rgba(192, 122, 74, 0.14);
         --text: #e5e7eb;
-        --text-muted: #9ca3af;
+        --text-muted: #b7a7a0;
         --canvas-bg: #020617;
       }
 
@@ -35,8 +35,8 @@
           sans-serif;
         background: radial-gradient(
           circle at top left,
-          #1e293b 0,
-          #020617 45%,
+          #3a241c 0,
+          #120806 45%,
           #000000 100%
         );
         color: var(--text);
@@ -52,16 +52,17 @@
         display: flex;
         flex-direction: column;
         height: 100vh;
+        position: relative;
         backdrop-filter: blur(18px);
         background: linear-gradient(
           145deg,
-          rgba(15, 23, 42, 0.96),
-          rgba(2, 6, 23, 0.98)
+          rgba(26, 15, 10, 0.96),
+          rgba(18, 8, 6, 0.98)
         );
         box-shadow:
-          0 24px 80px rgba(15, 23, 42, 0.85),
+          0 24px 80px rgba(26, 15, 10, 0.85),
           0 0 0 1px rgba(148, 163, 184, 0.08),
-          inset 0 0 0 1px rgba(15, 23, 42, 0.9);
+          inset 0 0 0 1px rgba(26, 15, 10, 0.9);
         border-radius: 3px;
         margin: 10px;
         overflow: hidden;
@@ -78,13 +79,13 @@
         background:
           radial-gradient(
             circle at top left,
-            rgba(56, 189, 248, 0.2),
+            rgba(192, 122, 74, 0.22),
             transparent 60%
           ),
           linear-gradient(
             to right,
-            rgba(15, 23, 42, 0.98),
-            rgba(15, 23, 42, 0.96)
+            rgba(26, 15, 10, 0.98),
+            rgba(26, 15, 10, 0.96)
           );
       }
 
@@ -101,6 +102,37 @@
         flex-wrap: wrap;
         gap: 10px;
         min-width: 520px;
+      }
+
+      .toolbar-nav {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        align-self: center;
+        flex: 0 0 auto;
+        padding: 0 8px;
+        color: rgba(148, 163, 184, 0.95);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        user-select: none;
+      }
+
+      .toolbar-nav a {
+        color: rgba(226, 232, 240, 0.92);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        padding-bottom: 1px;
+      }
+
+      .toolbar-nav a:hover {
+        color: rgba(224, 163, 110, 0.98);
+        border-bottom-color: rgba(192, 122, 74, 0.6);
+      }
+
+      .toolbar-nav-sep {
+        opacity: 0.7;
       }
 
       .brand {
@@ -127,16 +159,16 @@
         border-radius: 8px;
         background: conic-gradient(
           from 200deg,
-          #38bdf8,
-          #a855f7,
-          #ec4899,
-          #f97316,
-          #38bdf8
+          #c07a4a,
+          #7a3b2e,
+          #d39a6c,
+          #8a4f36,
+          #c07a4a
         );
         position: relative;
         box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 0.9),
-          0 10px 30px rgba(56, 189, 248, 0.45);
+          0 0 0 1px rgba(26, 15, 10, 0.9),
+          0 10px 30px rgba(192, 122, 74, 0.35);
         overflow: hidden;
       }
 
@@ -203,12 +235,12 @@
         margin-left: 8px;
         font-size: 10px;
         letter-spacing: 0.04em;
-        color: rgba(125, 211, 252, 0.95);
+        color: rgba(224, 163, 110, 0.95);
         text-transform: none;
-        border: 1px solid rgba(125, 211, 252, 0.4);
+        border: 1px solid rgba(224, 163, 110, 0.35);
         border-radius: 999px;
         padding: 2px 7px;
-        background: rgba(2, 6, 23, 0.45);
+        background: rgba(18, 8, 6, 0.45);
       }
 
       .template-id-badge.template-id-badge-unsaved {
@@ -231,10 +263,10 @@
 
       /* Template fields: make text inputs bright + readable */
       #template-name {
-        background: rgba(248, 250, 252, 0.98);
-        color: rgba(15, 23, 42, 0.95);
-        border: 1px solid rgba(15, 23, 42, 0.18);
-        box-shadow: none;
+        background: rgba(18, 8, 6, 0.35);
+        color: rgba(183, 167, 160, 0.92);
+        border: 1px solid rgba(183, 167, 160, 0.22);
+        box-shadow: inset 0 0 0 1px rgba(18, 8, 6, 0.5);
         padding: 0 10px 0 14px;
         text-align: left;
       }
@@ -244,10 +276,10 @@
       }
 
       #template-status {
-        background: rgba(248, 250, 252, 0.98);
-        color: rgba(15, 23, 42, 0.95);
-        border: 1px solid rgba(15, 23, 42, 0.18);
-        box-shadow: none;
+        background: rgba(18, 8, 6, 0.32);
+        color: rgba(183, 167, 160, 0.86);
+        border: 1px solid rgba(183, 167, 160, 0.2);
+        box-shadow: inset 0 0 0 1px rgba(18, 8, 6, 0.5);
       }
 
       #template-status.template-status-unknown {
@@ -261,8 +293,8 @@
       }
 
       #template-status.template-status-editing {
-        background: #38bdf8;
-        color: #001018;
+        background: #c07a4a;
+        color: #1a0f0a;
       }
 
       #template-status.template-status-ready {
@@ -271,13 +303,13 @@
       }
 
       #template-status.template-status-deleted {
-        background: #0f172a;
-        color: #94a3b8;
+        background: #1a0f0a;
+        color: #b7a7a0;
       }
 
       #template-status:focus {
-        border-color: rgba(56, 189, 248, 0.85);
-        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+        border-color: rgba(192, 122, 74, 0.85);
+        box-shadow: 0 0 0 3px rgba(192, 122, 74, 0.2);
         outline: none;
       }
 
@@ -296,21 +328,21 @@
       }
 
       #modal-body .toolbar-control:focus {
-        border-color: rgba(56, 189, 248, 0.85);
-        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+        border-color: rgba(192, 122, 74, 0.85);
+        box-shadow: 0 0 0 3px rgba(192, 122, 74, 0.2);
       }
 
       .toolbar-control:focus {
-        border-color: rgba(56, 189, 248, 0.85);
+        border-color: rgba(192, 122, 74, 0.85);
         box-shadow:
-          inset 0 0 0 1px rgba(15, 23, 42, 0.8),
-          0 0 0 3px rgba(56, 189, 248, 0.18);
+          inset 0 0 0 1px rgba(26, 15, 10, 0.8),
+          0 0 0 3px rgba(192, 122, 74, 0.2);
       }
 
       .toolbar-control-invalid {
         border-color: rgba(248, 113, 113, 0.9);
         box-shadow:
-          inset 0 0 0 1px rgba(15, 23, 42, 0.8),
+          inset 0 0 0 1px rgba(26, 15, 10, 0.8),
           0 0 0 3px rgba(248, 113, 113, 0.18);
       }
 
@@ -329,7 +361,7 @@
         background: radial-gradient(
           circle at top,
           rgba(248, 250, 252, 0.08),
-          rgba(15, 23, 42, 0.95)
+          rgba(26, 15, 10, 0.95)
         );
         color: var(--text);
         border-radius: 3px;
@@ -349,8 +381,8 @@
           box-shadow 120ms ease-out,
           background 160ms ease-out;
         box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 0.9),
-          0 10px 20px rgba(15, 23, 42, 0.9);
+          0 0 0 1px rgba(26, 15, 10, 0.9),
+          0 10px 20px rgba(26, 15, 10, 0.9);
       }
 
       .toolbar-button::before {
@@ -359,7 +391,7 @@
         inset: 0;
         background: radial-gradient(
           circle at top left,
-          rgba(56, 189, 248, 0.3),
+          rgba(192, 122, 74, 0.28),
           transparent 55%
         );
         opacity: 0;
@@ -375,22 +407,22 @@
         font-size: 10px;
         padding: 2px 5px;
         border-radius: 999px;
-        background: rgba(15, 23, 42, 0.9);
+        background: rgba(26, 15, 10, 0.9);
         color: var(--text-muted);
         border: 1px solid rgba(148, 163, 184, 0.4);
       }
 
       .toolbar-button:hover {
-        border-color: rgba(56, 189, 248, 0.8);
+        border-color: rgba(192, 122, 74, 0.8);
         transform: translateY(-1px);
         box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 1),
-          0 16px 35px rgba(15, 23, 42, 1),
-          0 0 25px rgba(56, 189, 248, 0.55);
+          0 0 0 1px rgba(26, 15, 10, 1),
+          0 16px 35px rgba(26, 15, 10, 1),
+          0 0 25px rgba(192, 122, 74, 0.45);
         background: radial-gradient(
           circle at top,
           rgba(248, 250, 252, 0.12),
-          rgba(2, 6, 23, 0.98)
+          rgba(18, 8, 6, 0.98)
         );
       }
 
@@ -401,8 +433,8 @@
       .toolbar-button:active {
         transform: translateY(0);
         box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 1),
-          0 6px 14px rgba(15, 23, 42, 1);
+          0 0 0 1px rgba(26, 15, 10, 1),
+          0 6px 14px rgba(26, 15, 10, 1);
       }
 
       .toolbar-button:disabled {
@@ -411,8 +443,8 @@
         pointer-events: none;
         transform: none;
         box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 0.85),
-          0 4px 10px rgba(15, 23, 42, 0.65);
+          0 0 0 1px rgba(26, 15, 10, 0.85),
+          0 4px 10px rgba(26, 15, 10, 0.65);
       }
 
       .toolbar-button:disabled:hover {
@@ -421,11 +453,11 @@
         background: radial-gradient(
           circle at top,
           rgba(248, 250, 252, 0.08),
-          rgba(15, 23, 42, 0.95)
+          rgba(26, 15, 10, 0.95)
         );
         box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 0.9),
-          0 10px 20px rgba(15, 23, 42, 0.9);
+          0 0 0 1px rgba(26, 15, 10, 0.9),
+          0 10px 20px rgba(26, 15, 10, 0.9);
       }
 
       .toolbar-button:disabled:hover::before {
@@ -487,11 +519,11 @@
       }
 
       .toolbar-toggle:hover {
-        border-color: rgba(56, 189, 248, 0.75);
+        border-color: rgba(192, 122, 74, 0.75);
         transform: translateY(-1px);
         box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 0.9),
-          0 14px 28px rgba(15, 23, 42, 1);
+          0 0 0 1px rgba(26, 15, 10, 0.9),
+          0 14px 28px rgba(26, 15, 10, 1);
       }
 
       .toolbar-toggle:active {
@@ -501,6 +533,36 @@
       .toolbar-caption {
         font-size: 11px;
         color: var(--text-muted);
+      }
+
+      .library-collapsed-badge {
+        position: absolute;
+        left: 0;
+        top: 182px;
+        z-index: 30;
+        width: 24px;
+        min-height: 75px;
+        padding: 10px 4px 8px;
+        border: 1px solid rgba(183, 167, 160, 0.22);
+        border-left: 0;
+        border-radius: 10px 0 0 10px;
+        background: linear-gradient(
+          to bottom,
+          rgba(18, 8, 6, 0.86),
+          rgba(26, 15, 10, 0.9)
+        );
+        box-shadow:
+          inset 0 0 0 1px rgba(18, 8, 6, 0.65),
+          0 8px 20px rgba(26, 15, 10, 0.55);
+        color: rgba(183, 167, 160, 0.75);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        line-height: 1;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        user-select: none;
+        pointer-events: none;
       }
 
       @media (max-width: 1040px) {
@@ -518,18 +580,19 @@
       .main {
         flex: 1;
         display: grid;
-        grid-template-columns: 151px minmax(0, 1fr) 360px;
+        grid-template-columns: 0 minmax(0, 1fr) 360px;
         min-height: 0;
       }
 
       .sidebar {
-        border-right: 1px solid rgba(148, 163, 184, 0.2);
-        background: radial-gradient(
-          circle at top left,
-          rgba(56, 189, 248, 0.06),
-          transparent 55%
-        );
-        padding: 10px 6px;
+        width: 0;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        border-right: 0;
+        background: none;
+        overflow: hidden;
+        pointer-events: none;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -561,7 +624,7 @@
         border-left: 1px solid rgba(148, 163, 184, 0.2);
         background: radial-gradient(
           circle at top right,
-          rgba(56, 189, 248, 0.06),
+          rgba(192, 122, 74, 0.06),
           transparent 55%
         );
         padding: 10px 6px;
@@ -574,11 +637,11 @@
       .rightbar-section {
         border: 1px solid rgba(148, 163, 184, 0.22);
         border-radius: 3px;
-        background: rgba(2, 6, 23, 0.18);
+        background: rgba(18, 8, 6, 0.18);
         overflow: hidden;
         box-shadow:
-          inset 0 0 0 1px rgba(15, 23, 42, 0.85),
-          0 16px 35px rgba(15, 23, 42, 0.9);
+          inset 0 0 0 1px rgba(26, 15, 10, 0.85),
+          0 16px 35px rgba(26, 15, 10, 0.9);
       }
 
       .rightbar-section.rightbar-section-disabled {
@@ -597,11 +660,11 @@
         letter-spacing: 0.14em;
         color: rgba(226, 232, 240, 0.95);
         padding: 10px 6px 8px;
-        border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+        border-bottom: 1px solid rgba(192, 122, 74, 0.24);
         background: linear-gradient(
           to right,
-          rgba(15, 23, 42, 0.98),
-          rgba(2, 6, 23, 0.55)
+          rgba(26, 15, 10, 0.98),
+          rgba(18, 8, 6, 0.55)
         );
         box-shadow:
           inset 0 -1px 0 rgba(148, 163, 184, 0.18),
@@ -628,12 +691,12 @@
       .rightbar-actions-templates {
         padding: 10px 5px;
         border-top: 1px solid rgba(148, 163, 184, 0.18);
-        background: rgba(2, 6, 23, 0.12);
+        background: rgba(18, 8, 6, 0.12);
       }
 
       .rightbar-action {
         border: 1px solid rgba(148, 163, 184, 0.3);
-        background: rgba(2, 6, 23, 0.28);
+        background: rgba(18, 8, 6, 0.28);
         color: rgba(226, 232, 240, 0.95);
         border-radius: 3px;
         padding: 8px 5px;
@@ -661,7 +724,7 @@
 
       .template-list-item {
         border: 1px solid rgba(148, 163, 184, 0.25);
-        background: rgba(15, 23, 42, 0.36);
+        background: rgba(26, 15, 10, 0.36);
         color: rgba(226, 232, 240, 0.94);
         border-radius: 3px;
         padding: 6px 8px;
@@ -675,13 +738,13 @@
       }
 
       .template-list-item:hover {
-        border-color: rgba(125, 211, 252, 0.8);
-        background: rgba(2, 132, 199, 0.2);
+        border-color: rgba(224, 163, 110, 0.75);
+        background: rgba(192, 122, 74, 0.16);
       }
 
       .template-list-item.template-list-item-selected {
-        border-color: rgba(56, 189, 248, 0.95);
-        background: rgba(56, 189, 248, 0.28);
+        border-color: rgba(192, 122, 74, 0.9);
+        background: rgba(192, 122, 74, 0.22);
         box-shadow:
           inset 0 0 0 1px rgba(186, 230, 253, 0.42),
           0 0 0 1px rgba(15, 23, 42, 0.92);
@@ -693,7 +756,7 @@
       }
 
       .action-icon-update {
-        color: #38bdf8;
+        color: #c07a4a;
       }
 
       .action-icon-load {
@@ -705,11 +768,11 @@
       }
 
       .rightbar-action:hover {
-        border-color: rgba(56, 189, 248, 0.75);
+        border-color: rgba(192, 122, 74, 0.75);
         transform: translateY(-1px);
         box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 0.9),
-          0 14px 28px rgba(15, 23, 42, 1);
+          0 0 0 1px rgba(26, 15, 10, 0.9),
+          0 14px 28px rgba(26, 15, 10, 1);
       }
 
       .rightbar-action:active {
@@ -833,11 +896,11 @@
       .journal {
         border: 1px solid rgba(148, 163, 184, 0.22);
         border-radius: 3px;
-        background: rgba(2, 6, 23, 0.18);
+        background: rgba(18, 8, 6, 0.18);
         overflow: hidden;
         box-shadow:
-          inset 0 0 0 1px rgba(15, 23, 42, 0.85),
-          0 16px 35px rgba(15, 23, 42, 0.9);
+          inset 0 0 0 1px rgba(26, 15, 10, 0.85),
+          0 16px 35px rgba(26, 15, 10, 0.9);
       }
 
       .journal-collapsed {
@@ -855,8 +918,8 @@
         border-bottom: 1px solid rgba(148, 163, 184, 0.18);
         background: linear-gradient(
           to right,
-          rgba(15, 23, 42, 0.9),
-          rgba(2, 6, 23, 0.2)
+          rgba(26, 15, 10, 0.9),
+          rgba(18, 8, 6, 0.2)
         );
       }
 
@@ -871,7 +934,7 @@
         resize: none;
         border-radius: 3px;
         border: 1px solid rgba(148, 163, 184, 0.25);
-        background: rgba(2, 6, 23, 0.35);
+        background: rgba(18, 8, 6, 0.35);
         color: rgba(226, 232, 240, 0.95);
         padding: 10px;
         font-size: 12px;
@@ -882,7 +945,7 @@
       .modal-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(2, 6, 23, 0.72);
+        background: rgba(18, 8, 6, 0.78);
         display: none;
         align-items: center;
         justify-content: center;
@@ -901,14 +964,50 @@
         background:
           radial-gradient(
             circle at top left,
-            rgba(56, 189, 248, 0.18),
+            rgba(192, 122, 74, 0.18),
             transparent 55%
           ),
-          rgba(2, 6, 23, 0.92);
+          rgba(18, 8, 6, 0.92);
         box-shadow:
-          0 0 0 1px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(26, 15, 10, 0.95),
           0 30px 80px rgba(0, 0, 0, 0.75);
         overflow: hidden;
+      }
+
+      .modal.modal-tone-success {
+        border-color: rgba(34, 197, 94, 0.35);
+        background: radial-gradient(
+            circle at top left,
+            rgba(34, 197, 94, 0.22),
+            transparent 60%
+          ),
+          rgba(0, 34, 20, 0.94);
+        box-shadow:
+          0 0 0 1px rgba(0, 34, 20, 0.95),
+          0 30px 90px rgba(0, 0, 0, 0.75),
+          0 0 45px rgba(34, 197, 94, 0.18);
+      }
+
+      .modal.modal-tone-error {
+        border-color: rgba(220, 38, 38, 0.38);
+        background: radial-gradient(
+            circle at top left,
+            rgba(220, 38, 38, 0.22),
+            transparent 60%
+          ),
+          rgba(44, 0, 10, 0.94);
+        box-shadow:
+          0 0 0 1px rgba(44, 0, 10, 0.95),
+          0 30px 90px rgba(0, 0, 0, 0.75),
+          0 0 45px rgba(220, 38, 38, 0.18);
+      }
+
+      .modal.modal-tone-success .modal-header {
+        border-bottom-color: rgba(34, 197, 94, 0.22);
+      }
+
+      .modal.modal-tone-error .modal-header {
+        border-bottom-color: rgba(220, 38, 38, 0.22);
       }
 
       .modal-header {
@@ -929,7 +1028,7 @@
 
       .modal-close {
         border: 1px solid rgba(148, 163, 184, 0.28);
-        background: rgba(2, 6, 23, 0.2);
+        background: rgba(18, 8, 6, 0.2);
         color: rgba(226, 232, 240, 0.95);
         border-radius: 3px;
         padding: 6px 10px;
@@ -937,6 +1036,35 @@
         letter-spacing: 0.1em;
         text-transform: uppercase;
         cursor: pointer;
+        transition:
+          border-color 120ms ease-out,
+          background 160ms ease-out,
+          box-shadow 160ms ease-out,
+          transform 100ms ease-out;
+      }
+
+      .modal-close:hover {
+        transform: translateY(-1px);
+      }
+
+      .modal.modal-tone-success .modal-close {
+        border-color: rgba(34, 197, 94, 0.35);
+        background: rgba(0, 34, 20, 0.35);
+      }
+
+      .modal.modal-tone-success .modal-close:hover {
+        border-color: rgba(34, 197, 94, 0.6);
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+      }
+
+      .modal.modal-tone-error .modal-close {
+        border-color: rgba(220, 38, 38, 0.35);
+        background: rgba(44, 0, 10, 0.35);
+      }
+
+      .modal.modal-tone-error .modal-close:hover {
+        border-color: rgba(220, 38, 38, 0.65);
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
       }
 
       .modal-body {
@@ -970,6 +1098,29 @@
         color: rgba(148, 163, 184, 0.95);
       }
 
+      .form-label-required::after {
+        content: ' *';
+        color: rgba(248, 113, 113, 0.95);
+        font-weight: 600;
+      }
+
+      .form-label-optional-hint {
+        text-transform: none;
+        letter-spacing: 0.04em;
+        color: rgba(148, 163, 184, 0.75);
+        font-size: 9px;
+        font-weight: 500;
+      }
+
+      .form-hint {
+        margin: 12px 0 0;
+        padding-top: 10px;
+        border-top: 1px solid rgba(148, 163, 184, 0.15);
+        font-size: 11px;
+        line-height: 1.45;
+        color: rgba(148, 163, 184, 0.92);
+      }
+
       .password-wrap {
         position: relative;
         display: flex;
@@ -998,7 +1149,7 @@
       }
 
       .password-toggle:hover {
-        border-color: rgba(56, 189, 248, 0.6);
+        border-color: rgba(192, 122, 74, 0.65);
       }
 
       .form-actions {
@@ -1006,6 +1157,15 @@
         display: flex;
         justify-content: flex-end;
         gap: 8px;
+      }
+
+      .form-actions-split {
+        justify-content: space-between;
+      }
+
+      .modal-close:disabled {
+        opacity: 0.42;
+        cursor: not-allowed;
       }
 
       .confirm-actions {
@@ -1061,7 +1221,7 @@
       }
 
       .canvas-size-controls {
-        display: flex;
+        display: none;
         align-items: center;
         gap: 4px;
       }
@@ -1082,8 +1242,8 @@
       }
 
       .canvas-size-controls input:focus {
-        border-color: rgba(56, 189, 248, 0.85);
-        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+        border-color: rgba(192, 122, 74, 0.85);
+        box-shadow: 0 0 0 3px rgba(192, 122, 74, 0.2);
       }
 
       .canvas-size-controls .canvas-size-sep {
@@ -1105,12 +1265,12 @@
       }
 
       .canvas-size-controls button:hover {
-        border-color: rgba(56, 189, 248, 0.75);
+        border-color: rgba(192, 122, 74, 0.75);
       }
 
       .canvas-viewport {
         flex: 1;
-        background: #f8fafc;
+        background: #6b7280;
         border-radius: 3px;
         border: 1px solid rgba(148, 163, 184, 0.35);
         box-shadow:
@@ -1128,7 +1288,7 @@
         width: 1200px;
         height: 700px;
         flex-shrink: 0;
-        background-color: #f8fafc;
+        background-color: #cbd5e1;
         /* Engineering-paper grid:
            minor grid = 50px (10px * 5)
            major grid = 250px (minor * 5) */
@@ -1179,16 +1339,16 @@
 
       .connection-path {
         fill: none;
-        stroke: rgba(148, 163, 184, 0.9);
-        stroke-width: 2;
+        stroke: rgba(156, 163, 175, 0.95);
+        stroke-width: 2.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        filter: drop-shadow(0 0 6px rgba(15, 23, 42, 0.8));
+        filter: drop-shadow(0 0 4px rgba(156, 163, 175, 0.2));
       }
 
       .connection-path-active {
-        stroke: rgba(56, 189, 248, 0.95);
-        stroke-dasharray: 4 4;
+        stroke: rgba(156, 163, 175, 0.98);
+        stroke-dasharray: 3 4;
       }
 
       .canvas-node {
@@ -1441,12 +1601,12 @@
         border: 1px solid rgba(148, 163, 184, 0.6);
         background: radial-gradient(
           circle at 10% 0%,
-          rgba(15, 23, 42, 0.9),
-          rgba(15, 23, 42, 0.96)
+          rgba(26, 15, 10, 0.9),
+          rgba(26, 15, 10, 0.96)
         );
         box-shadow:
-          0 10px 30px rgba(15, 23, 42, 0.95),
-          0 0 0 1px rgba(15, 23, 42, 1);
+          0 10px 30px rgba(26, 15, 10, 0.95),
+          0 0 0 1px rgba(26, 15, 10, 1);
         overflow: hidden;
       }
 
@@ -1473,14 +1633,14 @@
         font-size: 10px;
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        color: rgba(148, 163, 184, 0.85);
+        color: rgba(183, 167, 160, 0.9);
       }
 
       .properties-value {
         min-height: 28px;
         border-radius: 4px;
         border: 1px solid rgba(148, 163, 184, 0.22);
-        background: rgba(2, 6, 23, 0.25);
+        background: rgba(18, 8, 6, 0.28);
         color: rgba(226, 232, 240, 0.95);
         padding: 6px 8px;
         font-size: 12px;
@@ -1499,11 +1659,11 @@
         letter-spacing: 0.14em;
         color: var(--text-muted);
         padding: 4px 6px;
-        border-bottom: 1px solid rgba(30, 64, 175, 0.8);
+        border-bottom: 1px solid rgba(122, 59, 46, 0.85);
         background: linear-gradient(
           to right,
-          rgba(15, 23, 42, 0.98),
-          rgba(30, 64, 175, 0.85)
+          rgba(26, 15, 10, 0.98),
+          rgba(122, 59, 46, 0.9)
         );
       }
 
@@ -1514,13 +1674,13 @@
         background-image:
           linear-gradient(
             transparent 9px,
-            rgba(30, 64, 175, 0.5) 10px,
+            rgba(122, 59, 46, 0.55) 10px,
             transparent 10px
           ),
           linear-gradient(
             90deg,
             transparent 9px,
-            rgba(30, 64, 175, 0.5) 10px,
+            rgba(122, 59, 46, 0.55) 10px,
             transparent 10px
           );
         background-size: 10px 10px;
@@ -1533,7 +1693,7 @@
       }
 
       .minimap-node-primary {
-        background: rgba(56, 189, 248, 0.9);
+        background: rgba(192, 122, 74, 0.9);
       }
       .minimap-node-secondary {
         background: rgba(236, 72, 153, 0.9);
@@ -1587,15 +1747,15 @@
         width: 6px;
         height: 6px;
         border-radius: 999px;
-        background: radial-gradient(circle at 30% 0%, #38bdf8, #0ea5e9);
+        background: radial-gradient(circle at 30% 0%, #d39a6c, #c07a4a);
         box-shadow:
-          0 0 0 3px rgba(56, 189, 248, 0.4),
-          0 0 14px rgba(56, 189, 248, 0.9);
+          0 0 0 3px rgba(192, 122, 74, 0.4),
+          0 0 14px rgba(192, 122, 74, 0.9);
       }
 
       @media (max-width: 900px) {
         .main {
-          grid-template-columns: 126px minmax(0, 1fr) 330px;
+          grid-template-columns: 0 minmax(0, 1fr) 330px;
         }
       }
 
@@ -1607,17 +1767,16 @@
 
         .main {
           grid-template-columns: 1fr;
-          grid-template-rows: 210px minmax(0, 1fr) 220px;
+          grid-template-rows: 0 minmax(0, 1fr) 220px;
         }
-
-        .sidebar {
-          border-right: none;
-          border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-        }
-
+ 
         .rightbar {
           border-left: none;
           border-top: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .library-collapsed-badge {
+          top: 158px;
         }
       }
     </style>
@@ -1629,7 +1788,7 @@
           <div class="brand">
             <img
               class="brand-logo"
-              src="../images/flow-forge-tksoft-hr-blue-05.png"
+              src="../images/flow-forge-tksoft-hr-brown-01.png"
               alt="Flow Forge"
             />
           </div>
@@ -1638,7 +1797,7 @@
             <div class="toolbar-fields">
               <div class="toolbar-field">
                 <div class="toolbar-field-label">
-                  Template name
+                  Instance name
                   <span
                     id="template-id-badge"
                     class="template-id-badge"
@@ -1651,20 +1810,28 @@
                   type="text"
                   minlength="4"
                   maxlength="64"
-                  aria-label="Template name"
+                  aria-label="Instance name"
                   placeholder="For example: My first template"
+                  readonly
                 />
               </div>
               <div class="toolbar-field">
-                <div class="toolbar-field-label">Template status</div>
+                <div class="toolbar-field-label">State</div>
                 <select
                   class="toolbar-control"
                   id="template-status"
-                  aria-label="Template status"
+                  aria-label="State"
+                  disabled
                 ></select>
               </div>
             </div>
           </div>
+        </div>
+        <div class="toolbar-nav" aria-label="Navigation">
+          <span aria-hidden="true">←</span>
+          <a href="../developer/">Developer</a>
+          <span class="toolbar-nav-sep">|</span>
+          <a href="../">Landing</a>
         </div>
         <div class="toolbar-right">
           <div class="toolbar-auth">
@@ -1691,6 +1858,7 @@
         </div>
       </header>
 
+      <div class="library-collapsed-badge" aria-hidden="true">Library</div>
       <div class="main">
         <aside class="sidebar">
           <div class="sidebar-header">
@@ -1820,6 +1988,7 @@
                     step="10"
                     value="1200"
                     aria-label="Canvas width"
+                    readonly
                   />
                   <span class="canvas-size-sep">×</span>
                   <input
@@ -1830,8 +1999,9 @@
                     step="10"
                     value="700"
                     aria-label="Canvas height"
+                    readonly
                   />
-                  <button type="button" id="canvas-set">Set</button>
+                  <button type="button" id="canvas-set" disabled>Set</button>
                 </div>
               </div>
             </div>
@@ -1858,7 +2028,7 @@
                       <!-- Small triangle arrowhead -->
                       <path
                         d="M 0 0 L 14 7 L 0 14 z"
-                        fill="rgba(148, 163, 184, 0.9)"
+                        fill="rgba(156, 163, 175, 0.95)"
                       />
                     </marker>
                     <marker
@@ -1872,7 +2042,7 @@
                     >
                       <path
                         d="M 0 0 L 14 7 L 0 14 z"
-                        fill="rgba(56, 189, 248, 0.95)"
+                        fill="rgba(156, 163, 175, 0.98)"
                       />
                     </marker>
                   </defs>
@@ -1957,7 +2127,9 @@ Lorem ipsum
               <div class="properties-grid" id="properties-panel">
                 <div class="properties-line">
                   <div class="properties-label">ID</div>
-                  <div class="properties-value" id="prop-internal-block-id">-</div>
+                  <div class="properties-value" id="prop-internal-block-id">
+                    -
+                  </div>
                 </div>
                 <div class="properties-line">
                   <div class="properties-label">Type</div>
@@ -1966,7 +2138,9 @@ Lorem ipsum
                 <div class="properties-label properties-title">
                   Default input text
                 </div>
-                <div class="properties-value" id="prop-default-input-text">-</div>
+                <div class="properties-value" id="prop-default-input-text">
+                  -
+                </div>
                 <div class="properties-line">
                   <div class="properties-label">Position</div>
                   <div class="properties-value" id="prop-position">-</div>
@@ -1982,7 +2156,7 @@ Lorem ipsum
           <div class="rightbar-footer">
             <img
               class="rightbar-footer-logo"
-              src="../images/logo-tksoft-hr-blue-01.png"
+              src="../images/logo-hr-brown-01.png"
               alt="TKSoft"
             />
           </div>
@@ -2069,25 +2243,46 @@ Lorem ipsum
 
         const toolbarContainer = document.getElementById('toolbar-buttons');
         const toolbarActions = [
-          { id: 'new-template', label: 'New template' },
-          { id: 'save-template', label: 'Save this template' },
+          { id: 'new-template', label: 'Run' },
+          { id: 'save-template', label: 'Stop' },
         ];
+        let runTemplateToolbarBtn = null;
         let saveTemplateToolbarBtn = null;
 
         const modalOverlay = document.getElementById('modal-overlay');
         const modalTitleEl = document.getElementById('modal-title');
         const modalBodyEl = document.getElementById('modal-body');
         const modalCloseBtn = document.getElementById('modal-close');
+        const modalEl = modalOverlay?.querySelector('.modal');
 
-        function showModal(title, message) {
+        function setModalTone(tone) {
+          if (!(modalEl instanceof HTMLElement)) return;
+          modalEl.classList.remove('modal-tone-success', 'modal-tone-error');
+          if (tone === 'success') modalEl.classList.add('modal-tone-success');
+          if (tone === 'error') modalEl.classList.add('modal-tone-error');
+        }
+
+        function showModal(title, message, options = {}) {
           if (!modalOverlay || !modalTitleEl || !modalBodyEl) return;
+          if (modalCloseBtn instanceof HTMLElement) {
+            // Ensure neutral message dialogs always have a way to close.
+            modalCloseBtn.style.display = '';
+          }
+          const tone = options?.tone || 'neutral';
+          setModalTone(tone);
           modalTitleEl.textContent = title;
           modalBodyEl.textContent = message;
           modalOverlay.classList.add('modal-overlay-open');
         }
 
-        function showModalHtml(title, html) {
+        function showModalHtml(title, html, options = {}) {
           if (!modalOverlay || !modalTitleEl || !modalBodyEl) return;
+          const hideHeaderClose = Boolean(options.hideHeaderClose);
+          if (modalCloseBtn instanceof HTMLElement) {
+            modalCloseBtn.style.display = hideHeaderClose ? 'none' : '';
+          }
+          const tone = options?.tone || 'neutral';
+          setModalTone(tone);
           modalTitleEl.textContent = title;
           modalBodyEl.innerHTML = html;
           modalOverlay.classList.add('modal-overlay-open');
@@ -2098,6 +2293,7 @@ Lorem ipsum
             onConfirm?.();
             return;
           }
+          setModalTone('neutral');
 
           if (modalCloseBtn instanceof HTMLElement) {
             // Hide "OK" header button for confirmation dialogs.
@@ -2189,7 +2385,8 @@ Lorem ipsum
           const cleanup = () => {
             try {
               if (cancelBtn) cancelBtn.replaceWith(cancelBtn.cloneNode(true));
-              if (dismissBtn) dismissBtn.replaceWith(dismissBtn.cloneNode(true));
+              if (dismissBtn)
+                dismissBtn.replaceWith(dismissBtn.cloneNode(true));
               if (saveBtn) saveBtn.replaceWith(saveBtn.cloneNode(true));
             } catch {}
           };
@@ -2214,6 +2411,7 @@ Lorem ipsum
           if (modalCloseBtn instanceof HTMLElement) {
             modalCloseBtn.style.display = '';
           }
+          setModalTone('neutral');
           modalOverlay?.classList.remove('modal-overlay-open');
         }
 
@@ -2242,6 +2440,11 @@ Lorem ipsum
           const btn = document.createElement('button');
           btn.className = 'toolbar-button';
           btn.type = 'button';
+          if (action.id === 'new-template') {
+            btn.id = 'toolbar-run-template';
+            btn.disabled = true;
+            runTemplateToolbarBtn = btn;
+          }
           if (action.id === 'save-template') {
             btn.id = 'toolbar-save-template';
             btn.disabled = true;
@@ -2359,7 +2562,9 @@ Lorem ipsum
 
         function getTemplateState() {
           return {
-            status: String(templateStatusSelect?.value || TemplateStatus.UNKNOWN),
+            status: String(
+              templateStatusSelect?.value || TemplateStatus.UNKNOWN,
+            ),
             name: String(templateNameInput?.value || ''),
           };
         }
@@ -2397,15 +2602,25 @@ Lorem ipsum
           const templateName = String(
             selectedTemplateListItem.dataset.templateName || '',
           ).trim();
-          if (!Number.isFinite(templateId) || templateId <= 0 || !templateName) {
+          if (
+            !Number.isFinite(templateId) ||
+            templateId <= 0 ||
+            !templateName
+          ) {
             return null;
           }
           return { templateId, templateName };
         }
 
-        function buildCanvasStateFromBackend(logicResp, visualsResp, fallbackTemplateId) {
+        function buildCanvasStateFromBackend(
+          logicResp,
+          visualsResp,
+          fallbackTemplateId,
+        ) {
           const templateId = Number(
-            logicResp?.template_id ?? logicResp?.templateId ?? fallbackTemplateId,
+            logicResp?.template_id ??
+              logicResp?.templateId ??
+              fallbackTemplateId,
           );
           const templateName = String(
             logicResp?.name || visualsResp?.name || '',
@@ -2439,16 +2654,22 @@ Lorem ipsum
             if (key) visualBlockById.set(key, b);
           });
 
-          const visualLines = Array.isArray(visualsData?.lines) ? visualsData.lines : [];
+          const visualLines = Array.isArray(visualsData?.lines)
+            ? visualsData.lines
+            : [];
           const visualLineById = new Map();
           visualLines.forEach((l) => {
             const key = String(l?.internal_line_id ?? '');
             if (key) visualLineById.set(key, l);
           });
 
-          const logicBlocks = Array.isArray(logicResp?.blocks) ? logicResp.blocks : [];
+          const logicBlocks = Array.isArray(logicResp?.blocks)
+            ? logicResp.blocks
+            : [];
           const blocks = logicBlocks.map((b) => {
-            const internalId = String(b?.internal_block_id ?? b?.internalBlockId ?? '');
+            const internalId = String(
+              b?.internal_block_id ?? b?.internalBlockId ?? '',
+            );
             const visualBlock = visualBlockById.get(internalId) || {};
             return {
               internal_block_id: internalId,
@@ -2465,7 +2686,9 @@ Lorem ipsum
             };
           });
 
-          const logicLines = Array.isArray(logicResp?.lines) ? logicResp.lines : [];
+          const logicLines = Array.isArray(logicResp?.lines)
+            ? logicResp.lines
+            : [];
           const lines = logicLines.map((l) => {
             const internalLineId = String(
               l?.internal_line_id ?? l?.internalLineId ?? '',
@@ -2485,7 +2708,9 @@ Lorem ipsum
           });
 
           const width = Number(
-            visualsData?.canvas?.width ?? visualsData?.canvasWidth ?? MIN_CANVAS_WIDTH,
+            visualsData?.canvas?.width ??
+              visualsData?.canvasWidth ??
+              MIN_CANVAS_WIDTH,
           );
           const height = Number(
             visualsData?.canvas?.height ??
@@ -2585,7 +2810,9 @@ Lorem ipsum
             });
             return true;
           } catch (e) {
-            showModal('Load template error', String(e?.message || e));
+            showModal('Load template error', String(e?.message || e), {
+              tone: 'error',
+            });
             return false;
           }
         }
@@ -2653,8 +2880,16 @@ Lorem ipsum
                 selected.templateName,
               )}`;
               await Promise.all([
-                apiDeleteTo(CONFIG.templateServiceUrl, deleteTemplatePath, accessToken),
-                apiDeleteTo(CONFIG.templateServiceUrl, deleteVisualsPath, accessToken),
+                apiDeleteTo(
+                  CONFIG.templateServiceUrl,
+                  deleteTemplatePath,
+                  accessToken,
+                ),
+                apiDeleteTo(
+                  CONFIG.templateServiceUrl,
+                  deleteVisualsPath,
+                  accessToken,
+                ),
               ]);
 
               if (isOpenedTemplate) {
@@ -2670,7 +2905,9 @@ Lorem ipsum
               });
               return true;
             } catch (e) {
-              showModal('Delete template error', String(e?.message || e));
+            showModal('Delete template error', String(e?.message || e), {
+              tone: 'error',
+            });
               return false;
             }
           };
@@ -2761,7 +2998,8 @@ Lorem ipsum
             }
           });
           if (tplDeleteBtn instanceof HTMLButtonElement) {
-            const hasSelection = selectedTemplateListItem instanceof HTMLElement;
+            const hasSelection =
+              selectedTemplateListItem instanceof HTMLElement;
             tplDeleteBtn.disabled = !isLoggedIn || !hasSelection;
           }
 
@@ -2769,11 +3007,16 @@ Lorem ipsum
             document.getElementById('toolbar-save-template') ||
             saveTemplateToolbarBtn;
           if (saveBtn instanceof HTMLButtonElement) {
-            saveBtn.disabled = !isLoggedIn;
-            saveBtn.setAttribute(
-              'aria-disabled',
-              isLoggedIn ? 'false' : 'true',
-            );
+            saveBtn.disabled = true;
+            saveBtn.setAttribute('aria-disabled', 'true');
+          }
+
+          const runBtn =
+            document.getElementById('toolbar-run-template') ||
+            runTemplateToolbarBtn;
+          if (runBtn instanceof HTMLButtonElement) {
+            runBtn.disabled = true;
+            runBtn.setAttribute('aria-disabled', 'true');
           }
         }
 
@@ -2817,7 +3060,13 @@ Lorem ipsum
         }
 
         async function apiPost(path, body, accessToken) {
-          return await apiRequest('POST', CONFIG.userServiceUrl, path, body, accessToken);
+          return await apiRequest(
+            'POST',
+            CONFIG.userServiceUrl,
+            path,
+            body,
+            accessToken,
+          );
         }
 
         async function apiPostTo(baseUrl, path, body, accessToken) {
@@ -2879,11 +3128,15 @@ Lorem ipsum
 
         function setSelectedTemplateListItem(node) {
           if (selectedTemplateListItem instanceof HTMLElement) {
-            selectedTemplateListItem.classList.remove('template-list-item-selected');
+            selectedTemplateListItem.classList.remove(
+              'template-list-item-selected',
+            );
           }
           if (node instanceof HTMLElement) {
             selectedTemplateListItem = node;
-            selectedTemplateListItem.classList.add('template-list-item-selected');
+            selectedTemplateListItem.classList.add(
+              'template-list-item-selected',
+            );
           } else {
             selectedTemplateListItem = null;
           }
@@ -2891,7 +3144,8 @@ Lorem ipsum
         }
 
         function renderTemplateList(items, options = {}) {
-          const { preferredTemplateId = null, preferredTemplateName = '' } = options;
+          const { preferredTemplateId = null, preferredTemplateName = '' } =
+            options;
           if (!(templatesListContainer instanceof HTMLElement)) return;
           selectedTemplateListItem = null;
           if (!Array.isArray(items) || items.length === 0) {
@@ -2903,7 +3157,9 @@ Lorem ipsum
           const fragment = document.createDocumentFragment();
           items.forEach((item, idx) => {
             const name = String(item?.name || '').trim() || 'Unnamed';
-            const status = String(item?.status || TemplateStatus.UNKNOWN).toUpperCase();
+            const status = String(
+              item?.status || TemplateStatus.UNKNOWN,
+            ).toUpperCase();
             const row = document.createElement('button');
             row.type = 'button';
             row.className = 'template-list-item';
@@ -2954,7 +3210,9 @@ Lorem ipsum
           } = options;
           const state = getAuthState();
           const accessToken = state?.access_token;
-          const selectedBefore = keepSelection ? getSelectedTemplateMeta() : null;
+          const selectedBefore = keepSelection
+            ? getSelectedTemplateMeta()
+            : null;
           const openedTemplateId =
             Number.isFinite(currentTemplateId) && currentTemplateId > 0
               ? currentTemplateId
@@ -2977,7 +3235,7 @@ Lorem ipsum
               preferredTemplateId:
                 Number.isFinite(preferredTemplateId) && preferredTemplateId > 0
                   ? preferredTemplateId
-                  : openedTemplateId ?? selectedBefore?.templateId ?? null,
+                  : (openedTemplateId ?? selectedBefore?.templateId ?? null),
               preferredTemplateName:
                 String(preferredTemplateName || '').trim() ||
                 openedTemplateName ||
@@ -2992,7 +3250,9 @@ Lorem ipsum
                 message === 'Failed to fetch'
                   ? 'Failed to fetch template list. The browser request was blocked before receiving a response. Please check template-service CORS/OPTIONS configuration and that the service is reachable at http://localhost:8080.'
                   : message;
-              showModal('Template list error', humanFriendlyMessage);
+              showModal('Template list error', humanFriendlyMessage, {
+                tone: 'error',
+              });
             }
           }
         }
@@ -3024,40 +3284,82 @@ Lorem ipsum
               `
                 <div class="form-grid">
                   <div class="form-field">
-                    <div class="form-label">Login</div>
-                    <input class="toolbar-control" id="reg-login" type="text" minlength="4" maxlength="64" />
+                    <div class="form-label form-label-required">Login</div>
+                    <input class="toolbar-control" id="reg-login" type="text" minlength="4" maxlength="64" required autocomplete="username" />
                   </div>
                   <div class="form-field">
-                    <div class="form-label">Password</div>
+                    <div class="form-label form-label-required">Password</div>
                     <div class="password-wrap">
-                      <input class="toolbar-control" id="reg-password" type="password" minlength="8" maxlength="128" />
+                      <input class="toolbar-control" id="reg-password" type="password" minlength="8" maxlength="128" required autocomplete="new-password" />
                       <button class="password-toggle" type="button" id="reg-password-toggle" aria-label="Show/hide password">👁</button>
                     </div>
                   </div>
                   <div class="form-field">
-                    <div class="form-label">First name</div>
-                    <input class="toolbar-control" id="reg-first" type="text" minlength="1" maxlength="64" />
+                    <div class="form-label form-label-required">First name</div>
+                    <input class="toolbar-control" id="reg-first" type="text" minlength="1" maxlength="64" required autocomplete="given-name" />
                   </div>
                   <div class="form-field">
-                    <div class="form-label">Last name</div>
-                    <input class="toolbar-control" id="reg-last" type="text" minlength="1" maxlength="64" />
+                    <div class="form-label form-label-required">Last name</div>
+                    <input class="toolbar-control" id="reg-last" type="text" minlength="1" maxlength="64" required autocomplete="family-name" />
                   </div>
                   <div class="form-field form-field-full">
-                    <div class="form-label">Email</div>
-                    <input class="toolbar-control" id="reg-email" type="email" minlength="5" maxlength="64" />
+                    <div class="form-label form-label-required">Email</div>
+                    <input class="toolbar-control" id="reg-email" type="email" minlength="5" maxlength="64" required autocomplete="email" />
                   </div>
                   <div class="form-field form-field-full">
-                    <div class="form-label">Phone (+79001234567)</div>
-                    <input class="toolbar-control" id="reg-phone" type="tel" minlength="11" maxlength="16" placeholder="+79001234567" />
+                    <div class="form-label">Phone <span class="form-label-optional-hint">(optional, e.g. +79001234567)</span></div>
+                    <input class="toolbar-control" id="reg-phone" type="tel" maxlength="16" placeholder="+79001234567" autocomplete="tel" />
                   </div>
                 </div>
-                <div class="form-actions">
-                  <button class="modal-close modal-close-secondary" type="button" id="auth-cancel">Cancel</button>
-                  <button class="modal-close" type="button" id="auth-submit">Submit</button>
+                <div class="form-actions form-actions-split">
+                  <button class="modal-close modal-close-secondary" type="button" id="auth-cancel" autofocus>Cancel</button>
+                  <button class="modal-close" type="button" id="auth-submit" disabled>Create</button>
                 </div>
+                <p class="form-hint">All fields are required except Phone (optional). Create is enabled only when every required field is valid.</p>
               `,
+              { hideHeaderClose: true },
             );
             wirePasswordToggle('reg-password', 'reg-password-toggle');
+
+            function registerFormIsComplete() {
+              const login =
+                document.getElementById('reg-login')?.value?.trim() || '';
+              const password =
+                document.getElementById('reg-password')?.value || '';
+              const firstName =
+                document.getElementById('reg-first')?.value?.trim() || '';
+              const lastName =
+                document.getElementById('reg-last')?.value?.trim() || '';
+              const email =
+                document.getElementById('reg-email')?.value?.trim() || '';
+              if (login.length < 4 || login.length > 64) return false;
+              if (password.length < 8 || password.length > 128) return false;
+              if (!firstName.length || firstName.length > 64) return false;
+              if (!lastName.length || lastName.length > 64) return false;
+              if (email.length < 5 || email.length > 64) return false;
+              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
+              return true;
+            }
+
+            function syncRegisterSubmitEnabled() {
+              const submitBtn = document.getElementById('auth-submit');
+              if (!(submitBtn instanceof HTMLButtonElement)) return;
+              submitBtn.disabled = !registerFormIsComplete();
+            }
+
+            for (const id of [
+              'reg-login',
+              'reg-password',
+              'reg-first',
+              'reg-last',
+              'reg-email',
+              'reg-phone',
+            ]) {
+              document
+                .getElementById(id)
+                ?.addEventListener('input', syncRegisterSubmitEnabled);
+            }
+            syncRegisterSubmitEnabled();
           } else if (kind === 'login') {
             showModalHtml(
               'Login',
@@ -3075,11 +3377,12 @@ Lorem ipsum
                     </div>
                   </div>
                 </div>
-                <div class="form-actions">
-                  <button class="modal-close modal-close-secondary" type="button" id="auth-cancel">Cancel</button>
+                <div class="form-actions form-actions-split">
+                  <button class="modal-close modal-close-secondary" type="button" id="auth-cancel" autofocus>Cancel</button>
                   <button class="modal-close" type="button" id="auth-submit">Login</button>
                 </div>
               `,
+              { hideHeaderClose: true },
             );
             wirePasswordToggle('login-password', 'login-password-toggle');
           }
@@ -3092,6 +3395,13 @@ Lorem ipsum
             ?.addEventListener('click', async () => {
               try {
                 if (kind === 'register') {
+                  const submitBtn = document.getElementById('auth-submit');
+                  if (
+                    submitBtn instanceof HTMLButtonElement &&
+                    submitBtn.disabled
+                  ) {
+                    return;
+                  }
                   const login =
                     document.getElementById('reg-login')?.value?.trim() || '';
                   const password =
@@ -3120,6 +3430,7 @@ Lorem ipsum
                   showModal(
                     'Register',
                     'Registration completed successfully. You can now login.',
+                    { tone: 'success' },
                   );
                 }
 
@@ -3146,12 +3457,15 @@ Lorem ipsum
                   updateAuthButtonsVisibility();
                   await refreshTemplateList({
                     preferredTemplateId: currentTemplateId,
-                    preferredTemplateName: templateNameInput?.value?.trim() || '',
+                    preferredTemplateName:
+                      templateNameInput?.value?.trim() || '',
                   });
-                  showModal('Login', 'Login completed successfully.');
+                  showModal('Login', 'Login completed successfully.', {
+                    tone: 'success',
+                  });
                 }
               } catch (e) {
-                showModal('Auth error', String(e?.message || e));
+                showModal('Auth error', String(e?.message || e), { tone: 'error' });
               }
             });
         }
@@ -3270,7 +3584,9 @@ Lorem ipsum
           const width =
             Number.parseFloat(node.style.width || '') || node.offsetWidth || 0;
           const height =
-            Number.parseFloat(node.style.height || '') || node.offsetHeight || 0;
+            Number.parseFloat(node.style.height || '') ||
+            node.offsetHeight ||
+            0;
           return { width, height };
         }
 
@@ -3286,7 +3602,9 @@ Lorem ipsum
           }
 
           const id = node.dataset.internalBlockId || dash;
-          const blockTypeCanonical = normalizeBlockTypeId(node.dataset.blockTypeId);
+          const blockTypeCanonical = normalizeBlockTypeId(
+            node.dataset.blockTypeId,
+          );
           const blockTypeId = blockTypeCanonical
             ? getBlockTypeDisplayTitle(blockTypeCanonical)
             : dash;
@@ -3310,7 +3628,8 @@ Lorem ipsum
 
         canvas?.addEventListener('pointerdown', (event) => {
           // Clear selection when clicking canvas background (not a node).
-          const targetEl = event.target instanceof HTMLElement ? event.target : null;
+          const targetEl =
+            event.target instanceof HTMLElement ? event.target : null;
           const closestNode = targetEl?.closest('.canvas-node') || null;
           if (!closestNode) {
             setSelectedBlockNode(null);
@@ -3508,8 +3827,13 @@ Lorem ipsum
               const createdTemplateId = Number(
                 created?.template_id ?? created?.templateId,
               );
-              if (!Number.isFinite(createdTemplateId) || createdTemplateId <= 0) {
-                throw new Error('Invalid create response (missing template_id)');
+              if (
+                !Number.isFinite(createdTemplateId) ||
+                createdTemplateId <= 0
+              ) {
+                throw new Error(
+                  'Invalid create response (missing template_id)',
+                );
               }
               currentTemplateId = createdTemplateId;
               updateTemplateIdBadge();
@@ -3552,7 +3876,9 @@ Lorem ipsum
             });
             return true;
           } catch (e) {
-            showModal('Save template error', String(e?.message || e));
+            showModal('Save template error', String(e?.message || e), {
+              tone: 'error',
+            });
             return false;
           }
         }
@@ -3572,7 +3898,10 @@ Lorem ipsum
         let nodeMenuOpenNode = null;
 
         function setSelectedBlockNode(node) {
-          if (nodeMenuOpenNode instanceof HTMLElement && node !== nodeMenuOpenNode) {
+          if (
+            nodeMenuOpenNode instanceof HTMLElement &&
+            node !== nodeMenuOpenNode
+          ) {
             closeNodeMenu();
           }
           if (selectedBlockNode === node) return;
@@ -3610,33 +3939,33 @@ Lorem ipsum
         let suppressPersistence = false;
 
         function serializeCanvasState() {
-          const blocks = Array.from(canvas.querySelectorAll('.canvas-node')).map(
-            (node) => {
-              const inputEl = node.querySelector('.canvas-node-input');
-              const defaultInputText =
-                (inputEl && inputEl.value) || node.dataset.defaultInputText || '';
-              const x = Number.parseFloat(node.style.left || '0') || 0;
-              const y = Number.parseFloat(node.style.top || '0') || 0;
-              const width =
-                Number.parseFloat(node.style.width || '') ||
-                node.offsetWidth ||
-                0;
-              const height =
-                Number.parseFloat(node.style.height || '') ||
-                node.offsetHeight ||
-                0;
+          const blocks = Array.from(
+            canvas.querySelectorAll('.canvas-node'),
+          ).map((node) => {
+            const inputEl = node.querySelector('.canvas-node-input');
+            const defaultInputText =
+              (inputEl && inputEl.value) || node.dataset.defaultInputText || '';
+            const x = Number.parseFloat(node.style.left || '0') || 0;
+            const y = Number.parseFloat(node.style.top || '0') || 0;
+            const width =
+              Number.parseFloat(node.style.width || '') ||
+              node.offsetWidth ||
+              0;
+            const height =
+              Number.parseFloat(node.style.height || '') ||
+              node.offsetHeight ||
+              0;
 
-              return {
-                internal_block_id: node.dataset.internalBlockId,
-                block_type_id: normalizeBlockTypeId(node.dataset.blockTypeId),
-                default_input_text: defaultInputText,
-                x,
-                y,
-                width,
-                height,
-              };
-            },
-          );
+            return {
+              internal_block_id: node.dataset.internalBlockId,
+              block_type_id: normalizeBlockTypeId(node.dataset.blockTypeId),
+              default_input_text: defaultInputText,
+              x,
+              y,
+              width,
+              height,
+            };
+          });
 
           const lines = connections.map((c) => ({
             internal_line_id: c.internal_line_id,
@@ -3721,7 +4050,9 @@ Lorem ipsum
             const candidate = normalizeBlockTypeId(
               libItem.dataset.blockTypeId ||
                 libItem.dataset.templateId ||
-                libItem.querySelector('.library-item-title')?.textContent?.trim() ||
+                libItem
+                  .querySelector('.library-item-title')
+                  ?.textContent?.trim() ||
                 '',
             );
             if (candidate === target) return libItem;
@@ -3748,7 +4079,8 @@ Lorem ipsum
 
             const width = Number(state.canvas.width);
             const height = Number(state.canvas.height);
-            if (!Number.isFinite(width) || !Number.isFinite(height)) return false;
+            if (!Number.isFinite(width) || !Number.isFinite(height))
+              return false;
 
             applyCanvasSize(width, height);
 
@@ -3781,17 +4113,15 @@ Lorem ipsum
               node.dataset.templateId = canonicalType;
               applyNodeSizeLimits(node, libItem);
               if (canonicalType === 'start' || canonicalType === 'finish') {
-                node.dataset.defaultInputText = getBlockTypeDisplayTitle(
-                  canonicalType,
-                );
+                node.dataset.defaultInputText =
+                  getBlockTypeDisplayTitle(canonicalType);
               } else {
                 node.dataset.defaultInputText = defaultInputText;
               }
 
-              const titleEl = node.querySelector(
-                '.canvas-node-topline-title',
-              );
-              if (titleEl) titleEl.textContent = getBlockTypeDisplayTitle(canonicalType);
+              const titleEl = node.querySelector('.canvas-node-topline-title');
+              if (titleEl)
+                titleEl.textContent = getBlockTypeDisplayTitle(canonicalType);
 
               const badgeEl = node.querySelector('.node-badge');
               if (badgeEl) badgeEl.textContent = '#' + internalId;
@@ -3847,8 +4177,9 @@ Lorem ipsum
               path.setAttribute('marker-end', 'url(#conn-arrow)');
               connectionsLayer.appendChild(path);
 
-              const internalLineId =
-                String(l.internal_line_id ?? `${fromId}-${toId}`);
+              const internalLineId = String(
+                l.internal_line_id ?? `${fromId}-${toId}`,
+              );
               const conn = {
                 id: 'conn-' + ++connectionCounter,
                 internal_line_id: internalLineId,
@@ -3880,7 +4211,8 @@ Lorem ipsum
             if (!state.canvas || typeof state.canvas !== 'object') return false;
             const width = Number(state.canvas.width);
             const height = Number(state.canvas.height);
-            if (!Number.isFinite(width) || !Number.isFinite(height)) return false;
+            if (!Number.isFinite(width) || !Number.isFinite(height))
+              return false;
 
             if (!Array.isArray(state.blocks) || !Array.isArray(state.lines))
               return false;
@@ -3918,9 +4250,19 @@ Lorem ipsum
             maxWidth: 700,
             maxHeight: 500,
           },
-          watch: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          watch: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 500,
+            maxHeight: 300,
+          },
           start: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
-          finish: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          finish: {
+            minWidth: 160,
+            minHeight: 80,
+            maxWidth: 160,
+            maxHeight: 80,
+          },
           expressions: {
             minWidth: 200,
             minHeight: 130,
@@ -3933,7 +4275,12 @@ Lorem ipsum
             maxWidth: 700,
             maxHeight: 500,
           },
-          delay: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          delay: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 500,
+            maxHeight: 300,
+          },
           confirmation: {
             minWidth: 200,
             minHeight: 130,
@@ -3961,9 +4308,19 @@ Lorem ipsum
             maxWidth: 700,
             maxHeight: 500,
           },
-          watch: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          watch: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 500,
+            maxHeight: 300,
+          },
           start: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
-          finish: { minWidth: 160, minHeight: 80, maxWidth: 160, maxHeight: 80 },
+          finish: {
+            minWidth: 160,
+            minHeight: 80,
+            maxWidth: 160,
+            maxHeight: 80,
+          },
           expressions: {
             minWidth: 200,
             minHeight: 130,
@@ -3976,7 +4333,12 @@ Lorem ipsum
             maxWidth: 700,
             maxHeight: 500,
           },
-          delay: { minWidth: 200, minHeight: 130, maxWidth: 500, maxHeight: 300 },
+          delay: {
+            minWidth: 200,
+            minHeight: 130,
+            maxWidth: 500,
+            maxHeight: 300,
+          },
           confirmation: {
             minWidth: 200,
             minHeight: 130,
@@ -4066,7 +4428,9 @@ Lorem ipsum
           const normalizedBlockTypeId = String(node.dataset.blockTypeId || '')
             .trim()
             .toLowerCase();
-          const isStartFinish = normalizedBlockTypeId === 'start' || normalizedBlockTypeId === 'finish';
+          const isStartFinish =
+            normalizedBlockTypeId === 'start' ||
+            normalizedBlockTypeId === 'finish';
           if (isStartFinish) {
             node.classList.add('canvas-node-start-finish');
           }
@@ -4075,10 +4439,12 @@ Lorem ipsum
           }
           applyNodeSizeLimits(node, libItem);
 
-          if (canonicalBlockType === 'start' || canonicalBlockType === 'finish') {
-            node.dataset.defaultInputText = getBlockTypeDisplayTitle(
-              canonicalBlockType,
-            );
+          if (
+            canonicalBlockType === 'start' ||
+            canonicalBlockType === 'finish'
+          ) {
+            node.dataset.defaultInputText =
+              getBlockTypeDisplayTitle(canonicalBlockType);
           } else {
             node.dataset.defaultInputText = DEFAULT_INPUT_TEXT;
           }
@@ -4292,7 +4658,8 @@ Lorem ipsum
         }
 
         function clampNodeRect(x, y, width, height, node = null) {
-          const { minWidth, minHeight, maxWidth, maxHeight } = getNodeMaxSize(node);
+          const { minWidth, minHeight, maxWidth, maxHeight } =
+            getNodeMaxSize(node);
           let clampedWidth = Math.min(Math.max(width, minWidth), maxWidth);
           let clampedHeight = Math.min(Math.max(height, minHeight), maxHeight);
 
@@ -4369,7 +4736,7 @@ Lorem ipsum
             node.style.top = rect.y + 'px';
             node.style.width = rect.width + 'px';
             node.style.height = rect.height + 'px';
-              if (selectedBlockNode === node) updatePropertiesPanel(node);
+            if (selectedBlockNode === node) updatePropertiesPanel(node);
           });
 
           updateMinimap();
