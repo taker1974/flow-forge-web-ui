@@ -2961,21 +2961,6 @@ Lorem ipsum
         updateAuthButtonsVisibility();
         updateTemplateIdBadge();
 
-        async function sha256Hex(text) {
-          const data = new TextEncoder().encode(text);
-          const hash = await crypto.subtle.digest('SHA-256', data);
-          const bytes = Array.from(new Uint8Array(hash));
-          return bytes.map((b) => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function getPasswordHashFromInput(rawPassword) {
-          const value = String(rawPassword || '');
-          if (value.startsWith('hash:')) {
-            return value.slice('hash:'.length).trim();
-          }
-          return await sha256Hex(value);
-        }
-
         async function apiPost(path, body, accessToken) {
           return await apiRequest('POST', CONFIG.userServiceUrl, path, body, accessToken);
         }
@@ -3192,7 +3177,7 @@ Lorem ipsum
                   <div class="form-field">
                     <div class="form-label form-label-required">Password</div>
                     <div class="password-wrap">
-                      <input class="toolbar-control" id="reg-password" type="password" minlength="8" maxlength="128" required autocomplete="new-password" />
+                      <input class="toolbar-control" id="reg-password" type="password" minlength="8" maxlength="255" required autocomplete="new-password" />
                       <button class="password-toggle" type="button" id="reg-password-toggle" aria-label="Show/hide password">👁</button>
                     </div>
                   </div>
@@ -3235,7 +3220,7 @@ Lorem ipsum
               const email =
                 document.getElementById('reg-email')?.value?.trim() || '';
               if (login.length < 4 || login.length > 64) return false;
-              if (password.length < 8 || password.length > 128) return false;
+              if (password.length < 8 || password.length > 255) return false;
               if (!firstName.length || firstName.length > 64) return false;
               if (!lastName.length || lastName.length > 64) return false;
               if (email.length < 5 || email.length > 64) return false;
@@ -3272,7 +3257,7 @@ Lorem ipsum
                   <div class="form-field form-field-full">
                     <div class="form-label">Password</div>
                     <div class="password-wrap">
-                      <input class="toolbar-control" id="login-password" type="password" minlength="8" maxlength="128" />
+                      <input class="toolbar-control" id="login-password" type="password" minlength="8" maxlength="255" />
                       <button class="password-toggle" type="button" id="login-password-toggle" aria-label="Show/hide password">👁</button>
                     </div>
                   </div>
@@ -3315,16 +3300,15 @@ Lorem ipsum
                   const phone =
                     document.getElementById('reg-phone')?.value?.trim() || '';
 
-                  const password_hash =
-                    await getPasswordHashFromInput(password);
-                  await apiPost('/auth/register', {
+                  const registerBody = {
                     login,
-                    password_hash,
+                    password,
                     first_name: firstName,
                     last_name: lastName,
                     email,
-                    phone,
-                  });
+                  };
+                  if (phone) registerBody.phone = phone;
+                  await apiPost('/auth/register', registerBody);
 
                   closeModal();
                   showModal(
@@ -3339,11 +3323,9 @@ Lorem ipsum
                     document.getElementById('login-login')?.value?.trim() || '';
                   const password =
                     document.getElementById('login-password')?.value || '';
-                  const password_hash =
-                    await getPasswordHashFromInput(password);
                   const resp = await apiPost('/auth/login', {
                     login,
-                    password_hash,
+                    password,
                   });
                   const access_token = resp?.access_token;
                   const refresh_token = resp?.refresh_token;
@@ -3352,7 +3334,15 @@ Lorem ipsum
                     throw new Error('Invalid login response (missing tokens)');
                   }
 
-                  setAuthState({ access_token, refresh_token, login });
+                  const loginFromServer = String(resp?.login || login).trim();
+                  setAuthState({
+                    access_token,
+                    refresh_token,
+                    login: loginFromServer || login,
+                    first_name: resp?.first_name,
+                    last_name: resp?.last_name,
+                    email: resp?.email,
+                  });
                   closeModal();
                   updateAuthButtonsVisibility();
                   await refreshTemplateList({
@@ -3382,10 +3372,7 @@ Lorem ipsum
           try {
             await apiPost(
               '/auth/logout',
-              {
-                refresh_token: state.refresh_token,
-                access_token: state.access_token,
-              },
+              { refresh_token: state.refresh_token },
               state.access_token,
             );
           } catch {
@@ -3403,15 +3390,25 @@ Lorem ipsum
           const state = getAuthState();
           if (!state) return;
           try {
-            const resp = await apiPost('/auth/refresh', {
-              refresh_token: state.refresh_token,
-            });
+            const resp = await apiPost(
+              '/auth/refresh',
+              { refresh_token: state.refresh_token },
+              state.access_token,
+            );
             const access_token = resp?.access_token;
             const refresh_token = resp?.refresh_token;
             if (!access_token || !refresh_token) {
               throw new Error('Invalid refresh response (missing tokens)');
             }
-            setAuthState({ ...state, access_token, refresh_token });
+            setAuthState({
+              ...state,
+              access_token,
+              refresh_token,
+              login: resp?.login ?? state.login,
+              first_name: resp?.first_name ?? state.first_name,
+              last_name: resp?.last_name ?? state.last_name,
+              email: resp?.email ?? state.email,
+            });
             updateAuthButtonsVisibility();
           } catch {
             // silent auto-refresh fail -> drop auth
